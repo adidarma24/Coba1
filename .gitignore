@@ -1,0 +1,49 @@
+# ---- Build output ----
+bin/
+obj/
+[Bb]uild/
+[Bb]uildOutput/
+
+# ---- Visual Studio / VS Code ----
+.vs/
+.vscode/*        # settings workspace
+!.vscode/settings.json   # jika mau commit setting khusus (opsional)
+
+# ---- Paket & Restore ----
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.nupkg
+*.snupkg
+*.vspscc
+*.vssscc
+
+# ---- Log & Temp ----
+*.log
+*.tlog
+*.tmp
+*.temp
+*.db
+*.cache
+*.bak
+
+# ---- Secrets / environment ----
+*.env
+secrets.json
+
+# ---- OS / Tools ----
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# ---- Dotnet ----
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ---- Test results ----
+TestResult*/
+*.coverage
+*.coveragexml
