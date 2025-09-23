@@ -1,0 +1,142 @@
+﻿@page "/register"
+
+<PageTitle>Register</PageTitle>
+
+<MudContainer Class="d-flex flex-column gap-15 justify-center align-center"
+  Style="min-height: calc(100vh - 5.375rem); color: #5B4947;">
+
+  <MudPaper Elevation="0" Class="d-flex flex-column gap-10" Style="width: 100%; max-width: 38.5rem;">
+    <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5B4947;">
+      <MudText Typo="Typo.h5" Style="font-weight: 500;">Are you ready to become a professional chef?</MudText>
+      <MudText Typo="Typo.body1" Style="font-weight: 400;">Please register first</MudText>
+    </MudPaper>
+
+    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+      <MudPaper Elevation="0" Class="d-flex flex-column gap-6">
+        <MudTextField T="string"
+                      @bind-Value="registerModel.Name"
+                      Placeholder="Name" 
+                      Variant="Variant.Outlined" 
+                      Required="true"
+                      RequiredError="Name is required!"
+                      For="@(() => registerModel.Name)" Style="height: 2rem;" />
+
+        <MudTextField T="string"
+                      @bind-Value="registerModel.Email" 
+                      Validation="@(new Func<string, string>(ValidateEmail))"
+                      Placeholder="Email" 
+                      Variant="Variant.Outlined" 
+                      InputType="InputType.Email" 
+                      Required="true"
+                      RequiredError="Email is required!"
+                      For="@(() => registerModel.Email)" 
+                      Style="height: 2rem;" />
+
+        <MudTextField T="string"
+                      @bind-Value="registerModel.Password" 
+                      Validation="@(new Func<string, IEnumerable<string>>(ValidatePassword))"
+                      Placeholder="Password" 
+                      Variant="Variant.Outlined"
+                      InputType="InputType.Password" 
+                      Required="true" 
+                      RequiredError="Password is required!"
+                      For="@(() => registerModel.Password)" 
+                      Style="height: 2rem;" />
+
+        <MudTextField T="string"
+                      @bind-Value="registerModel.ConfirmPassword" 
+                      Validation="@(new Func<string, string>(ValidateConfirmPassword))"
+                      Placeholder="Confirm Password"
+                      Variant="Variant.Outlined" 
+                      InputType="InputType.Password" 
+                      Required="true"
+                      RequiredError="Please confirm your password!"
+                      For="@(() => registerModel.ConfirmPassword)" 
+                      Style="height: 2rem;" />
+      </MudPaper>
+    </MudForm>
+
+    <MudPaper Elevation="0" Class="d-flex justify-end">
+      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg"
+        Style="width:11rem; height:2.5rem; background-color: #FABC1D; color: #5B4947;">
+        Sign Up
+      </MudButton>
+    </MudPaper>
+  </MudPaper>
+
+  <MudText Typo="Typo.body2" Style="font-weight: 400;">
+    Have account?
+    <MudLink Href="/login">Login here</MudLink>
+  </MudText>
+</MudContainer>
+
+@code {
+  bool success;
+  string[] errors = { };
+  MudForm? form;
+  private RegisterModel registerModel = new();
+
+  private void Submit()
+  {
+      form?.Validate();
+      if (success)
+      {
+          Console.WriteLine("Register Success!");
+      }
+  }
+
+  private string ValidateEmail(string value)
+  {
+    if (string.IsNullOrWhiteSpace(value))
+    {
+      return "Email is required.";
+    }
+    else if (!System.Text.RegularExpressions.Regex.IsMatch(value,
+    @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+    {
+      return "Invalid email format.";
+    }
+    else
+    {
+      return string.Empty;
+    }
+  }
+
+  private IEnumerable<string> ValidatePassword(string value)
+  {
+    if (string.IsNullOrWhiteSpace(value))
+    {
+      yield return "Password is required!";
+      yield break;
+    }
+    if (value.Length < 6 || !Regex.IsMatch(value, @"[A-Z]") || !Regex.IsMatch(value, @"[0-9]"))
+    {
+      yield return "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number.";
+    }
+    ValidateConfirmPassword(registerModel.ConfirmPassword);
+  }
+
+  private string ValidateConfirmPassword(string value)
+  {
+    if (string.IsNullOrWhiteSpace(value))
+    {
+      return "Please confirm your password.";
+    }
+    else if (value != registerModel.Password)
+    {
+      return "Passwords do not match";
+    }
+    else
+    {
+      return string.Empty;
+    }
+  }
+
+  public class RegisterModel
+  {
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string ConfirmPassword { get; set; } = string.Empty;
+  }
+}
