@@ -1,0 +1,92 @@
+@page "/reset-password"
+@inject NavigationManager Navigation
+
+<PageTitle>Reset Password</PageTitle>
+
+<MudContainer Class="d-flex flex-column gap-15 align-center"
+  Style="min-height: calc(100vh - 5.375rem); color: #5B4947; margin: 9rem auto;">
+
+  <MudPaper Elevation="0" Class="d-flex flex-column gap-10" Style="width: 100%; max-width: 38.5rem;">
+    <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5B4947;">
+      <MudText Typo="Typo.h5" Style="font-weight: 400;">Reset Password</MudText>
+      <MudText Typo="Typo.body1" Style="font-weight: 400;">Send OTP code to your email address</MudText>
+    </MudPaper>
+
+    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+      <MudPaper Elevation="0" Class="d-flex flex-column gap-6">
+        <MudTextField T="string" @bind-Value="resetModel.Email" Validation="@(new Func<string, string>(ValidateEmail))"
+          Placeholder="Email" Variant="Variant.Outlined" InputType="InputType.Email" Required="true"
+          RequiredError="Email is required!" For="@(() => resetModel.Email)" Style="height: 2rem;" />
+
+        @if (!string.IsNullOrEmpty(OTPError))
+        {
+          <MudText Color="Color.Error">@OTPError</MudText>
+        }
+      </MudPaper>
+    </MudForm>
+
+    <MudPaper Elevation="0" Class="d-flex justify-end gap-6">
+      <MudLink Href="/login">
+        <MudButton Variant="Variant.Outlined" Class="rounded-lg" Style="width:11rem; height:2.5rem; color: #5B4947;">
+          Cancel
+        </MudButton>
+      </MudLink>
+
+      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg"
+        Style="width:11rem; height:2.5rem; background-color: #FABC1D; color: #5B4947;">
+        Confirm
+      </MudButton>
+    </MudPaper>
+  </MudPaper>
+
+</MudContainer>
+
+@code {
+  MudForm? form;
+  bool success;
+  string[] errors = { };
+  private string OTPError = string.Empty;
+  private ResetModel resetModel = new();
+
+  private static string email = "test@gmail.com";
+
+  private void Submit()
+  {
+    form?.Validate();
+    if (success)
+    {
+      if (resetModel.Email == email)
+      {
+        Console.WriteLine("OTP is send to your Email!");
+        OTPError = string.Empty;
+        Navigation.NavigateTo("/new-password");
+      }
+      else
+      {
+        OTPError = "Email not registered!";
+      }
+    }
+  }
+
+  private string ValidateEmail(string value)
+  {
+    if (string.IsNullOrWhiteSpace(value))
+    {
+      return "Email is required.";
+    }
+    else if (!System.Text.RegularExpressions.Regex.IsMatch(value,
+    @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+    {
+      return "Invalid email format.";
+    }
+    else
+    {
+      return string.Empty;
+    }
+  }
+
+  public class ResetModel
+  {
+    public string Email { get; set; } = string.Empty;
+  }
+}

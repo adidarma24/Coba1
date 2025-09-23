@@ -78,23 +78,23 @@
 
   private void Submit()
   {
-      form?.Validate();
-      if (success)
-      {
-          Console.WriteLine("Register Success!");
-      }
+    form?.Validate();
+    if (success)
+    {
+      Console.WriteLine("Register Success!");
+    }
   }
 
   private string ValidateEmail(string value)
   {
     if (string.IsNullOrWhiteSpace(value))
     {
-      return "Email is required.";
+      return "Email is required!";
     }
     else if (!System.Text.RegularExpressions.Regex.IsMatch(value,
     @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
     {
-      return "Invalid email format.";
+      return "Invalid email format!";
     }
     else
     {
@@ -111,7 +111,7 @@
     }
     if (value.Length < 6 || !Regex.IsMatch(value, @"[A-Z]") || !Regex.IsMatch(value, @"[0-9]"))
     {
-      yield return "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number.";
+      yield return "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number!";
     }
     ValidateConfirmPassword(registerModel.ConfirmPassword);
   }
@@ -120,11 +120,11 @@
   {
     if (string.IsNullOrWhiteSpace(value))
     {
-      return "Please confirm your password.";
+      return "Please confirm your password!";
     }
     else if (value != registerModel.Password)
     {
-      return "Passwords do not match";
+      return "Passwords do not match!";
     }
     else
     {
