@@ -1,25 +1,27 @@
 {
   "format": 1,
   "restore": {
-    "/Users/krisnafirdaus/Desktop/MyApp/src/01.Base/MyApp.Base.csproj": {}
+    "D:\\Temp\\Zhe\\Bootcamp\\kelompok4-soup\\src\\01.Base\\MyApp.Base.csproj": {}
   },
   "projects": {
-    "/Users/krisnafirdaus/Desktop/MyApp/src/01.Base/MyApp.Base.csproj": {
+    "D:\\Temp\\Zhe\\Bootcamp\\kelompok4-soup\\src\\01.Base\\MyApp.Base.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/krisnafirdaus/Desktop/MyApp/src/01.Base/MyApp.Base.csproj",
+        "projectUniqueName": "D:\\Temp\\Zhe\\Bootcamp\\kelompok4-soup\\src\\01.Base\\MyApp.Base.csproj",
         "projectName": "MyApp.Base",
-        "projectPath": "/Users/krisnafirdaus/Desktop/MyApp/src/01.Base/MyApp.Base.csproj",
-        "packagesPath": "/Users/krisnafirdaus/.nuget/packages/",
-        "outputPath": "/Users/krisnafirdaus/Desktop/MyApp/src/01.Base/obj/",
+        "projectPath": "D:\\Temp\\Zhe\\Bootcamp\\kelompok4-soup\\src\\01.Base\\MyApp.Base.csproj",
+        "packagesPath": "C:\\Users\\zhena\\.nuget\\packages\\",
+        "outputPath": "D:\\Temp\\Zhe\\Bootcamp\\kelompok4-soup\\src\\01.Base\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/krisnafirdaus/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\zhena\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -59,7 +61,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

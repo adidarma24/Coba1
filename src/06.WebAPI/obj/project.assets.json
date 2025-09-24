@@ -75,24 +75,26 @@
     ]
   },
   "packageFolders": {
-    "/Users/krisnafirdaus/.nuget/packages/": {}
+    "C:\\Users\\zhena\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/krisnafirdaus/Desktop/MyApp/src/06.WebAPI/MyApp.WebAPI.csproj",
+      "projectUniqueName": "D:\\Temp\\Zhe\\Bootcamp\\kelompok4-soup\\src\\06.WebAPI\\MyApp.WebAPI.csproj",
       "projectName": "MyApp.WebAPI",
-      "projectPath": "/Users/krisnafirdaus/Desktop/MyApp/src/06.WebAPI/MyApp.WebAPI.csproj",
-      "packagesPath": "/Users/krisnafirdaus/.nuget/packages/",
-      "outputPath": "/Users/krisnafirdaus/Desktop/MyApp/src/06.WebAPI/obj/",
+      "projectPath": "D:\\Temp\\Zhe\\Bootcamp\\kelompok4-soup\\src\\06.WebAPI\\MyApp.WebAPI.csproj",
+      "packagesPath": "C:\\Users\\zhena\\.nuget\\packages\\",
+      "outputPath": "D:\\Temp\\Zhe\\Bootcamp\\kelompok4-soup\\src\\06.WebAPI\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "/Users/krisnafirdaus/.nuget/NuGet/NuGet.Config"
+        "C:\\Users\\zhena\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
         "net9.0"
       ],
       "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
         "https://api.nuget.org/v3/index.json": {}
       },
       "frameworks": {
@@ -141,7 +143,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
