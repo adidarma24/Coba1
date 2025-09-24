@@ -4,7 +4,7 @@
 <PageTitle>Reset Password</PageTitle>
 
 <MudContainer Class="d-flex flex-column gap-15 align-center"
-  Style="max-height: calc(100vh - 5.375rem); color: #5B4947; margin: 9rem auto;">
+  Style="max-height: calc(100vh - 5.375rem); margin: 9rem auto;">
 
   <MudPaper Elevation="0" Class="d-flex flex-column gap-10" Style="width: 100%; max-width: 38.5rem;">
     <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5B4947;">
@@ -33,13 +33,12 @@
 
     <MudPaper Elevation="0" Class="d-flex justify-end gap-6">
       <MudLink Href="/login">
-        <MudButton Variant="Variant.Outlined" Class="rounded-lg" Style="width:11rem; height:2.5rem; color: #5B4947;">
+        <MudButton Variant="Variant.Outlined" Class="rounded-lg button button-outline">
           Cancel
         </MudButton>
       </MudLink>
 
-      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg"
-        Style="width:11rem; height:2.5rem; background-color: #FABC1D; color: #5B4947;">
+      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
         Confirm
       </MudButton>
     </MudPaper>
