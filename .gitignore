@@ -3,6 +3,8 @@ bin/
 obj/
 [Bb]uild/
 [Bb]uildOutput/
+[Dd]ebug/
+[Rr]elease/
 
 # ---- Visual Studio / VS Code ----
 .vs/
