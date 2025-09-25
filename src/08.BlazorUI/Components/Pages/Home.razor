@@ -1,37 +1,44 @@
 ﻿@page "/"
 @using MudBlazor
 
-<MudPaper Width="100%">
-    <MudPaper >
-        <MudItem Style="width:100%; height:294px; overflow:hidden">
-            <MudImage Src="/images/hero.svg"
-                          Alt="Asian Food"
-                          Style="width:100%; height:auto;"
-                          Class="mx-auto object-contain" />
-        </MudItem>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="pa-0">
+
+    <!-- Hero -->
+    <MudPaper Class="w-100 mb-6" Elevation="0">
+        <MudImage Src="/images/hero.svg"
+                  Alt="Asian Food"
+                  Class="w-100 object-contain"
+                  Style="height:auto; max-height:300px;" />
     </MudPaper>
 
-    <MudPaper Elevation="1" Class="mb-8 pa-14">
-        <MudText Typo="Typo.h5" Style="font-weight:bold;">Asian</MudText>
-        <MudText Class="mt-2 text-gray-700" Typo="Typo.body1">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+    <!-- Intro Section -->
+    <MudPaper Elevation="1" Class="pa-4 pa-md-10 mb-8">
+        <MudText Typo="Typo.h5" Class="fw-bold">Asian</MudText>
+        <MudText Typo="Typo.body1" Class="mt-2 text-secondary">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+            et dolore magna aliqua. Ut enim ad minim veniam...
         </MudText>
     </MudPaper>
 
-    <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="px-14 pb-20">
-        <MudText Typo="Typo.h5" Align="Align.Center" Style="font-weight:600; color:#5B4947;" Class="mt-14" >
+    <!-- Menu Cards -->
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="px-3 px-md-10 pb-10">
+        <MudText Typo="Typo.h5"
+                 Align="Align.Center"
+                 Class="fw-semibold mt-6 mb-6"
+                 Style="color:#5B4947;">
             Another menu in this class
         </MudText>
-        <MudGrid Class="mt-10" Gutter="3">
+
+        <MudGrid Gutter="3">
             @foreach (var item in MenuItems)
             {
-                <MudItem xs="12" sm="4" md="4" lg="4">
-                    <MudCard Class="h-full" Elevation="0">
-                        <MudCardMedia Image="@item.ImageUrl" Height="180" Class="object-cover"/>
+                <MudItem xs="12" sm="6" md="4" lg="4">
+                    <MudCard Class="h-100" Elevation="1">
+                        <MudCardMedia Image="@item.ImageUrl" Height="180" Class="object-cover" />
                         <MudCardContent>
                             <MudText Typo="Typo.caption">@item.Category</MudText>
                             <MudText Typo="Typo.h6">@item.Name</MudText>
-                            <MudText Class="mt-10" Style="color:#FABC1D;">@item.Price</MudText>
+                            <MudText Class="mt-4" Style="color:#FABC1D;">@item.Price</MudText>
                         </MudCardContent>
                     </MudCard>
                 </MudItem>
@@ -39,44 +46,66 @@
         </MudGrid>
     </MudContainer>
 
-    <MudPaper Elevation="0" Class="mt-10 px-20 py-8" Style="background-color:#5B4947; color:#E0E0E0;">
-    <MudGrid Gutter="3">
-    
-        <MudItem xs="12" sm="4">
-            <MudText Typo="Typo.h6" Class="mb-2">About Us</MudText>
-            <MudText Typo="Typo.body2" Style="text-align:justify">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-            </MudText>
-        </MudItem>
+    <!-- Footer -->
+    <MudPaper Elevation="0"
+              Class="mt-10 px-4 px-md-10 py-8"
+              Style="background-color:#5B4947; color:#E0E0E0;">
+        <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+            <MudGrid Gutter="3">
 
-        
-        <MudItem xs="12" sm="3" Class="ml-10 d-flex flex-column gap-2 align-start">
-            <MudText Typo="Typo.h6">Produk</MudText>
-            <ul style="columns:2; list-style-type: disc; padding-left:20px; margin:0; gap:20px;">
-                @foreach (var produk in ProdukList)
-                {
-                    <li>@produk</li>
-                }
-            </ul>
-        </MudItem>
+                <!-- About -->
+                <MudItem xs="12" sm="6" md="4">
+                    <MudText Typo="Typo.h6" Class="mb-2">About Us</MudText>
+                    <MudText Typo="Typo.body2" Class="text-justify">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium...
+                    </MudText>
+                </MudItem>
 
-    
-        <MudItem xs="12" sm="4">
-            <MudText Typo="Typo.h6">Address</MudText>
-            <MudText Typo="Typo.body1" Class="mb-2">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.</MudText>
-            <MudText Typo="Typo.h6" Class="mb-2">Contact Us</MudText>
-            <MudStack Spacing="3" Row="true">
-                <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D" Size="Size.Medium"/>
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Style="background-color:#FABC1D" Size="Size.Medium"/>
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Style="background-color:#FABC1D" Size="Size.Medium"/>
-                <MudIconButton Icon="@Icons.Material.Filled.Email" Variant="Variant.Filled" Style="background-color:#FABC1D" Size="Size.Medium"/>
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Style="background-color:#FABC1D" Size="Size.Medium"/>
-            </MudStack>
-        </MudItem>
-    </MudGrid>
+                <!-- Produk -->
+                <MudItem xs="12" sm="6" md="3">
+                <MudText Typo="Typo.h6" Class="mb-2">Produk</MudText>
+                    <ul style="
+                        list-style-type: disc;
+                        padding-left:20px;
+                        margin:0;
+                        columns:2;           
+                        -webkit-columns:2;
+                        -moz-columns:2;
+                        column-gap: 1.5rem;  
+                    ">
+                        @foreach (var produk in ProdukList)
+                        {
+                            <li>@produk</li>
+                        }
+                    </ul>
+                </MudItem>
+
+                <!-- Address & Contact -->
+                <MudItem xs="12" sm="12" md="5">
+                    <MudText Typo="Typo.h6" Class="mb-2">Address</MudText>
+                    <MudText Typo="Typo.body1" Class="mb-2">
+                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.
+                    </MudText>
+
+                    <MudText Typo="Typo.h6" Class="mb-2">Contact Us</MudText>
+                    <MudStack Spacing="2" Row="true">
+                        <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled"
+                                       Style="background-color:#FABC1D" Size="Size.Medium"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Email" Variant="Variant.Filled"
+                                       Style="background-color:#FABC1D" Size="Size.Medium"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled"
+                                       Style="background-color:#FABC1D" Size="Size.Medium"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled"
+                                       Style="background-color:#FABC1D" Size="Size.Medium"/>
+                        <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled"
+                                       Style="background-color:#FABC1D" Size="Size.Medium"/>
+                    </MudStack>
+                </MudItem>
+            </MudGrid>
+        </MudContainer>
     </MudPaper>
-</MudPaper>
 
+</MudContainer>
 
 @code {
     public record Menu(string Category, string Name, string Price, string ImageUrl);
@@ -96,13 +125,6 @@
 
     private List<string> ProdukList = new()
     {
-        "Electric",
-        "LCOC",
-        "Offroad",
-        "SUV",
-        "Heartback",
-        "MPV",
-        "Sedan",
-        "Truck"
+        "Electric","LCOC","Offroad","SUV","Heartback","MPV","Sedan","Truck"
     };
 }

@@ -7,30 +7,68 @@
 
 <MudLayout>
     <MudAppBar Elevation="5" Style="background-color:#ffffff;" Class="px-2">
-        <MudGrid AlignItems="Center">
-            
+        <MudGrid AlignItems="Center" Spacing="0">
             <!-- Logo di kiri -->
-            <MudItem xs="3">
-               <img src="logo.svg" alt="Logo" style="width:55px; height:55px;" />
+            <MudItem xs="6" sm="3">
+                <img src="logo.svg" alt="Logo" style="width:55px; height:55px;" />
             </MudItem>
 
-
-            <MudSpacer />
-
-            <MudItem xs="3" Class="d-flex flex-row gap-4 align-center justify-end">
+            <MudItem Class="d-none d-sm-flex" Style="flex: 1;">
+            </MudItem>
+            <MudItem sm="6" md="3" Class="d-none d-sm-flex flex-row gap-4 align-center justify-end">
                 <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Style="color:black;" Size="Size.Small" />
                 <MudText Href="/" Class="nav-link" Typo="Typo.button" Style="color:black">My Class</MudText>
                 <MudText Href="/shop" Class="nav-link" Typo="Typo.button" Style="color:black">Invoice</MudText>
             </MudItem>
 
-            <MudItem Class="d-flex flex-row gap-3 align-center">
+            <MudItem sm="3" md="2" Class="d-none d-sm-flex flex-row gap-3 align-center justify-center">
                 <span class="mx-1" style="color:black; font-size:24px">|</span>
                 <MudIconButton Icon="@Icons.Material.Filled.Person" Style="color:#FABC1D;" />
                 <MudIconButton Icon="@Icons.Material.Filled.ExitToApp" Style="color:black" />
             </MudItem>
 
+            <MudItem xs="6" Class="d-flex d-sm-none justify-end">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu" 
+                              Style="color:black;" 
+                              OnClick="DrawerToggle" />
+            </MudItem>
         </MudGrid>
     </MudAppBar>
+
+    <!-- Mobile Drawer -->
+    <MudDrawer Open="drawerOpen" 
+               OpenChanged="OnDrawerOpenChanged"
+               Anchor="Anchor.Right" 
+               Elevation="2" 
+               Variant="@DrawerVariant.Temporary"
+               Class="d-block d-sm-none">
+        <MudDrawerHeader Class="px-4 py-3">
+            <MudText Typo="Typo.h6">Menu</MudText>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Filled.Close" 
+                          OnClick="DrawerToggle" 
+                          Style="color:black;" />
+        </MudDrawerHeader>
+        <MudDivider />
+        <MudNavMenu>
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
+                My Class
+            </MudNavLink>
+            <MudNavLink Href="/shop" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Receipt">
+                Invoice
+            </MudNavLink>
+            <MudDivider Class="my-2" />
+            <MudNavLink Href="#" Icon="@Icons.Material.Filled.ShoppingCart">
+                Cart
+            </MudNavLink>
+            <MudNavLink Href="#" Icon="@Icons.Material.Filled.Person">
+                Profile
+            </MudNavLink>
+            <MudNavLink Href="#" Icon="@Icons.Material.Filled.ExitToApp">
+                Logout
+            </MudNavLink>
+        </MudNavMenu>
+    </MudDrawer>
 
     <MudMainContent>
         @Body
@@ -38,6 +76,17 @@
 </MudLayout>
 
 @code {
-    bool _drawerOpen = true;
-    void DrawerToggle() => _drawerOpen = !_drawerOpen;
+    private bool drawerOpen = false;
+    
+    private void DrawerToggle()
+    {
+        drawerOpen = !drawerOpen;
+        StateHasChanged();
+    }
+    
+    private void OnDrawerOpenChanged(bool value)
+    {
+        drawerOpen = value;
+        StateHasChanged();
+    }
 }
