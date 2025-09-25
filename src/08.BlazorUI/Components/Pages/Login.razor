@@ -1,0 +1,99 @@
+﻿@page "/login"
+
+<PageTitle>Login</PageTitle>
+
+<MudContainer Class="d-flex flex-column gap-15 justify-center align-center"
+  Style="min-height: calc(100vh - 5.375rem); color: #5B4947;">
+
+  <MudPaper Elevation="0" Class="d-flex flex-column gap-10" Style="width: 100%; max-width: 38.5rem;">
+    <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5B4947;">
+      <MudText Typo="Typo.h5" Style="font-weight: 500;">welcome Back! Cheff</MudText>
+      <MudText Typo="Typo.body1" Style="font-weight: 400;">Please login first</MudText>
+    </MudPaper>
+
+    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+      <MudPaper Elevation="0" Class="d-flex flex-column gap-6">
+        <MudTextField T="string" @bind-Value="loginModel.Email" Validation="@(new Func<string, string>(ValidateEmail))"
+          Placeholder="Email" Variant="Variant.Outlined" InputType="InputType.Email" Required="true"
+          RequiredError="Email is required!" For="@(() => loginModel.Email)" Style="height: 2rem;" />
+
+        <MudTextField T="string" @bind-Value="loginModel.Password" Placeholder="Password" Variant="Variant.Outlined"
+          InputType="InputType.Password" Required="true" RequiredError="Password is required!"
+          For="@(() => loginModel.Password)" Style="height: 2rem;" />
+
+        @if (!string.IsNullOrEmpty(loginError))
+        {
+          <MudText Color="Color.Error">@loginError</MudText>
+        }
+
+        <MudText Typo="Typo.body2" Style="font-weight: 400;">
+          Forgot Password?
+          <MudLink Href="/reset-password">Click Here</MudLink>
+        </MudText>
+      </MudPaper>
+    </MudForm>
+
+    <MudPaper Elevation="0" Class="d-flex justify-end">
+      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg"
+        Style="width:11rem; height:2.5rem; background-color: #FABC1D; color: #5B4947;">
+        Login
+      </MudButton>
+    </MudPaper>
+  </MudPaper>
+
+  <MudText Typo="Typo.body2" Style="font-weight: 400;">
+    Dont have account?
+    <MudLink Href="/register">Sign Up here</MudLink>
+  </MudText>
+</MudContainer>
+
+@code {
+  MudForm? form;
+  bool success;
+  string[] errors = { };
+  private string loginError = string.Empty;
+  private LoginModel loginModel = new();
+
+  private static string email = "test@gmail.com";
+  private static string pass = "Qwerty123";
+
+  private void Submit()
+  {
+    form?.Validate();
+    if (success)
+    {
+      if (loginModel.Email == email && loginModel.Password == pass)
+      {
+        Console.WriteLine("Login Success!");
+        loginError = string.Empty;
+      }
+      else
+      {
+        loginError = "Email or Password incorrect!";
+      }
+    }
+  }
+
+  private string ValidateEmail(string value)
+  {
+    if (string.IsNullOrWhiteSpace(value))
+    {
+      return "Email is required.";
+    }
+    else if (!System.Text.RegularExpressions.Regex.IsMatch(value,
+    @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+    {
+      return "Invalid email format.";
+    }
+    else
+    {
+      return string.Empty;
+    }
+  }
+
+  public class LoginModel
+  {
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+  }
+}

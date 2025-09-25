@@ -1,25 +1,31 @@
 {
   "format": 1,
   "restore": {
-    "/Users/krisnafirdaus/Desktop/MyApp/src/08.BlazorUI/MyApp.BlazorUI.csproj": {}
+    "D:\\Project\\C#\\Bootcamp\\Final Project\\kelompok4-soup\\src\\08.BlazorUI\\MyApp.BlazorUI.csproj": {}
   },
   "projects": {
-    "/Users/krisnafirdaus/Desktop/MyApp/src/08.BlazorUI/MyApp.BlazorUI.csproj": {
+    "D:\\Project\\C#\\Bootcamp\\Final Project\\kelompok4-soup\\src\\08.BlazorUI\\MyApp.BlazorUI.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/krisnafirdaus/Desktop/MyApp/src/08.BlazorUI/MyApp.BlazorUI.csproj",
+        "projectUniqueName": "D:\\Project\\C#\\Bootcamp\\Final Project\\kelompok4-soup\\src\\08.BlazorUI\\MyApp.BlazorUI.csproj",
         "projectName": "MyApp.BlazorUI",
-        "projectPath": "/Users/krisnafirdaus/Desktop/MyApp/src/08.BlazorUI/MyApp.BlazorUI.csproj",
-        "packagesPath": "/Users/krisnafirdaus/.nuget/packages/",
-        "outputPath": "/Users/krisnafirdaus/Desktop/MyApp/src/08.BlazorUI/obj/",
+        "projectPath": "D:\\Project\\C#\\Bootcamp\\Final Project\\kelompok4-soup\\src\\08.BlazorUI\\MyApp.BlazorUI.csproj",
+        "packagesPath": "C:\\Users\\a\\.nuget\\packages\\",
+        "outputPath": "D:\\Project\\C#\\Bootcamp\\Final Project\\kelompok4-soup\\src\\08.BlazorUI\\obj\\",
         "projectStyle": "PackageReference",
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
         "configFilePaths": [
-          "/Users/krisnafirdaus/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\a\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -43,6 +49,12 @@
       "frameworks": {
         "net9.0": {
           "targetAlias": "net9.0",
+          "dependencies": {
+            "MudBlazor": {
+              "target": "Package",
+              "version": "[8.12.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",
@@ -62,7 +74,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.301/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.304/PortableRuntimeIdentifierGraph.json"
         }
       }
     }
