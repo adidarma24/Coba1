@@ -1,11 +1,12 @@
 ﻿@page "/register"
+@inject NavigationManager Navigation
+
 
 <PageTitle>Register</PageTitle>
 
-<MudContainer Class="d-flex flex-column gap-15 justify-center align-center"
-  Style="min-height: calc(100vh - 5.375rem); color: #5B4947;">
+<MudContainer Class="d-flex flex-column gap-15 justify-center align-center container">
 
-  <MudPaper Elevation="0" Class="d-flex flex-column gap-10" Style="width: 100%; max-width: 38.5rem;">
+  <MudPaper Elevation="0" Width="100%" Class="d-flex flex-column gap-10" Style="max-width: 38.5rem;">
     <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5B4947;">
       <MudText Typo="Typo.h5" Style="font-weight: 500;">Are you ready to become a professional chef?</MudText>
       <MudText Typo="Typo.body1" Style="font-weight: 400;">Please register first</MudText>
@@ -19,7 +20,8 @@
                       Variant="Variant.Outlined" 
                       Required="true"
                       RequiredError="Name is required!"
-                      For="@(() => registerModel.Name)" Style="height: 2rem;" />
+                      For="@(() => registerModel.Name)" 
+                      Style="height: 2rem;" />
 
         <MudTextField T="string"
                       @bind-Value="registerModel.Email" 
@@ -57,8 +59,7 @@
     </MudForm>
 
     <MudPaper Elevation="0" Class="d-flex justify-end">
-      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg"
-        Style="width:11rem; height:2.5rem; background-color: #FABC1D; color: #5B4947;">
+      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
         Sign Up
       </MudButton>
     </MudPaper>
@@ -78,23 +79,24 @@
 
   private void Submit()
   {
-      form?.Validate();
-      if (success)
-      {
-          Console.WriteLine("Register Success!");
-      }
+    form?.Validate();
+    if (success)
+    {
+      Console.WriteLine("Register Success!");
+      Navigation.NavigateTo("/email-success");
+    }
   }
 
   private string ValidateEmail(string value)
   {
     if (string.IsNullOrWhiteSpace(value))
     {
-      return "Email is required.";
+      return "Email is required!";
     }
     else if (!System.Text.RegularExpressions.Regex.IsMatch(value,
     @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
     {
-      return "Invalid email format.";
+      return "Invalid email format!";
     }
     else
     {
@@ -111,7 +113,7 @@
     }
     if (value.Length < 6 || !Regex.IsMatch(value, @"[A-Z]") || !Regex.IsMatch(value, @"[0-9]"))
     {
-      yield return "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number.";
+      yield return "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number!";
     }
     ValidateConfirmPassword(registerModel.ConfirmPassword);
   }
@@ -120,11 +122,11 @@
   {
     if (string.IsNullOrWhiteSpace(value))
     {
-      return "Please confirm your password.";
+      return "Please confirm your password!";
     }
     else if (value != registerModel.Password)
     {
-      return "Passwords do not match";
+      return "Passwords do not match!";
     }
     else
     {

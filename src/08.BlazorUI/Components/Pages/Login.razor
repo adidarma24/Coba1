@@ -2,11 +2,10 @@
 
 <PageTitle>Login</PageTitle>
 
-<MudContainer Class="d-flex flex-column gap-15 justify-center align-center"
-  Style="min-height: calc(100vh - 5.375rem); color: #5B4947;">
+<MudContainer Class="d-flex flex-column gap-15 justify-center align-center container">
 
-  <MudPaper Elevation="0" Class="d-flex flex-column gap-10" Style="width: 100%; max-width: 38.5rem;">
-    <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5B4947;">
+  <MudPaper Elevation="0" Width="100%" Class="d-flex flex-column gap-10" Style="max-width: 38.5rem;">
+    <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5b4947;">
       <MudText Typo="Typo.h5" Style="font-weight: 500;">welcome Back! Cheff</MudText>
       <MudText Typo="Typo.body1" Style="font-weight: 400;">Please login first</MudText>
     </MudPaper>
@@ -26,7 +25,7 @@
           <MudText Color="Color.Error">@loginError</MudText>
         }
 
-        <MudText Typo="Typo.body2" Style="font-weight: 400;">
+        <MudText Typo="Typo.body2" Style="font-weight: 400; color: #5b4947;">
           Forgot Password?
           <MudLink Href="/reset-password">Click Here</MudLink>
         </MudText>
@@ -34,14 +33,13 @@
     </MudForm>
 
     <MudPaper Elevation="0" Class="d-flex justify-end">
-      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg"
-        Style="width:11rem; height:2.5rem; background-color: #FABC1D; color: #5B4947;">
+      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
         Login
       </MudButton>
     </MudPaper>
   </MudPaper>
 
-  <MudText Typo="Typo.body2" Style="font-weight: 400;">
+  <MudText Typo="Typo.body2" Style="font-weight: 400; color: #5b4947;">
     Dont have account?
     <MudLink Href="/register">Sign Up here</MudLink>
   </MudText>
@@ -78,12 +76,12 @@
   {
     if (string.IsNullOrWhiteSpace(value))
     {
-      return "Email is required.";
+      return "Email is required!";
     }
     else if (!System.Text.RegularExpressions.Regex.IsMatch(value,
     @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
     {
-      return "Invalid email format.";
+      return "Invalid email format!";
     }
     else
     {

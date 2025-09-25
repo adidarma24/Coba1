@@ -1,0 +1,101 @@
+@page "/new-password"
+@inject NavigationManager Navigation
+
+<PageTitle>Reset Password</PageTitle>
+
+<MudContainer Class="d-flex flex-column gap-15 align-center"
+  Style="max-height: calc(100vh - 5.375rem); margin: 9rem auto;">
+
+  <MudPaper Elevation="0" Class="d-flex flex-column gap-10" Style="width: 100%; max-width: 38.5rem;">
+    <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5B4947;">
+      <MudText Typo="Typo.h5" Style="font-weight: 400;">Create Password</MudText>
+    </MudPaper>
+
+    <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
+      <MudPaper Elevation="0" Class="d-flex flex-column gap-6">
+        <MudTextField T="string" @bind-Value="resetModel.Password"
+          Validation="@(new Func<string, IEnumerable<string>>(ValidatePassword))" Placeholder="New Password"
+          Variant="Variant.Outlined" InputType="InputType.Password" Required="true"
+          RequiredError="New password is required!" For="@(() => resetModel.Password)" Style="height: 2rem;" />
+
+        <MudTextField T="string" @bind-Value="resetModel.ConfirmPassword"
+          Validation="@(new Func<string, string>(ValidateConfirmPassword))" Placeholder="Confirm New Password"
+          Variant="Variant.Outlined" InputType="InputType.Password" Required="true"
+          RequiredError="Please confirm your new password!" For="@(() => resetModel.ConfirmPassword)"
+          Style="height: 2rem;" />
+
+        @if (!string.IsNullOrEmpty(OTPError))
+        {
+          <MudText Color="Color.Error">@OTPError</MudText>
+        }
+      </MudPaper>
+    </MudForm>
+
+    <MudPaper Elevation="0" Class="d-flex justify-end gap-6">
+      <MudLink Href="/login">
+        <MudButton Variant="Variant.Outlined" Class="rounded-lg button button-outline">
+          Cancel
+        </MudButton>
+      </MudLink>
+
+      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
+        Confirm
+      </MudButton>
+    </MudPaper>
+  </MudPaper>
+
+</MudContainer>
+
+@code {
+  MudForm? form;
+  bool success;
+  string[] errors = { };
+  private string OTPError = string.Empty;
+  private ResetModel resetModel = new();
+
+  private void Submit()
+  {
+    form?.Validate();
+    if (success)
+    {
+      Console.WriteLine("Rreset password Success!");
+      Navigation.NavigateTo("/login");
+    }
+  }
+
+  private IEnumerable<string> ValidatePassword(string value)
+  {
+    if (string.IsNullOrWhiteSpace(value))
+    {
+      yield return "New password is required!";
+      yield break;
+    }
+    if (value.Length < 6 || !Regex.IsMatch(value, @"[A-Z]") || !Regex.IsMatch(value, @"[0-9]"))
+    {
+      yield return "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number!";
+    }
+    ValidateConfirmPassword(resetModel.ConfirmPassword);
+  }
+
+  private string ValidateConfirmPassword(string value)
+  {
+    if (string.IsNullOrWhiteSpace(value))
+    {
+      return "Please confirm your new password!";
+    }
+    else if (value != resetModel.Password)
+    {
+      return "New password do not match!";
+    }
+    else
+    {
+      return string.Empty;
+    }
+  }
+
+  public class ResetModel
+  {
+    public string Password { get; set; } = string.Empty;
+    public string ConfirmPassword { get; set; } = string.Empty;
+  }
+}
