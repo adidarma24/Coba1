@@ -1,7 +1,6 @@
 ﻿@page "/register"
 @inject NavigationManager Navigation
 
-
 <PageTitle>Register</PageTitle>
 
 <MudContainer Class="d-flex flex-column gap-15 justify-center align-center container">
@@ -39,7 +38,12 @@
                       Validation="@(new Func<string, IEnumerable<string>>(ValidatePassword))"
                       Placeholder="Password" 
                       Variant="Variant.Outlined"
-                      InputType="InputType.Password" 
+                      InputType="@PasswordInput"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@PasswordInputIcon"
+                      OnAdornmentClick="TogglePasword"
+                      AdornmentAriaLabel="Show Password"
+                      IconSize="Size.Small"
                       Required="true" 
                       RequiredError="Password is required!"
                       For="@(() => registerModel.Password)" 
@@ -50,11 +54,22 @@
                       Validation="@(new Func<string, string>(ValidateConfirmPassword))"
                       Placeholder="Confirm Password"
                       Variant="Variant.Outlined" 
-                      InputType="InputType.Password" 
+                      InputType="@PasswordInput"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@PasswordInputIcon"
+                      OnAdornmentClick="TogglePasword"
+                      AdornmentAriaLabel="Show Password"
+                      IconSize="Size.Small"
                       Required="true"
                       RequiredError="Please confirm your password!"
                       For="@(() => registerModel.ConfirmPassword)" 
                       Style="height: 2rem;" />
+      
+        @if (!string.IsNullOrEmpty(registerError))
+        {
+          <MudText Color="Color.Error">@registerError</MudText>
+        }
+
       </MudPaper>
     </MudForm>
 
@@ -75,15 +90,29 @@
   bool success;
   string[] errors = { };
   MudForm? form;
+  private string registerError = string.Empty;
   private RegisterModel registerModel = new();
+
+  bool isShow;
+  InputType PasswordInput = InputType.Password;
+  string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
+  private static string email = "test@gmail.com";
 
   private void Submit()
   {
     form?.Validate();
     if (success)
     {
-      Console.WriteLine("Register Success!");
-      Navigation.NavigateTo("/email-success");
+      if (registerModel.Email != email)
+      {
+        Console.WriteLine("Register Success!");
+        Navigation.NavigateTo("/email-success");
+      }
+      else
+      {
+        registerError = "Email already registered!";
+      }
     }
   }
 
@@ -131,6 +160,21 @@
     else
     {
       return string.Empty;
+    }
+  }
+
+  void TogglePasword()
+  {
+    @if (isShow)
+    {
+      isShow = false;
+      PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+      PasswordInput = InputType.Password;
+    }
+    else {
+      isShow = true;
+      PasswordInputIcon = Icons.Material.Filled.Visibility;
+      PasswordInput = InputType.Text;
     }
   }
 

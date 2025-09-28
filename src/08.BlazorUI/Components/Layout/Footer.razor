@@ -1,0 +1,62 @@
+<MudPaper Elevation="0" Class="mt-10 px-4 px-md-10 py-8" Style="background-color:#5B4947; color:#E0E0E0;">
+  <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+    <MudGrid>
+
+      <!-- About -->
+      <MudItem xs="12" sm="6" md="4">
+        <MudText Typo="Typo.h6" Class="mb-2">About Us</MudText>
+        <MudText Typo="Typo.body2" Class="text-justify">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium...
+        </MudText>
+      </MudItem>
+
+      <!-- Produk -->
+      <MudItem xs="12" sm="6" md="3">
+        <MudText Typo="Typo.h6" Class="mb-2">Produk</MudText>
+        <ul style="
+                        list-style-type: disc;
+                        padding-left:20px;
+                        margin:0;
+                        columns:2;           
+                        -webkit-columns:2;
+                        -moz-columns:2;
+                        column-gap: 1.5rem;  
+                    ">
+          @foreach (var produk in ProdukList)
+          {
+            <li>@produk</li>
+          }
+        </ul>
+      </MudItem>
+
+      <!-- Address & Contact -->
+      <MudItem xs="12" sm="12" md="5">
+        <MudText Typo="Typo.h6" Class="mb-2">Address</MudText>
+        <MudText Typo="Typo.body1" Class="mb-2">
+          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.
+        </MudText>
+
+        <MudText Typo="Typo.h6" Class="mb-2">Contact Us</MudText>
+        <MudStack Spacing="2" Row="true">
+          <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D"
+            Size="Size.Medium" />
+          <MudIconButton Icon="@Icons.Material.Filled.Email" Variant="Variant.Filled" Style="background-color:#FABC1D"
+            Size="Size.Medium" />
+          <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D"
+            Size="Size.Medium" />
+          <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D"
+            Size="Size.Medium" />
+          <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D"
+            Size="Size.Medium" />
+        </MudStack>
+      </MudItem>
+    </MudGrid>
+  </MudContainer>
+</MudPaper>
+
+@code {
+  private List<string> ProdukList = new()
+{
+"Electric","LCOC","Offroad","SUV","Heartback","MPV","Sedan","Truck"
+};
+}
