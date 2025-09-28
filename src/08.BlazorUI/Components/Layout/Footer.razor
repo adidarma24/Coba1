@@ -1,58 +1,55 @@
-<MudPaper Elevation="0" Class="mt-10 px-4 px-md-10 py-8" Style="background-color:#5B4947; color:#E0E0E0;">
-  <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-    <MudGrid>
+<footer>
+  <!-- Product -->
+  <MudPaper Elevation="0" Class="footer-section">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge">
+      <MudGrid Gutter="3">
 
-      <!-- About -->
-      <MudItem xs="12" sm="6" md="4">
-        <MudText Typo="Typo.h6" Class="mb-2">About Us</MudText>
-        <MudText Typo="Typo.body2" Class="text-justify">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium...
-        </MudText>
-      </MudItem>
+        <!-- About -->
+        <MudItem xs="12" sm="6" md="4">
+          <MudText Typo="Typo.h6" Class="footer-title mb-2">
+            About Us
+          </MudText>
+          <MudText Class="footer-text">
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+            laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
+            architecto
+            beatae vitae dicta sunt explicabo.
+          </MudText>
+        </MudItem>
 
-      <!-- Produk -->
-      <MudItem xs="12" sm="6" md="3">
-        <MudText Typo="Typo.h6" Class="mb-2">Produk</MudText>
-        <ul style="
-                        list-style-type: disc;
-                        padding-left:20px;
-                        margin:0;
-                        columns:2;           
-                        -webkit-columns:2;
-                        -moz-columns:2;
-                        column-gap: 1.5rem;  
-                    ">
-          @foreach (var produk in ProdukList)
-          {
-            <li>@produk</li>
-          }
-        </ul>
-      </MudItem>
+        <!-- Produk -->
+        <MudItem xs="12" sm="6" md="3">
+          <MudText Typo="Typo.h6" Class="footer-title mb-2">Produk</MudText>
+          <ul class="produk-list">
+            @foreach (string produk in ProdukList)
+            {
+              <li>@produk</li>
+            }
+          </ul>
+        </MudItem>
 
-      <!-- Address & Contact -->
-      <MudItem xs="12" sm="12" md="5">
-        <MudText Typo="Typo.h6" Class="mb-2">Address</MudText>
-        <MudText Typo="Typo.body1" Class="mb-2">
-          Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.
-        </MudText>
+        <!-- Address & Contact -->
+        <MudItem xs="12" sm="12" md="5">
+          <MudText Typo="Typo.h6" Class="footer-title mb-2">Address</MudText>
+          <MudText Typo="Typo.body1" Class="mb-2">
+            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.
+          </MudText>
 
-        <MudText Typo="Typo.h6" Class="mb-2">Contact Us</MudText>
-        <MudStack Spacing="2" Row="true">
-          <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D"
-            Size="Size.Medium" />
-          <MudIconButton Icon="@Icons.Material.Filled.Email" Variant="Variant.Filled" Style="background-color:#FABC1D"
-            Size="Size.Medium" />
-          <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D"
-            Size="Size.Medium" />
-          <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D"
-            Size="Size.Medium" />
-          <MudIconButton Icon="@Icons.Material.Filled.Call" Variant="Variant.Filled" Style="background-color:#FABC1D"
-            Size="Size.Medium" />
-        </MudStack>
-      </MudItem>
-    </MudGrid>
-  </MudContainer>
-</MudPaper>
+          <MudText Typo="Typo.h6" Class="footer-title mb-2">Contact Us</MudText>
+          <MudStack Spacing="2" Row="true">
+            <div class="social-icons">
+              <MudIconButton Icon="@Icons.Material.Filled.Phone" AriaLabel="Phone" Class="social-btn" />
+              <MudIconButton Icon="@Icons.Custom.Brands.Instagram" AriaLabel="Instagram" Class="social-btn" />
+              <MudIconButton Icon="@Icons.Material.Filled.PlayCircle" AriaLabel="YouTube" Class="social-btn" />
+              <MudIconButton Icon="@Icons.Material.Filled.Send" AriaLabel="Telegram" Class="social-btn" />
+              <MudIconButton Icon="@Icons.Material.Filled.Email" AriaLabel="Email" Class="social-btn" />
+            </div>
+          </MudStack>
+        </MudItem>
+      </MudGrid>
+    </MudContainer>
+  </MudPaper>
+</footer>
 
 @code {
   private List<string> ProdukList = new()
@@ -60,3 +57,65 @@
 "Electric","LCOC","Offroad","SUV","Heartback","MPV","Sedan","Truck"
 };
 }
+
+<style>
+  .logo-img {
+    width: 53.57px;
+    height: 50px;
+  }
+
+  .footer-section {
+    margin-top: 2.5rem;
+    padding: 1.5rem;
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+    background-color: #5B4947;
+    color: #E0E0E0;
+  }
+
+  .footer-title {
+    color: #f4b526;
+  }
+
+  .footer-text {
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    color: #ffffff;
+  }
+
+  .footer-list {
+    list-style: disc;
+    margin-left: 20px;
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+
+  .social-icons {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  .social-btn {
+    background-color: #f4b526 !important;
+    color: #2d2d2d !important;
+    border-radius: 50% !important;
+    width: 44px !important;
+    height: 44px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .produk-list {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+    columns: 2;
+    -webkit-columns: 2;
+    -moz-columns: 2;
+    column-gap: 1.5rem;
+  }
+</style>
