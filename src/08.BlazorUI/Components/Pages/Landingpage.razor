@@ -1,18 +1,20 @@
 @page "/"
 @using MudBlazor
 
+<PageTitle>Landing Page</PageTitle>
+
 <!-- Hero Section -->
-    <MudPaper Class="bg-hero d-flex flex-column align-items-center justify-content-center text-center min-h-350" Square="true" Style="width:100%;">
-        <MudContainer>
-            <MudText Typo="Typo.h4" Class="text-white font-weight-bold mb-2">
-                Be the next great chef
-            </MudText>
-            <MudText Typo="Typo.h6" Class="text-white max-w-600 mx-auto ">
-                We are able to awaken your cooking skills to become a classy chef
-                and ready to dive into the professional world
-            </MudText>
-        </MudContainer>
-    </MudPaper>
+<MudPaper Class="hero-section" Square="true">
+    <MudContainer>
+        <MudText Typo="Typo.h4" Class="hero-title">
+            Be the next great chef
+        </MudText>
+        <MudText Typo="Typo.h6" Class="hero-subtitle">
+            We are able to awaken your cooking skills to become a classy chef
+            and ready to dive into the professional world
+        </MudText>
+    </MudContainer>
+</MudPaper>
 
 <!-- Statistic Section -->
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-6 px-3">
@@ -127,10 +129,26 @@ private List<StatItem> stats = new List<StatItem>()
 }
 
 <style>
-    .bg-hero {
-        background: url("/images/hero.svg") center/cover no-repeat;
-        width: 100%;
-    }
+    .hero-section {
+    background: url("/images/hero.svg") center/cover no-repeat;
+    width: 100%;
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+.hero-title {
+    color: white;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+.hero-subtitle {
+    color: white;
+    max-width: 600px;
+    margin: 0 auto;
+}
 
     .min-h-350 {
         min-height: 350px;
