@@ -1,4 +1,6 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
 
 <MudThemeProvider Theme="CustomTheme" />
 <MudPopoverProvider />
@@ -6,43 +8,62 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-  <MudAppBar Elevation="0" Color="Color.Transparent" Style="height:5.375rem;" class="d-flex justify-center px-13 py-8">
+
+  @* navbar pc screen *@
+  <MudAppBar Elevation="0" Style="height:5.375rem; width: 100vw; background-color:#ffffff;"
+    class="d-flex justify-center px-13">
 
     <MudPaper Elevation="0" Width="100%" Class="d-flex justify-space-between">
       <MudLink Href="/">
         <MudImage Src="/logo.svg" Width="55" Height="50" />
       </MudLink>
 
-      <MudHidden Breakpoint="Breakpoint.SmAndDown">
-        <NavMenu CssParent="d-flex align-center" CssChild="d-flex gap-10" />
-      </MudHidden>
+      <MudPaper Elevation="0">
+        <NavMenu Css="d-none d-sm-flex align-center gap-10" />
+      </MudPaper>
 
-      <MudHidden Breakpoint="Breakpoint.MdAndUp">
+      <MudPaper Elevation="0" Class="d-flex d-sm-none">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" />
-      </MudHidden>
+      </MudPaper>
     </MudPaper>
 
   </MudAppBar>
 
-  <MudHidden Breakpoint="Breakpoint.MdAndUp">
-    <MudDrawer @bind-Open="@_drawerOpen" Anchor="Anchor.Right">
-      <NavMenu CssParent="d-flex flex-column align-center mt-5" CssChild="d-flex flex-column gap-3 mt-5"
-        Toggle="DrawerToggle" />
-    </MudDrawer>
-  </MudHidden>
+  @* navbar phone screen *@
+  <MudDrawer @bind-Open="@drawerOpen" Anchor="Anchor.Right" Class="d-flex d-sm-none">
+    <MudDrawerHeader Class="d-flex align-center">
+      <MudText Class="d-flex justify-center" Style="width: 100%;" Typo="Typo.h6">Menu</MudText>
+      <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" @onclick="DrawerToggle" />
+    </MudDrawerHeader>
 
+    <MudPaper Elevation="0">
+      <MudDivider Class="my-1" />
+      <NavMenu Css="d-flex flex-column" />
+    </MudPaper>
 
+  </MudDrawer>
+
+  @* main content *@
   <MudMainContent>
     @Body
   </MudMainContent>
+
+  @* footer *@
+  @if (ShowFooter)
+  {
+    <MudPaper>
+      <Footer />
+    </MudPaper>
+  }
+
 </MudLayout>
 
 @code {
-  bool _drawerOpen = true;
+  bool drawerOpen = false;
 
   void DrawerToggle()
   {
-    _drawerOpen = !_drawerOpen;
+    drawerOpen = !drawerOpen;
   }
 
   MudTheme CustomTheme = new MudTheme()
@@ -55,4 +76,13 @@
       }
     }
   };
+
+  private bool ShowFooter => !IsAuthPage;
+
+  private bool IsAuthPage =>
+  Navigation.Uri.Contains("login", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("register", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("reset-password", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("new-password", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("email-success", StringComparison.OrdinalIgnoreCase);
 }

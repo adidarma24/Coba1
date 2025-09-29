@@ -1,13 +1,15 @@
+using MudBlazor.Services;
 using MyApp.BlazorUI.Components;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddMudServices();
-
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddMudServices();
+
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 
@@ -29,3 +31,5 @@ app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 
 app.Run();
+
+

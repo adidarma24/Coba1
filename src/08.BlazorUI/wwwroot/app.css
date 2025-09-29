@@ -20,3 +20,10 @@
 .button-filled:hover {
   background: #fabc1d;
 }
+
+.mud-input-control-input-container
+  > .mud-input.mud-input-outlined
+  > input:focus
+  ~ .mud-input-outlined-border {
+  border-color: #5b4947 !important;
+}

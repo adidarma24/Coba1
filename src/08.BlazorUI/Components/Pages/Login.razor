@@ -1,4 +1,5 @@
 ﻿@page "/login"
+@inject NavigationManager Navigation
 
 <PageTitle>Login</PageTitle>
 
@@ -6,7 +7,7 @@
 
   <MudPaper Elevation="0" Width="100%" Class="d-flex flex-column gap-10" Style="max-width: 38.5rem;">
     <MudPaper Elevation="0" Class="d-flex flex-column gap-4" Style="color: #5b4947;">
-      <MudText Typo="Typo.h5" Style="font-weight: 500;">welcome Back! Cheff</MudText>
+      <MudText Typo="Typo.h5" Style="font-weight: 500;">Welcome Back! Cheff</MudText>
       <MudText Typo="Typo.body1" Style="font-weight: 400;">Please login first</MudText>
     </MudPaper>
 
@@ -17,8 +18,9 @@
           RequiredError="Email is required!" For="@(() => loginModel.Email)" Style="height: 2rem;" />
 
         <MudTextField T="string" @bind-Value="loginModel.Password" Placeholder="Password" Variant="Variant.Outlined"
-          InputType="InputType.Password" Required="true" RequiredError="Password is required!"
-          For="@(() => loginModel.Password)" Style="height: 2rem;" />
+          InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon"
+          OnAdornmentClick="TogglePasword" AdornmentAriaLabel="Show Password" IconSize="Size.Small" Required="true"
+          RequiredError="Password is required!" For="@(() => loginModel.Password)" Style="height: 2rem;" />
 
         @if (!string.IsNullOrEmpty(loginError))
         {
@@ -52,6 +54,10 @@
   private string loginError = string.Empty;
   private LoginModel loginModel = new();
 
+  bool isShow;
+  InputType PasswordInput = InputType.Password;
+  string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+
   private static string email = "test@gmail.com";
   private static string pass = "Qwerty123";
 
@@ -64,6 +70,7 @@
       {
         Console.WriteLine("Login Success!");
         loginError = string.Empty;
+        Navigation.NavigateTo("/");
       }
       else
       {
@@ -86,6 +93,22 @@
     else
     {
       return string.Empty;
+    }
+  }
+
+  void TogglePasword()
+  {
+    @if (isShow)
+    {
+      isShow = false;
+      PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
+      PasswordInput = InputType.Password;
+    }
+    else
+    {
+      isShow = true;
+      PasswordInputIcon = Icons.Material.Filled.Visibility;
+      PasswordInput = InputType.Text;
     }
   }
 

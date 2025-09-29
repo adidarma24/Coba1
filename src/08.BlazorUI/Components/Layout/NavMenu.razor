@@ -1,22 +1,9 @@
-﻿<MudNavMenu Class="@CssParent" Style="width: 100%;">
-
-  @* tombol icon(home) dan close navmenu saat di layar smartphone  *@
-  <MudHidden Breakpoint="Breakpoint.MdAndUp">
-    <MudPaper Elevation="0" Width="100%" Class="d-flex justify-space-around">
-      <MudLink Href="/">
-        <MudImage Src="/logo.svg" Width="55" Height="50" />
-      </MudLink>
-      <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" @onclick="ToggleDrawParent" />
-    </MudPaper>
-  </MudHidden>
-
-  <MudSpacer />
-
-  @* tombol navigasi halaman  *@
-  <MudPaper Elevation="0" Class="@CssChild">
-
+<MudNavMenu Class="@Css" Style="width: 100%;">
+  @if (!login)
+  {
     <MudLink Href="/login">
-      <MudButton Variant="Variant.Outlined" Class="rounded-lg button button-outline">Login
+      <MudButton Variant="Variant.Outlined" Class="rounded-lg button button-outline">
+        Login
       </MudButton>
     </MudLink>
 
@@ -25,18 +12,78 @@
         Register
       </MudButton>
     </MudLink>
+  }
+  else
+  {
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.ShoppingCart" />
+        <MudText Class="d-flex d-sm-none nav-text">Cart</MudText>
+      </MudButton>
+    </MudLink>
 
-  </MudPaper>
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.Home" Class="d-flex d-sm-none" />
+        <MudText Class="nav-text">My Class</MudText>
+      </MudButton>
+    </MudLink>
 
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.Receipt" Class="d-flex d-sm-none" />
+        <MudText Class="nav-text">Invoice</MudText>
+      </MudButton>
+    </MudLink>
+
+    <MudText Class="d-none d-sm-flex" style="color:#5b4947; font-size:24px">|</MudText>
+    <MudDivider Class="d-flex d-sm-none my-1" />
+
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.Person" Style="color:#FABC1D;" />
+        <MudText Class="d-flex d-sm-none nav-text">Profile</MudText>
+      </MudButton>
+    </MudLink>
+
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.ExitToApp" />
+        <MudText Class="d-flex d-sm-none nav-text">Logout</MudText>
+      </MudButton>
+    </MudLink>
+  }
 </MudNavMenu>
 
 @code {
-  [Parameter] public string CssParent { get; set; } = "";
-  [Parameter] public string CssChild { get; set; } = "";
-  [Parameter] public EventCallback Toggle { get; set; }
+  [Parameter] public string Css { get; set; } = "";
 
-  private Task ToggleDrawParent()
-  {
-    return Toggle.InvokeAsync();
-  }
+  private static bool login = false;
 }
+
+<style>
+  .nav-link {
+    text-decoration: none !important;
+  }
+
+  .nav-btn {
+    width: 100%;
+    padding: 0.7rem;
+    display: flex;
+    justify-content: start;
+    color: #5b4947;
+    border-radius: 0.5rem;
+  }
+
+  .nav-text {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 1rem;
+  }
+
+  @@media (min-width: 600px) {
+    .nav-btn {
+      justify-content: center;
+    }
+  }
+</style>
