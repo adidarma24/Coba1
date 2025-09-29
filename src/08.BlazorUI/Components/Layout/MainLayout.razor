@@ -1,165 +1,88 @@
 ﻿@inherits LayoutComponentBase
-@using MudBlazor
+@inject NavigationManager Navigation
+
+
+<MudThemeProvider Theme="CustomTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
 <MudLayout>
-    <!-- Navbar -->
-    <MudAppBar Class="px-2" Style="background-color: #fff;">
-        <!-- Logo kiri -->
-        <img src="/images/logo.svg" alt="Company Logo" class="logo-img " />
-        <MudSpacer />
-        <!-- Tombol kanan -->
-        <div class="d-flex gap-2">
-            <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/login" class="btn-costume">
-                Login
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Warning" Href="/register" class="btn-costume"
-                Style="background-color: #FABC1D; color: #2d2d2d;">
-                Register
-            </MudButton>
-        </div>
-    </MudAppBar>
 
-    <!-- Konten Halaman -->
-    <MudMainContent>
-        <div>
-            @Body
-        </div>
-    </MudMainContent>
+  @* navbar pc screen *@
+  <MudAppBar Elevation="0" Style="height:5.375rem; width: 100vw; background-color:#ffffff;"
+    class="d-flex justify-center px-13">
 
-    <!-- Footer -->
-    <footer>
-        <!-- Product -->
-        <MudPaper Elevation="0" Class="footer-section">
-            <MudContainer MaxWidth="MaxWidth.ExtraLarge">
-                <MudGrid Gutter="3">
+    <MudPaper Elevation="0" Width="100%" Class="d-flex justify-space-between">
+      <MudLink Href="/">
+        <MudImage Src="/logo.svg" Width="55" Height="50" />
+      </MudLink>
 
-                    <!-- About -->
-                    <MudItem xs="12" sm="6" md="4">
-                        <MudText Typo="Typo.h6" Class="footer-title mb-2">
-                            About Us
-                        </MudText>
-                        <MudText Class="footer-text">
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-                            laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi
-                            architecto
-                            beatae vitae dicta sunt explicabo.
-                        </MudText>
-                    </MudItem>
+      <MudPaper Elevation="0">
+        <NavMenu Css="d-none d-sm-flex align-center gap-10" />
+      </MudPaper>
 
-                    <!-- Produk -->
-                    <MudItem xs="12" sm="6" md="3">
-                        <MudText Typo="Typo.h6" Class="footer-title mb-2">Produk</MudText>
-                        <ul class="produk-list">
-                            @foreach (string produk in ProdukList)
-                            {
-                                <li>@produk</li>
-                            }
-                        </ul>
-                    </MudItem>
+      <MudPaper Elevation="0" Class="d-flex d-sm-none">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" />
+      </MudPaper>
+    </MudPaper>
 
-                    <!-- Address & Contact -->
-                    <MudItem xs="12" sm="12" md="5">
-                        <MudText Typo="Typo.h6" Class="footer-title mb-2">Address</MudText>
-                        <MudText Typo="Typo.body1" Class="mb-2">
-                            Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.
-                        </MudText>
+  </MudAppBar>
 
-                        <MudText Typo="Typo.h6" Class="footer-title mb-2">Contact Us</MudText>
-                        <MudStack Spacing="2" Row="true">
-                            <div class="social-icons">
-                                <MudIconButton Icon="@Icons.Material.Filled.Phone" AriaLabel="Phone"
-                                    Class="social-btn" />
-                                <MudIconButton Icon="@Icons.Custom.Brands.Instagram" AriaLabel="Instagram"
-                                    Class="social-btn" />
-                                <MudIconButton Icon="@Icons.Material.Filled.PlayCircle" AriaLabel="YouTube"
-                                    Class="social-btn" />
-                                <MudIconButton Icon="@Icons.Material.Filled.Send" AriaLabel="Telegram"
-                                    Class="social-btn" />
-                                <MudIconButton Icon="@Icons.Material.Filled.Email" AriaLabel="Email"
-                                    Class="social-btn" />
-                            </div>
-                        </MudStack>
-                    </MudItem>
-                </MudGrid>
-            </MudContainer>
-        </MudPaper>
-    </footer>
+  @* navbar phone screen *@
+  <MudDrawer @bind-Open="@drawerOpen" Anchor="Anchor.Right" Class="d-flex d-sm-none">
+    <MudDrawerHeader Class="d-flex align-center">
+      <MudText Class="d-flex justify-center" Style="width: 100%;" Typo="Typo.h6">Menu</MudText>
+      <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" @onclick="DrawerToggle" />
+    </MudDrawerHeader>
+
+    <MudPaper Elevation="0">
+      <MudDivider Class="my-1" />
+      <NavMenu Css="d-flex flex-column" />
+    </MudPaper>
+
+  </MudDrawer>
+
+  @* main content *@
+  <MudMainContent>
+    @Body
+  </MudMainContent>
+
+  @* footer *@
+  @if (ShowFooter)
+  {
+    <MudPaper>
+      <Footer />
+    </MudPaper>
+  }
+
 </MudLayout>
 
 @code {
-    private List<string> ProdukList = new List<string>()
-{
-"Electric","LCOC","Offroad","SUV","Heartback","MPV","Sedan","Truck"
-};
+  bool drawerOpen = false;
+
+  void DrawerToggle()
+  {
+    drawerOpen = !drawerOpen;
+  }
+
+  MudTheme CustomTheme = new MudTheme()
+  {
+    Typography = new Typography()
+    {
+      Default = new DefaultTypography()
+      {
+        FontFamily = new[] { "Montserrat", "Helvetica", "Arial", "sans-serif" }
+      }
+    }
+  };
+
+  private bool ShowFooter => !IsAuthPage;
+
+  private bool IsAuthPage =>
+  Navigation.Uri.Contains("login", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("register", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("reset-password", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("new-password", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("email-success", StringComparison.OrdinalIgnoreCase);
 }
-
-<style>
-    .btn-costume {
-        width: 175px;
-        height: 40px;
-    }
-
-    .logo-img {
-        width: 55px;
-        height: 55px;
-    }
-
-    .footer-title {
-        color: #f4b526;
-    }
-
-    .footer-list {
-        list-style: disc;
-        margin-left: 0px;
-        color: #ffffff;
-        font-size: 14px;
-        line-height: 0;
-    }
-
-    .contact-title {
-        margin-top: 20px;
-    }
-
-    .social-icons {
-        display: flex;
-        gap: 12px;
-        margin-top: 10px;
-    }
-
-    .social-btn {
-        background-color: #f4b526 !important;
-        color: #2d2d2d !important;
-        border-radius: 50% !important;
-        width: 44px !important;
-        height: 44px !important;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    .footer-section {
-        margin-top: 2.5rem;
-        padding: 1.5rem;
-        padding-left: 2.5rem;
-        padding-right: 2.5rem;
-        background-color: #5B4947;
-        color: #E0E0E0;
-    }
-
-    .produk-list {
-        list-style-type: disc;
-        padding-left: 20px;
-        margin: 0;
-        columns: 2;
-        -webkit-columns: 2;
-        -moz-columns: 2;
-        column-gap: 1.5rem;
-    }
-
-    .footer-text {
-        font-size: 14px;
-        line-height: 1.6;
-        margin-bottom: 20px;
-        color: #ffffff;
-    }
-</style>
