@@ -1,27 +1,31 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @using MudBlazor
 
 <MudLayout>
-    <!-- Navbar -->
-    <MudAppBar Class="px-2" Style="background-color: #fff;">
-        <!-- Logo kiri -->
-        <img src="/images/logo.svg" alt="Company Logo" class="logo-img " />
-        <MudSpacer />
-        <!-- Tombol kanan -->
-        <div class="d-flex gap-2">
-            <MudButton Variant="Variant.Outlined" Color="Color.Default" Href="/login" class="btn-costume">
-                Login
-            </MudButton>
-            <MudButton Variant="Variant.Filled" Color="Color.Warning" Href="/register" class="btn-costume"
-                Style="background-color: #FABC1D; color: #2d2d2d;">
-                Register
-            </MudButton>
-        </div>
+    <MudAppBar Elevation="5" Style="background-color:#ffffff;" Class="px-2">
+        <MudGrid AlignItems="Center">
+            <!-- Logo di kiri -->
+            <MudItem xs="3">
+                <img src="/images/logo.svg" alt="Logo" style="width:55px; height:55px;" />
+            </MudItem>
+            <MudSpacer />
+            <MudItem xs="3" Class="d-flex flex-row gap-4 align-center justify-end">
+                <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Style="color:black;" Size="Size.Small" />
+                <MudText Href="/" Class="nav-link" Typo="Typo.button" Style="color:black">My Class</MudText>
+                <MudText Href="/shop" Class="nav-link" Typo="Typo.button" Style="color:black">Invoice</MudText>
+            </MudItem>
+            <MudItem Class="d-flex flex-row gap-3 align-center">
+                <span class="mx-1" style="color:black; font-size:24px">|</span>
+                <MudIconButton Icon="@Icons.Material.Filled.Person" Style="color:#FABC1D;" />
+                <MudIconButton Icon="@Icons.Material.Filled.ExitToApp" Style="color:black" />
+            </MudItem>
+        </MudGrid>
     </MudAppBar>
+
 
     <!-- Konten Halaman -->
     <MudMainContent>
-        <div>
+        <div class="p-4">
             @Body
         </div>
     </MudMainContent>
@@ -91,33 +95,42 @@
 {
 "Electric","LCOC","Offroad","SUV","Heartback","MPV","Sedan","Truck"
 };
+    bool _drawerOpen = true;
+    void DrawerToggle() => _drawerOpen = !_drawerOpen;
 }
 
 <style>
-    .btn-costume {
-        width: 175px;
-        height: 40px;
+    .logo-img {
+        width: 53.57px;
+        height: 50px;
     }
 
-    .logo-img {
-        width: 55px;
-        height: 55px;
+    .footer-section {
+        margin-top: 2.5rem;
+        padding: 1.5rem;
+        padding-left: 2.5rem;
+        padding-right: 2.5rem;
+        background-color: #5B4947;
+        color: #E0E0E0;
     }
 
     .footer-title {
         color: #f4b526;
     }
 
-    .footer-list {
-        list-style: disc;
-        margin-left: 0px;
-        color: #ffffff;
+    .footer-text {
         font-size: 14px;
-        line-height: 0;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        color: #ffffff;
     }
 
-    .contact-title {
-        margin-top: 20px;
+    .footer-list {
+        list-style: disc;
+        margin-left: 20px;
+        color: #ffffff;
+        font-size: 14px;
+        line-height: 1.8;
     }
 
     .social-icons {
@@ -137,15 +150,6 @@
         justify-content: center;
     }
 
-    .footer-section {
-        margin-top: 2.5rem;
-        padding: 1.5rem;
-        padding-left: 2.5rem;
-        padding-right: 2.5rem;
-        background-color: #5B4947;
-        color: #E0E0E0;
-    }
-
     .produk-list {
         list-style-type: disc;
         padding-left: 20px;
@@ -154,12 +158,5 @@
         -webkit-columns: 2;
         -moz-columns: 2;
         column-gap: 1.5rem;
-    }
-
-    .footer-text {
-        font-size: 14px;
-        line-height: 1.6;
-        margin-bottom: 20px;
-        color: #ffffff;
     }
 </style>
