@@ -1,92 +1,88 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
 
-<MudThemeProvider />
+
+<MudThemeProvider Theme="CustomTheme" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
 <MudLayout>
-    <MudAppBar Elevation="5" Style="background-color:#ffffff;" Class="px-2">
-        <MudGrid AlignItems="Center" Spacing="0">
-            <!-- Logo di kiri -->
-            <MudItem xs="6" sm="3">
-                <img src="logo.svg" alt="Logo" style="width:55px; height:55px;" />
-            </MudItem>
 
-            <MudItem Class="d-none d-sm-flex" Style="flex: 1;">
-            </MudItem>
-            <MudItem sm="6" md="3" Class="d-none d-sm-flex flex-row gap-4 align-center justify-end">
-                <MudIconButton Icon="@Icons.Material.Filled.ShoppingCart" Style="color:black;" Size="Size.Small" />
-                <MudText Href="/" Class="nav-link" Typo="Typo.button" Style="color:black">My Class</MudText>
-                <MudText Href="/shop" Class="nav-link" Typo="Typo.button" Style="color:black">Invoice</MudText>
-            </MudItem>
+  @* navbar pc screen *@
+  <MudAppBar Elevation="0" Style="height:5.375rem; width: 100vw; background-color:#ffffff;"
+    class="d-flex justify-center px-13">
 
-            <MudItem sm="3" md="2" Class="d-none d-sm-flex flex-row gap-3 align-center justify-center">
-                <span class="mx-1" style="color:black; font-size:24px">|</span>
-                <MudIconButton Icon="@Icons.Material.Filled.Person" Style="color:#FABC1D;" />
-                <MudIconButton Icon="@Icons.Material.Filled.ExitToApp" Style="color:black" />
-            </MudItem>
+    <MudPaper Elevation="0" Width="100%" Class="d-flex justify-space-between">
+      <MudLink Href="/">
+        <MudImage Src="/logo.svg" Width="55" Height="50" />
+      </MudLink>
 
-            <MudItem xs="6" Class="d-flex d-sm-none justify-end">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu" 
-                              Style="color:black;" 
-                              OnClick="DrawerToggle" />
-            </MudItem>
-        </MudGrid>
-    </MudAppBar>
+      <MudPaper Elevation="0">
+        <NavMenu Css="d-none d-sm-flex align-center gap-10" />
+      </MudPaper>
 
-    <!-- Mobile Drawer -->
-    <MudDrawer Open="drawerOpen" 
-               OpenChanged="OnDrawerOpenChanged"
-               Anchor="Anchor.Right" 
-               Elevation="2" 
-               Variant="@DrawerVariant.Temporary"
-               Class="d-block d-sm-none">
-        <MudDrawerHeader Class="px-4 py-3">
-            <MudText Typo="Typo.h6">Menu</MudText>
-            <MudSpacer />
-            <MudIconButton Icon="@Icons.Material.Filled.Close" 
-                          OnClick="DrawerToggle" 
-                          Style="color:black;" />
-        </MudDrawerHeader>
-        <MudDivider />
-        <MudNavMenu>
-            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">
-                My Class
-            </MudNavLink>
-            <MudNavLink Href="/shop" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Receipt">
-                Invoice
-            </MudNavLink>
-            <MudDivider Class="my-2" />
-            <MudNavLink Href="#" Icon="@Icons.Material.Filled.ShoppingCart">
-                Cart
-            </MudNavLink>
-            <MudNavLink Href="#" Icon="@Icons.Material.Filled.Person">
-                Profile
-            </MudNavLink>
-            <MudNavLink Href="#" Icon="@Icons.Material.Filled.ExitToApp">
-                Logout
-            </MudNavLink>
-        </MudNavMenu>
-    </MudDrawer>
+      <MudPaper Elevation="0" Class="d-flex d-sm-none">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" OnClick="@((e) => DrawerToggle())" />
+      </MudPaper>
+    </MudPaper>
 
-    <MudMainContent>
-        @Body
-    </MudMainContent>
+  </MudAppBar>
+
+  @* navbar phone screen *@
+  <MudDrawer @bind-Open="@drawerOpen" Anchor="Anchor.Right" Class="d-flex d-sm-none">
+    <MudDrawerHeader Class="d-flex align-center">
+      <MudText Class="d-flex justify-center" Style="width: 100%;" Typo="Typo.h6">Menu</MudText>
+      <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" @onclick="DrawerToggle" />
+    </MudDrawerHeader>
+
+    <MudPaper Elevation="0">
+      <MudDivider Class="my-1" />
+      <NavMenu Css="d-flex flex-column" />
+    </MudPaper>
+
+  </MudDrawer>
+
+  @* main content *@
+  <MudMainContent>
+    @Body
+  </MudMainContent>
+
+  @* footer *@
+  @if (ShowFooter)
+  {
+    <MudPaper>
+      <Footer />
+    </MudPaper>
+  }
+
 </MudLayout>
 
 @code {
-    private bool drawerOpen = false;
-    
-    private void DrawerToggle()
+  bool drawerOpen = false;
+
+  void DrawerToggle()
+  {
+    drawerOpen = !drawerOpen;
+  }
+
+  MudTheme CustomTheme = new MudTheme()
+  {
+    Typography = new Typography()
     {
-        drawerOpen = !drawerOpen;
-        StateHasChanged();
+      Default = new DefaultTypography()
+      {
+        FontFamily = new[] { "Montserrat", "Helvetica", "Arial", "sans-serif" }
+      }
     }
-    
-    private void OnDrawerOpenChanged(bool value)
-    {
-        drawerOpen = value;
-        StateHasChanged();
-    }
+  };
+
+  private bool ShowFooter => !IsAuthPage;
+
+  private bool IsAuthPage =>
+  Navigation.Uri.Contains("login", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("register", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("reset-password", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("new-password", StringComparison.OrdinalIgnoreCase) ||
+  Navigation.Uri.Contains("email-success", StringComparison.OrdinalIgnoreCase);
 }

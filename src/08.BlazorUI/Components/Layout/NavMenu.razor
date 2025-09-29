@@ -1,35 +1,89 @@
-﻿@* <MudNavMenu Class="@CssParent">
-    <MudPaper Elevation="0" Class="d-flex justify-start align-center gap-6" 
-          Style="background:white; width:100%;">
-        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Filled.ShoppingCart"
-                   Class="text-dark" Style="color:#2D1B14;" />
-        <MudNavLink Href="/myclass" Class="nav-link-desktop">
-            <MudText Typo="Typo.body1">My Class</MudText>
-        </MudNavLink>
-        <MudNavLink Href="/invoice" Class="nav-link-desktop">
-            <MudText Typo="Typo.body1">Invoice</MudText>
-        </MudNavLink>
+<MudNavMenu Class="@Css" Style="width: 100%;">
+  @if (!login)
+  {
+    <MudLink Href="/login">
+      <MudButton Variant="Variant.Outlined" Class="rounded-lg button button-outline">
+        Login
+      </MudButton>
+    </MudLink>
 
-        <MudDivider Vertical="true" Class="mx-2" />
+    <MudLink Href="/register">
+      <MudButton Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
+        Register
+      </MudButton>
+    </MudLink>
+  }
+  else
+  {
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.ShoppingCart" />
+        <MudText Class="d-flex d-sm-none nav-text">Cart</MudText>
+      </MudButton>
+    </MudLink>
 
-        <MudIconButton Icon="@Icons.Material.Filled.Person" Color="Color.Warning" />
-        <MudIconButton Icon="@Icons.Material.Filled.Logout" Color="Color.Default" />
-    </MudPaper>
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.Home" Class="d-flex d-sm-none" />
+        <MudText Class="nav-text">My Class</MudText>
+      </MudButton>
+    </MudLink>
+
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.Receipt" Class="d-flex d-sm-none" />
+        <MudText Class="nav-text">Invoice</MudText>
+      </MudButton>
+    </MudLink>
+
+    <MudText Class="d-none d-sm-flex" style="color:#5b4947; font-size:24px">|</MudText>
+    <MudDivider Class="d-flex d-sm-none my-1" />
+
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.Person" Style="color:#FABC1D;" />
+        <MudText Class="d-flex d-sm-none nav-text">Profile</MudText>
+      </MudButton>
+    </MudLink>
+
+    <MudLink Href="/" Class="nav-link">
+      <MudButton Class="nav-btn">
+        <MudIcon Icon="@Icons.Material.Filled.ExitToApp" />
+        <MudText Class="d-flex d-sm-none nav-text">Logout</MudText>
+      </MudButton>
+    </MudLink>
+  }
 </MudNavMenu>
 
-<style>
-.nav-link-desktop {
-    text-decoration: none;
-    color: #2D1B14;
-    font-weight: 500;
-    transition: color 0.2s ease;
-}
-.nav-link-desktop:hover {
-    color: #FABC1D !important;
-}
-</style>
-
 @code {
-    [Parameter] public string CssParent { get; set; } = "";
-    [Parameter] public string CssChild { get; set; } = "";
-} *@
+  [Parameter] public string Css { get; set; } = "";
+
+  private static bool login = false;
+}
+
+<style>
+  .nav-link {
+    text-decoration: none !important;
+  }
+
+  .nav-btn {
+    width: 100%;
+    padding: 0.7rem;
+    display: flex;
+    justify-content: start;
+    color: #5b4947;
+    border-radius: 0.5rem;
+  }
+
+  .nav-text {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 1rem;
+  }
+
+  @@media (min-width: 600px) {
+    .nav-btn {
+      justify-content: center;
+    }
+  }
+</style>
