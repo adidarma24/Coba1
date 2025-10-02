@@ -18,16 +18,16 @@
     </MudPaper>
 
     <!-- Menu Cards -->
-    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="px-3 px-md-10 pb-10">
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="px-3 my-20 pb-10">
         <MudText Typo="Typo.h5" Align="Align.Center" Class="fw-semibold mt-6 mb-6" Style="color:#5B4947;">
             Another menu in this class
         </MudText>
 
-        <MudGrid Gutter="3">
+        <MudGrid Class="my-20" Gutter="3">
             @foreach (var item in MenuItems)
             {
                 <MudItem xs="12" sm="6" md="4" lg="4">
-                    <MudCard Class="h-100" Elevation="1">
+                    <MudCard Class="h-100" Elevation="0">
                         <MudCardMedia Image="@item.ImageUrl" Height="180" Class="object-cover" />
                         <MudCardContent>
                             <MudText Typo="Typo.caption">@item.Category</MudText>
