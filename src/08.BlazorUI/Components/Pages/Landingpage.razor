@@ -23,7 +23,7 @@
         {
             <MudItem xs="12" sm="6" md="4">
                 <MudCard Class="stat-card h-100">
-                    <MudCardContent Class="d-flex flex-column align-items-center justify-content-center text-center p-4">
+                    <MudCardContent Class="stat-card-content">
                         <MudText Typo="Typo.h4" Color="Color.Warning" Class="font-weight-bold">@stat.Number</MudText>
                         <MudText Typo="Typo.body2">@stat.Description</MudText>
                     </MudCardContent>
@@ -42,7 +42,7 @@
         @foreach (FoodItem item in Foods)
         {
             <MudItem xs="12" sm="6" md="4">
-                <MudCard Elevation="0" 
+                <MudCard Elevation="0"
                          @onclick="() => OnCardClick(item)">
                     <MudCardMedia Image="@item.Image" Height="180" Alt="@item.Title" />
                     <MudCardContent>
@@ -60,7 +60,7 @@
 
 <!-- Benefit Section -->
 <MudPaper Class="my-8 bg-benefit position-relative">
-    <MudContainer MaxWidth="MaxWidth.False" Class="d-flex flex-column justify-content-center min-h-260">
+    <MudContainer MaxWidth="MaxWidth.False" Class="benefit-container">
         <MudText Typo="Typo.h3" Class="mb-2 text-white ms-7">Gets your best benefit</MudText>
         <MudText Typo="Typo.body1" Class="max-w text-white ms-7">
             Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam.
@@ -77,7 +77,7 @@
     <MudGrid Class="food-grid">
         @foreach (FoodType food in FoodTypes)
         {
-            <MudItem xs="6" sm="3">
+            <MudItem xs="12" sm="6" md="4" lg="3">
                 <MudCard Class="" Elevation="0">
                     <MudCardMedia Image="@food.Image" Height="120" Alt="@food.Name" />
                     <MudCardContent>
@@ -139,22 +139,23 @@ private List<StatItem> stats = new List<StatItem>()
     justify-content: center;
     text-align: center;
 }
+
 .hero-title {
     color: white;
     font-weight: bold;
     margin-bottom: 0.5rem;
 }
+
 .hero-subtitle {
     color: white;
     max-width: 600px;
     margin: 0 auto;
 }
+
     .font-weight-bold {
         font-weight: 700;
     }
-    .max-w-600 {
-        max-width: 600px;
-    }
+
     .stat-card {
         border: 1px solid #b4b4b4;
         min-height: 120px;
@@ -166,6 +167,16 @@ private List<StatItem> stats = new List<StatItem>()
         box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         border-radius: 24px;
     }
+
+    .stat-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+}
+
 
 .card-hover {
     cursor: pointer; 
@@ -180,12 +191,15 @@ private List<StatItem> stats = new List<StatItem>()
     .bg-benefit {
         background: url("/images/image1.svg") center/cover no-repeat;
     }
+
     .min-h-260 {
         min-height: 260px;
     }
+    
     .max-w {
         max-width: 1200px;
     }
+
 .food-container {
     margin-top: 40px;
     margin-bottom: 40px;
@@ -210,5 +224,19 @@ private List<StatItem> stats = new List<StatItem>()
 
 .text-grey {
     color: grey;
+}
+
+.food-title {
+    margin-top: 1rem;
+    font-size: 1.25rem; 
+    text-align: center;
+}
+
+.benefit-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 260px;
+    padding: 0 1.5rem; 
 }
 </style>
