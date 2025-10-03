@@ -1,0 +1,147 @@
+@page "/admin-dashboard"
+@using MyApp.BlazorUI.Components.Shared.Admin
+@layout AdminLayout
+@inject IDialogService DialogService
+
+<PageTitle>Dashboard</PageTitle>
+
+<MudPaper Elevation="1" Style="padding: 1rem; max-height: calc(100vh - 8rem);">
+  <MudText Typo="Typo.h4" Style="padding: 0 0 1rem 0;">Welcome, Admin</MudText>
+
+  <MudGrid>
+    <MudItem xs="12" sm="4">
+      <MudCard Class="card" Style="background-color: red;">
+        <MudCardHeader Class="d-flex justify-center gap-3" Style="padding: 0.5rem 0 0 0;">
+          <MudIcon Icon="@Icons.Material.Filled.PeopleAlt" />
+          <MudText Typo="Typo.body2">Total User Active</MudText>
+        </MudCardHeader>
+        <MudCardContent Style="padding: 0 0 0.5rem 0;">
+          <MudText Typo=" Typo.h3" Class="d-flex justify-center card-text">3</MudText>
+        </MudCardContent>
+      </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+      <MudCard Class="card" Style="background-color: blue;">
+        <MudCardHeader Class="d-flex justify-center gap-3" Style="padding: 0.5rem 0 0 0;">
+          <MudIcon Icon="@Icons.Material.Filled.Payments" />
+          <MudText Typo="Typo.body2">Total Payment</MudText>
+        </MudCardHeader>
+        <MudCardContent Style="padding: 0 0 0.5rem 0;">
+          <MudText Typo=" Typo.h3" Class="d-flex justify-center card-text">7</MudText>
+        </MudCardContent>
+      </MudCard>
+    </MudItem>
+
+    <MudItem xs="12" sm="4">
+      <MudCard Class="card" Style="background-color: purple;">
+        <MudCardHeader Class="d-flex justify-center gap-3" Style="padding: 0.5rem 0 0 0;">
+          <MudIcon Icon="@Icons.Material.Filled.PeopleAlt" />
+          <MudText Typo="Typo.body2">Total Member</MudText>
+        </MudCardHeader>
+        <MudCardContent Style="padding: 0 0 0.5rem 0;">
+          <MudText Typo=" Typo.h3" Class="d-flex justify-center card-text">2</MudText>
+        </MudCardContent>
+      </MudCard>
+    </MudItem>
+  </MudGrid>
+
+  <MudDivider Class="my-7 line" />
+
+  <MudTable Items="@Data" FixedHeader="true" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading"
+    LoadingProgressColor="Color.Info" Class="mb-10">
+    <HeaderContent>
+      <MudTh Class="thead">Email</MudTh>
+      <MudTh Class="thead">No. Invoice</MudTh>
+      <MudTh Class="thead">Date</MudTh>
+      <MudTh Class="thead">Total Course</MudTh>
+      <MudTh Class="thead">Total Price</MudTh>
+      <MudTh Class="thead">Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd DataLabel="Email">@context.Email</MudTd>
+      <MudTd DataLabel="No. Invoice">@context.NoInvoice</MudTd>
+      <MudTd DataLabel="Date">@context.Date.ToString("dddd, dd MMMM yyyy")</MudTd>
+      <MudTd DataLabel="Total Course">@context.TotalCourse</MudTd>
+      <MudTd DataLabel="Total Price">
+        @("IDR " + context.TotalPrice.ToString("N0", new System.Globalization.CultureInfo("id-ID")))
+      </MudTd>
+      <MudTd DataLabel="Action">
+        <MudButton OnClick="OpenDialogAsync" Variant="Variant.Filled" Class="rounded-lg button button-filled"
+          Style="color: white;">
+          Detail
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+    <PagerContent>
+      <MudTablePager />
+    </PagerContent>
+  </MudTable>
+
+</MudPaper>
+
+@code {
+  private bool _loading;
+  private IEnumerable<DataModel> Data = new List<DataModel>
+{
+new DataModel
+{
+Email = "nurimamiskandar@gmail.com",
+NoInvoice = "DLA00002",
+Date = new DateTime(2023, 5, 20),
+TotalCourse = 3,
+TotalPrice = 1450000m
+},
+new DataModel
+{
+Email = "mary@example.com",
+NoInvoice = "DLA00003",
+Date = new DateTime(2023, 5, 24),
+TotalCourse = 2,
+TotalPrice = 500000m
+},
+};
+
+  private Task OpenDialogAsync()
+  {
+    var options = new DialogOptions
+    {
+      CloseOnEscapeKey = true,
+      MaxWidth = MaxWidth.Medium,
+      FullWidth = true
+    };
+
+    return DialogService.ShowAsync<DetailDialog>("Detail Invoice", options);
+  }
+
+  public class DataModel
+  {
+    public string Email { get; set; } = string.Empty;
+    public string NoInvoice { get; set; } = string.Empty;
+    public DateTime Date { get; set; }
+    public int TotalCourse { get; set; }
+    public decimal TotalPrice { get; set; }
+  }
+}
+
+<style>
+  .card {
+    color: white;
+  }
+
+  .card-text {
+    font-weight: bold;
+  }
+
+  .line {
+    border: 1px solid black;
+  }
+
+  .mud-table-head th {
+    background-color: #dbffdd !important;
+  }
+
+  .thead {
+    text-align: center;
+  }
+</style>
