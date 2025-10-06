@@ -1,0 +1,110 @@
+@page "/invoice"
+@using MudBlazor
+
+<style>
+    .custom-header {
+        background-color: #5B4947;
+    }
+
+    /* Row ganjil putih, genap abu-abu */
+    .odd-row {
+        background-color: #ffffff;
+    }
+
+    .even-row {
+        background-color: #f5f5f5;
+    }
+
+    /* Tombol details */
+    .details-btn {
+        background-color: #FABC1D !important;
+        color: black !important;
+        font-weight: bold;
+        width: 75%;
+    }
+
+    /* Align cell */
+    .center-cell {
+        text-align: center;
+    }
+
+    .left-cell {
+        text-align: left;
+    }
+</style>
+
+<MudContainer MaxWidth="MaxWidth.ExtraLarge">
+    <MudItem Class="px-12 mt-10">
+        <MudBreadcrumbs Items="_items" Separator=">"></MudBreadcrumbs>
+    </MudItem>
+    <MudItem class="px-14 my-10">
+        <MudText Typo="Typo.h6" Style="color:#4F4F4F; font-weight:600">Menu Invoice</MudText>
+    </MudItem>
+    <MudTable Class="mx-14" T="InvoiceItem" Items="@Invoices" Hover="true" Breakpoint="Breakpoint.Sm"
+        RowClassFunc="@RowClassFunc">
+        <HeaderContent>
+            <MudTh Class="custom-header left-cell" style="color:white">No.</MudTh>
+            <MudTh Class="custom-header center-cell" style="color:white">No. Invoice</MudTh>
+            <MudTh Class="custom-header center-cell" style="color:white">Date</MudTh>
+            <MudTh Class="custom-header center-cell" style="color:white">Total Course</MudTh>
+            <MudTh Class="custom-header center-cell" style="color:white">Total Price</MudTh>
+            <MudTh Class="custom-header center-cell" style="color:white">Action</MudTh>
+        </HeaderContent>
+        <RowTemplate>
+            <MudTd Class="left-cell" DataLabel="No.">@context.No</MudTd>
+            <MudTd Class="center-cell" DataLabel="No. Invoice">@context.NoInvoice</MudTd>
+            <MudTd Class="center-cell" DataLabel="Date">
+                @context.Date.ToString("dd MMMM yyyy", new System.Globalization.CultureInfo("en-US"))
+            </MudTd>
+            <MudTd Class="center-cell" DataLabel="Total Course">@context.TotalCourse</MudTd>
+            <MudTd Class="center-cell" DataLabel="Total Price">@context.TotalPrice.ToString("C")</MudTd>
+            <MudTd Class="center-cell">
+                <MudButton Class="details-btn" Variant="Variant.Filled" Size="Size.Small"
+                    OnClick="@(() => ShowDetails(context))">
+                    Details
+                </MudButton>
+            </MudTd>
+        </RowTemplate>
+    </MudTable>
+
+</MudContainer>
+
+@code {
+    private List<BreadcrumbItem> _items =
+    [
+    new("Home", href: "/"),
+new("Invoice", href: null, disabled: true)
+    ];
+
+    // Contoh data model
+    public class InvoiceItem
+    {
+        public int No { get; set; }
+        public string NoInvoice { get; set; }
+        public DateTime Date { get; set; }
+        public int TotalCourse { get; set; }
+        public decimal TotalPrice { get; set; }
+    }
+
+    private List<InvoiceItem> Invoices = new()
+{
+new InvoiceItem { No = 1, NoInvoice = "INV-001", Date = new DateTime(2022, 7, 12), TotalCourse = 3, TotalPrice = 500000
+},
+new InvoiceItem { No = 2, NoInvoice = "INV-002", Date = new DateTime(2025, 10, 2), TotalCourse = 2, TotalPrice = 350000
+},
+new InvoiceItem { No = 3, NoInvoice = "INV-003", Date = new DateTime(2025, 10, 3), TotalCourse = 5, TotalPrice = 800000
+},
+new InvoiceItem { No = 4, NoInvoice = "INV-004", Date = new DateTime(2025, 10, 4), TotalCourse = 1, TotalPrice = 200000
+}
+};
+
+    private string RowClassFunc(InvoiceItem invoice, int rowNumber)
+    {
+        return (invoice.No % 2 == 1) ? "odd-row" : "even-row";
+    }
+
+    private void ShowDetails(InvoiceItem invoice)
+    {
+        Console.WriteLine($"Details invoice: {invoice.NoInvoice} pada {invoice.Date:dd/MM/yyyy}");
+    }
+}

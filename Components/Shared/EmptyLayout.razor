@@ -1,0 +1,30 @@
+@inherits LayoutComponentBase
+
+<MudThemeProvider Theme="CustomTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+
+  <MudLink Href="/" Style="position: absolute; top: 20px; left: 50px;">
+    <MudImage Src="/logo.svg" Width="55" Height="50" />
+  </MudLink>
+
+  <MudMainContent Class="pa-0" Style="color: #5B4947;">
+    @Body
+  </MudMainContent>
+</MudLayout>
+
+@code {
+  MudTheme CustomTheme = new MudTheme()
+  {
+    Typography = new Typography()
+    {
+      Default = new DefaultTypography()
+      {
+        FontFamily = new[] { "Montserrat", "Helvetica", "Arial", "sans-serif" }
+      }
+    }
+  };
+}

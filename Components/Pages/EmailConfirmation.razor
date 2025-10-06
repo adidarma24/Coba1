@@ -1,0 +1,42 @@
+@page "/email-success"
+@layout EmptyLayout
+
+<MudPaper Elevation="0" Width="100vw" Height="100vh" Class="d-flex flex-column justify-center align-center gap-10">
+  <MudImage Src="/success.svg" Width="250" Height="250" />
+  <MudPaper Elevation="0" Class="d-flex flex-column justify center align-center gap-2">
+    <MudText Typo="Typo.h5" Class="text-title">Email Confirmation Success</MudText>
+    <MudText Typo="Typo.body1" Class="text-body">Congratulations! your email has already used</MudText>
+  </MudPaper>
+  <MudLink Href="/login">
+    <MudButton Variant="Variant.Filled" DropShadow="false" Class="button">
+      Login Here
+    </MudButton>
+  </MudLink>
+</MudPaper>
+
+<style>
+  .text-title {
+    font-weight: 500;
+    font-size: 24px;
+  }
+
+  .text-body {
+    font-weight: 400;
+    font-size: 16px;
+  }
+
+  .button {
+    width: 8.3125rem;
+    height: 3.125rem;
+    background-color: #FABC1D;
+    color: #5B4947;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 15px;
+    text-transform: none;
+  }
+
+  .button:hover {
+    background-color: #FABC1D;
+  }
+</style>
