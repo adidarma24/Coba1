@@ -1,0 +1,54 @@
+@page "/email-confirmation-success"
+@using MudBlazor
+@inject NavigationManager NavigationManager
+
+<MudContainer MaxWidth="MaxWidth.False" Class="pa-0 ma-0" Style="position: relative; min-height: 100vh;">
+
+  <MudImage Src="images/logo.svg" Alt="Company Logo" Class="top-left-logo" />
+
+  <MudPaper Elevation="0" Class="d-flex flex-column align-center justify-center" Style="min-height: 90vh;">
+
+    <MudImage Src="images/SuccessPurchase.svg" Alt="Success Illustration" Width="250" Class="mb-6" />
+
+    <MudText Typo="Typo.h4" Align="Align.Center" GutterBottom="true" Style="font-weight: 600;">
+      Email Confirmation Success
+    </MudText>
+
+    <MudText Typo="Typo.h6" Align="Align.Center" Color="Color.Inherit" Class="mb-8" Style="font-weight: 400;">
+      Congratulations! your email has already used.
+    </MudText>
+
+    <MudButton Variant="Variant.Filled" Color="Color.Warning" Size="Size.Large" OnClick="NavigateToLogin"
+      Class="action-button" Style="color: black; text-transform: none; font-weight: 600;">
+      Login Here
+    </MudButton>
+
+  </MudPaper>
+
+</MudContainer>
+
+@code {
+  private void NavigateToLogin()
+  {
+    // Navigasi ke halaman login
+    NavigationManager.NavigateTo("/login");
+  }
+}
+
+<style>
+  .top-left-logo {
+    position: absolute;
+    top: 24px;
+    left: 32px;
+    width: 120px;
+    /* Sesuaikan ukuran logo */
+    height: auto;
+  }
+
+  .action-button {
+    border-radius: 8px;
+    padding: 10px 36px;
+    /* Padding disesuaikan untuk satu tombol */
+    font-size: 1rem;
+  }
+</style>

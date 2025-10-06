@@ -1,0 +1,174 @@
+@using MudBlazor
+
+<MudDialogContent>
+  <MudStack Spacing="2">
+    @foreach (var method in PaymentMethods)
+    {
+      <MudItem>
+        <div class="payment-option @(SelectedMethod == method.Name ? "selected-method" : "")"
+          @onclick="@(() => SetSelectedMethod(method.Name))">
+          <div class="icon-circle">
+            <img src="@method.Icon" class="payment-icon" />
+          </div>
+          <MudText Class="payment-name">@method.Name</MudText>
+        </div>
+      </MudItem>
+    }
+  </MudStack>
+</MudDialogContent>
+
+<MudDialogActions Class="mud-dialog-actions d-flex justify-center">
+  <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="Cancel" Class="action-btn cancel-btn">
+    Cancel
+  </MudButton>
+  <MudButton Variant="Variant.Filled" Color="Color.Warning" OnClick="ConfirmPayNow"
+    Disabled="@(string.IsNullOrEmpty(SelectedMethod))" Class="action-btn pay-btn ml-3" Style="color:black;">
+    Pay Now
+  </MudButton>
+</MudDialogActions>
+
+@code {
+  [CascadingParameter] object? MudDialogObj { get; set; }
+
+  [Parameter] public decimal TotalPrice { get; set; }
+
+  private string? SelectedMethod { get; set; }
+
+  private List<(string Name, string Icon)> PaymentMethods = new()
+{
+("Gopay", "images/payment/gopay.svg"),
+("OVO", "images/payment/ovo.svg"),
+("DANA", "images/payment/dana.svg"),
+("Mandiri", "images/payment/mandiri.svg"),
+("BCA", "images/payment/bca.svg"),
+("BNI", "images/payment/bni.svg"),
+};
+
+  private void SetSelectedMethod(string method) => SelectedMethod = method;
+
+  private void SelectMethod(string method)
+  {
+    if (MudDialogObj is not null)
+    {
+      dynamic d = MudDialogObj;
+      try { d.Close(DialogResult.Ok(method)); } catch { }
+    }
+  }
+
+  private void Cancel()
+  {
+    if (MudDialogObj is not null)
+    {
+      dynamic d = MudDialogObj;
+      try { d.Close(DialogResult.Cancel()); } catch { }
+    }
+  }
+
+  private void ConfirmPayNow()
+  {
+    if (string.IsNullOrEmpty(SelectedMethod))
+    {
+      // If no method is selected, you might want to show a message or just close with a generic result
+      // For now, let's assume if it's not selected, we don't proceed with a specific method.
+      // In Image 2, "Pay Now" is enabled even without a selection, but the image implies a selection has been made.
+      // If you want "Pay Now" always enabled and then handle selection later, remove the Disabled condition.
+      SelectMethod("PayNow"); // Or handle as an error/prompt for selection
+      return;
+    }
+
+    SelectMethod(SelectedMethod);
+  }
+}
+
+<style>
+  .payment-option {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    padding: 10px 8px;
+    border-radius: 8px;
+    transition: background-color 0.12s ease;
+  }
+
+  .payment-option:hover {
+    background-color: #f5f5f5;
+  }
+
+  .payment-option.selected-method {
+    background-color: #fff6df;
+    /* Warna latar belakang kuning muda saat terpilih */
+    border: 1px solid #f2b705;
+    /* Border kuning saat terpilih */
+  }
+
+  .icon-circle {
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    border-radius: 50%;
+    background: #f6f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  }
+
+  .payment-icon {
+    width: 20px;
+    height: 20px;
+    display: block;
+    margin: 0 auto;
+    max-height: 20px;
+  }
+
+  .payment-name {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.85);
+  }
+
+  .action-btn {
+    min-width: 100px;
+    border-radius: 8px;
+    font-weight: 500;
+  }
+
+  .cancel-btn {
+    border: 1px solid #4b2e2e;
+    /* Border merah marun */
+    color: #4b2e2e;
+    /* Warna teks merah marun */
+    background: #fff;
+  }
+
+  .pay-btn {
+    background-color: #f2b705;
+    /* Warna latar belakang kuning cerah */
+    color: #000;
+    /* Warna teks hitam */
+    font-weight: 600;
+  }
+
+  .mud-dialog-actions {
+    justify-content: center !important;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    gap: 12px;
+  }
+
+  /* Center the dialog title to match the design */
+  .mud-dialog-title {
+    text-align: center;
+    width: 100%;
+    font-weight: 600;
+  }
+
+  /* Override MudBlazor's default dialog width to make it smaller as in Image 2 */
+  /* You might need to adjust these values based on your exact layout */
+  .mud-dialog {
+    max-width: 400px !important;
+    /* Contoh, sesuaikan lebar ini */
+    width: 90% !important;
+    /* Agar responsif */
+  }
+</style>

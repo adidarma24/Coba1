@@ -1,0 +1,155 @@
+@page "/checkout"
+@rendermode InteractiveServer
+@using MudBlazor
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<PageTitle>Checkout</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
+
+  @* Checkbox Pilih Semua *@
+  <MudPaper Elevation="0" Class="pa-4 mb-4 d-flex align-center">
+    <MudCheckBox T="bool" @bind-Checked="SelectAll" Label=" Pilih Semua" />
+  </MudPaper>
+  <MudDivider Class="my-2" Style="border-top: 3px solid rgba(0,0,0,0.77);" />
+
+  @* Daftar Produk *@
+  <MudPaper Elevation="0" Class="pa-4">
+    @foreach (var item in CartItems)
+    {
+      <MudGrid Class="my-3 align-center" @key="item">
+
+        @* Checkbox per item *@
+        <MudItem xs="2" sm="1" md="1">
+          @* Explicit change handler so we can force a re-render and update SelectAll getter *@
+          <MudCheckBox T="bool" @bind-Checked="item.Selected" />
+        </MudItem>
+
+        @* Sisa dari markup tetap sama *@
+        <MudItem xs="12" sm="4" md="2">
+          <MudImage Src="@item.ImageUrl" Alt="@item.Name" Class="rounded-lg" Fluid="true" />
+        </MudItem>
+        <MudItem xs="10" sm="6" md="8">
+          <div class="d-flex flex-column">
+            <MudText Typo="Typo.caption" Color="Color.Default">@item.Category</MudText>
+            <MudText Typo="Typo.h6">@item.Name</MudText>
+            <MudText Typo="Typo.body2" Color="Color.Default">
+              Schedule: @item.Schedule.ToString("dddd, dd MMMM yyyy")
+            </MudText>
+            <MudText Typo="Typo.subtitle1" Color="Color.Warning" Class="mt-1">
+              IDR @item.Price.ToString("N2")
+            </MudText>
+          </div>
+        </MudItem>
+        <MudItem xs="2" sm="1" md="1" Class="d-flex justify-end align-center">
+          <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => RemoveItem(item))" />
+        </MudItem>
+      </MudGrid>
+      <MudDivider Class="my-2" Style="border-top: 3px solid rgba(0,0,0,0.77);" />
+    }
+  </MudPaper>
+
+  @* Total Harga dan Tombol Bayar *@
+  <MudDivider Class="my-2" Style="border-top: 3px solid rgba(0,0,0,0.77); width: 100%;" />
+  <MudPaper Elevation="0" Class="d-flex flex-wrap justify-between align-center width: 100%;">
+    <MudText Typo="Typo.subtitle1" Class="mr-4">Total Price</MudText>
+    <MudText Typo="Typo.h6" Color="Color.Warning">IDR @_totalPrice.ToString("N2")</MudText>
+    <MudSpacer />
+    <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="black-text px-12 py-2 rounded-lg mt-2 mt-sm-0"
+      OnClick="@OpenPayment">
+      Pay Now
+    </MudButton>
+  </MudPaper>
+</MudContainer>
+
+@code {
+  // Two-way bound property for the "Pilih Semua" checkbox.
+  private bool SelectAll
+  {
+    get => CartItems.Any() && CartItems.All(i => i.Selected);
+    set
+    {
+      foreach (var item in CartItems)
+      {
+        item.Selected = value;
+      }
+      Console.WriteLine($"[Checkout] SelectAll setter called. NewValue={value}");
+      Console.WriteLine($"[Checkout] Item states: {string.Join(',', CartItems.Select(i => i.Selected ? "1" : "0"))}");
+      StateHasChanged();
+    }
+  }
+
+  private List<CartItem> CartItems = new()
+{
+new CartItem { Category="Asian", Name="Tom Yum Thailand", Schedule=new DateTime(2022,7,27), Price=450_000,
+ImageUrl="images/image11.svg", Selected=true},
+new CartItem { Category="Asian", Name="Ichiraku Ramen", Schedule=new DateTime(2022,7,24), Price=300_000,
+ImageUrl="images/image10.svg"},
+new CartItem { Category="Eastern", Name="Italian Spaghetti Bolognese", Schedule=new DateTime(2022,7,25), Price=450_000,
+ImageUrl="images/image16.svg"},
+};
+
+  private decimal _totalPrice => CartItems.Where(i => i.Selected).Sum(i => i.Price);
+
+  private void OnItemSelectionChanged(CartItem item, bool isSelected)
+  {
+    item.Selected = isSelected;
+    Console.WriteLine($"[Checkout] OnItemSelectionChanged for {item.Name}: {isSelected}");
+    Console.WriteLine($"[Checkout] SelectAll getter now returns: {SelectAll}");
+    StateHasChanged();
+  }
+
+  private void RemoveItem(CartItem item)
+  {
+    CartItems.Remove(item);
+    StateHasChanged();
+  }
+
+  private async Task OpenPayment()
+  {
+    if (_totalPrice <= 0)
+    {
+      Snackbar.Add("Tidak ada item yang dipilih untuk dibayar.", Severity.Info);
+      return;
+    }
+
+    var parameters = new DialogParameters { ["TotalPrice"] = _totalPrice };
+    var options = new DialogOptions
+    {
+      CloseButton = true,
+      MaxWidth = MaxWidth.Small,
+      FullWidth = true,
+    };
+
+    // Use ShowAsync (recommended) and consider a null Data as cancellation
+    var dialogRef = await DialogService.ShowAsync<PaymentMethod>("Select Payment Method", parameters, options);
+    var result = await dialogRef.Result;
+
+    if (result?.Data != null)
+    {
+      var method = result.Data.ToString() ?? "(tidak diketahui)";
+      Snackbar.Add($"Membayar sebesar IDR {_totalPrice:N0} menggunakan {method}.", Severity.Success);
+    }
+    else
+    {
+      Snackbar.Add("Pembayaran dibatalkan.", Severity.Info);
+    }
+  }
+
+  public class CartItem
+  {
+    public string? Category { get; set; }
+    public string? Name { get; set; }
+    public DateTime Schedule { get; set; }
+    public decimal Price { get; set; }
+    public string? ImageUrl { get; set; }
+    public bool Selected { get; set; }
+  }
+}
+
+<style>
+  .black-text {
+    color: black !important;
+  }
+</style>

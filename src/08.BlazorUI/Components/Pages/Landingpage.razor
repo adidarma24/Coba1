@@ -3,7 +3,7 @@
 
 <PageTitle>Lending Pages</PageTitle>
 
-<!-- Hero Section -->
+@* Hero Section  *@
 <MudPaper Class="hero-section" Square="true">
     <MudContainer>
         <MudText Typo="Typo.h4" Class="hero-title">
@@ -16,7 +16,7 @@
     </MudContainer>
 </MudPaper>
 
-<!-- Statistic Section -->
+@* Statistic Section *@
 <MudContainer MaxWidth="MaxWidth.Large" Class="py-6 px-3">
     <MudGrid Justify="Justify.Center" AlignItems="AlignItems.Stretch" Spacing="4">
         @foreach (StatItem stat in stats)
@@ -33,7 +33,7 @@
     </MudGrid>
 </MudContainer>
 
-<!-- More Professional Class Section -->
+@* More Professional Class Section *@
 <MudContainer MaxWidth="MaxWidth.False" Class="my-8">
     <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-10 title-text">
         More Professional Classes
@@ -58,7 +58,7 @@
 </MudContainer>
 
 
-<!-- Benefit Section -->
+@* Benefit Section *@
 <MudPaper Class="my-8 bg-benefit position-relative">
     <MudContainer MaxWidth="MaxWidth.False" Class="benefit-container">
         <MudText Typo="Typo.h3" Class="mb-2 text-white ms-7">Gets your best benefit</MudText>
@@ -68,12 +68,12 @@
     </MudContainer>
 </MudPaper>
 
-<!-- Food Type Section -->
+@* Food Type Section *@
 <MudContainer MaxWidth="MaxWidth.False" Class="food-container">
     <MudText Typo="Typo.h5" Align="Align.Center" Class="title-text">
         More food type as you can choose
-    </MudText>
-    <!-- Foot Card -->
+    </MudText> 
+    @* Foot Card *@
     <MudGrid Class="food-grid">
         @foreach (FoodType food in FoodTypes)
         {
