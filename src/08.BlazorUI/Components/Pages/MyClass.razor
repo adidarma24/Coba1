@@ -1,0 +1,60 @@
+@page "/my-class"
+@using MyApp.BlazorUI.Components.Models
+
+<PageTitle>My Class</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 container">
+
+  <MudPaper Elevation="0" Class="pa-4">
+    @foreach (var mc in myClasses)
+    {
+      <MudGrid Class="my-3 align-center" @key="mc">
+
+        <MudItem xs="12" sm="4" md="2">
+          <MudImage Src="@mc.Image" Alt="@mc.Name" Fluid="true" />
+        </MudItem>
+        <MudItem xs="10" sm="6" md="8">
+          <div class="d-flex flex-column">
+            <MudText Typo="Typo.caption" style="color: #828282;">@mc.Category</MudText>
+            <MudText Typo="Typo.h6" style="font-weight: 600;">@mc.Name</MudText>
+            <MudText Typo="Typo.subtitle1" Class="mt-1" style="color: #FABC1D; font-weight: 500;">
+              Schedule: @mc.Schedule.ToString("dddd, dd MMMM yyyy")
+            </MudText>
+          </div>
+        </MudItem>
+      </MudGrid>
+      <MudDivider Class="my-2" Style="border: 1px solid rgba(0,0,0,0.77);" />
+    }
+  </MudPaper>
+</MudContainer>
+
+@code {
+
+  private IEnumerable<MyClassModel> myClasses = new List<MyClassModel>
+{
+new MyClassModel
+{
+MenuCourseId = 1,
+Name = "Tom Yum Thailand",
+Image = "images/image11.svg",
+Category = "Asian",
+Schedule = new DateTime(2022,7,27)
+},
+new MyClassModel
+{
+MenuCourseId = 1,
+Name = "Ichiraku Ramen",
+Image = "images/image10.svg",
+Category = "Asian",
+Schedule = new DateTime(2022,7,24)
+},
+new MyClassModel
+{
+MenuCourseId = 1,
+Name = "Italian Spaghetti Bolognese",
+Image = "images/image16.svg",
+Category = "Eastern",
+Schedule = new DateTime(2022,7,25)
+}
+};
+}

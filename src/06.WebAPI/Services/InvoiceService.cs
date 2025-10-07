@@ -40,7 +40,7 @@ namespace MyApp.WebAPI.Services
       var pagedResult = await invoices.ToPagedResultAsync(pageNumber, pageSize);
 
       if (!pagedResult.Items.Any())
-        throw new NotFoundException($"User with with ID {userId} not found");
+        throw new NotFoundException($"User with ID {userId} not found");
 
       return pagedResult;
     }
