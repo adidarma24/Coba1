@@ -8,14 +8,11 @@ namespace MyApp.WebAPI.Mappings
   {
     public InvoiceProfile()
     {
-      // Invoice → InvoiceDTO
       CreateMap<Invoice, InvoiceDTO>();
 
-      // Invoice → DetailInvoiceDTO
       CreateMap<Invoice, DetailInvoiceDTO>()
           .ForMember(dest => dest.ListCourse, opt => opt.MapFrom(src => src.InvoiceMenuCourses));
 
-      // InvoiceMenuCourse → CourseItemDTO
       CreateMap<InvoiceMenuCourse, CourseItemDTO>()
           .ForMember(dest => dest.MenuCourseId, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.MenuCourseId))
           .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.Name))
