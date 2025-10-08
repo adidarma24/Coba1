@@ -106,18 +106,31 @@ namespace MyApp.WebAPI.Controllers
       });
     }
 
-    [HttpPost("change-password")]
-    [Authorize]
+    [HttpPost("forgot-password")]
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse<bool>>> ChangePassword([FromBody] ChangePasswordRequestDto dto)
+    public async Task<ActionResult<ApiResponse<bool>>> ForgotPassword([FromBody] ForgotPasswordRequestDto dto)
     {
-      var result = await _authService.ChangePasswordAsync(dto);
+      var result = await _authService.SendResetPasswordEmailAsync(dto);
       return Ok(new ApiResponse<bool>
       {
         Success = result,
         Data = result,
-        Message = result ? "Password changed successfully" : "Failed to change password"
+        Message = result ? "Password reset email sent successfully." : "Failed to sent email"
+      });
+    }
+
+    [HttpPost("reset-password")]
+    [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ApiResponse<bool>>> ResetPassword([FromBody] ResetPasswordRequestDto request)
+    {
+      var result = await _authService.ResetPasswordAsync(request);
+      return Ok(new ApiResponse<bool>
+      {
+        Success = result,
+        Data = result,
+        Message = result ? "Password has been reset successfully." : "Failed to reset password"
       });
     }
   }

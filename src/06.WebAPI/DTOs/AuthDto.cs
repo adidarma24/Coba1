@@ -17,6 +17,10 @@ namespace MyApp.WebAPI.DTOs.Auth
     [RegularExpression(@"^(?=.*[A-Z])(?=.*\d).{6,}$",
     ErrorMessage = "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number!")]
     public string Password { get; set; } = string.Empty;
+
+    [Required]
+    [Compare("Password")]
+    public string ConfirmPassword { get; set; } = string.Empty;
   }
 
   public class LoginRequestDto
@@ -38,20 +42,31 @@ namespace MyApp.WebAPI.DTOs.Auth
     public string RefreshToken { get; set; } = string.Empty;
   }
 
-  public class ChangePasswordRequestDto
+  public class ForgotPasswordRequestDto
+  {
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Invalid email format")]
+    public string Email { get; set; } = default!;
+  }
+
+
+  public class ResetPasswordRequestDto
   {
     [Required(ErrorMessage = "Email is required")]
     [EmailAddress(ErrorMessage = "Invalid email format")]
     public string Email { get; set; } = string.Empty;
-
-    [Required]
-    public string CurrentPassword { get; set; } = string.Empty;
 
     [Required(ErrorMessage = "Password is required")]
     [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters")]
     [RegularExpression(@"^(?=.*[A-Z])(?=.*\d).{6,}$",
     ErrorMessage = "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number!")]
     public string NewPassword { get; set; } = string.Empty;
+
+    [Required]
+    [Compare("NewPassword")]
+    public string ConfirmNewPassword { get; set; } = string.Empty;
+
+    public string Token { get; set; } = default!;
   }
 
   public class AuthResponseDto

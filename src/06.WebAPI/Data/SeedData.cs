@@ -58,7 +58,7 @@ namespace MyApp.WebAPI.Data
       }
       else
       {
-        Console.WriteLine($"ℹUser {email} already exists.");
+        Console.WriteLine($"User {email} already exists.");
       }
     }
   }

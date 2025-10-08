@@ -45,6 +45,9 @@ namespace MyApp.WebAPI.Services
         };
       }
 
+      if (request.Password != request.ConfirmPassword)
+        throw new ValidationException("Passwords do not match.");
+
       var user = new User
       {
         UserName = request.Email,
@@ -209,15 +212,46 @@ namespace MyApp.WebAPI.Services
       return false;
     }
 
-    public async Task<bool> ChangePasswordAsync(ChangePasswordRequestDto request)
+    public async Task<bool> SendResetPasswordEmailAsync(ForgotPasswordRequestDto request)
     {
       var user = await _userManager.FindByEmailAsync(request.Email);
       if (user == null)
-        throw new Exception("Email not registered.");
+        throw new NotFoundException("Email not registered.");
 
-      var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+      // Generate reset password token
+      var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+      // Normally you'd send this via email
+      // For now, log it or return it for testing
+      // TODO: Use IEmailService to send email with token
+      Console.WriteLine($"Reset password token for {request.Email}: {token}");
+
+      return true;
+    }
+
+    public async Task<bool> ResetPasswordAsync(ResetPasswordRequestDto request)
+    {
+      var user = await _userManager.FindByEmailAsync(request.Email);
+      if (user == null)
+        throw new NotFoundException("Email not registered.");
+
+      var isSamePassword = await _userManager.CheckPasswordAsync(user, request.NewPassword);
+      if (isSamePassword)
+        throw new ValidationException("New password cannot be the same as your old password.");
+
+      if (request.NewPassword != request.ConfirmNewPassword)
+        throw new ValidationException("Passwords do not match.");
+
+      var result = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
       if (!result.Succeeded)
-        throw new Exception(string.Join("; ", result.Errors.Select(e => e.Description)));
+      {
+        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+        throw new ValidationException("RESET_FAILED", errors);
+      }
+
+      user.RefreshToken = null;
+      user.ExpiresAt = DateTime.UtcNow;
+      await _userManager.UpdateAsync(user);
 
       return true;
     }
