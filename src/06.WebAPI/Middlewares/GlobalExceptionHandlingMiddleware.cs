@@ -100,6 +100,12 @@ namespace MyApp.WebAPI.Middlewares
               StackTrace = _environment.IsDevelopment() ? validationException.StackTrace : null
             };
           }
+
+          if (apiException is ForbiddenException)
+          {
+            _logger.LogWarning("Forbidden access detected. TraceId: {TraceId}", traceId);
+          }
+
           break;
 
         // ===== ARGUMENT NULL EXCEPTION =====

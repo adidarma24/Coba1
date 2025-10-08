@@ -12,8 +12,8 @@ using MyApp.WebAPI.Data;
 namespace MyApp.WebAPI.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251005125617_Update_InvoiceMenuCourse_Relationship")]
-    partial class Update_InvoiceMenuCourse_Relationship
+    [Migration("20251007201551_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,139 @@ namespace MyApp.WebAPI.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
+
+                    b.ToTable("Roles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("RoleClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserClaims", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("LoginProvider", "ProviderKey");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("UserLogins", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "RoleId");
+
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("UserRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserId", "LoginProvider", "Name");
+
+                    b.ToTable("UserTokens", (string)null);
+                });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Category", b =>
                 {
@@ -102,14 +235,14 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<int>("TotalCourse")
                         .HasColumnType("int");
 
-                    b.Property<double>("TotalPrice")
+                    b.Property<decimal>("TotalPrice")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserIdRef")
                         .HasColumnType("int");
 
                     b.HasKey("InvoiceId");
@@ -117,7 +250,7 @@ namespace MyApp.WebAPI.Migrations
                     b.HasIndex("NoInvoice")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserIdRef");
 
                     b.ToTable("Invoices");
                 });
@@ -177,9 +310,9 @@ namespace MyApp.WebAPI.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<double>("Price")
+                    b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
-                        .HasColumnType("float(18)");
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -199,43 +332,43 @@ namespace MyApp.WebAPI.Migrations
                             MenuCourseId = 1,
                             CategoryId = 1,
                             CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Fresh tomato soup with basil.",
-                            Image = "tomato_soup.jpg",
-                            Name = "Tomato Soup",
-                            Price = 5.9900000000000002,
+                            Description = "Tom Yum dari Thailand",
+                            Image = "tomyum.jpg",
+                            Name = "Tom Yum Thailand",
+                            Price = 450000m,
                             UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             MenuCourseId = 2,
-                            CategoryId = 1,
+                            CategoryId = 2,
                             CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Creamy mushroom soup.",
-                            Image = "mushroom_soup.jpg",
-                            Name = "Mushroom Soup",
-                            Price = 6.4900000000000002,
+                            Description = "Minuman rasa strawberry",
+                            Image = "strawberry_float.jpg",
+                            Name = "Strawberry Float",
+                            Price = 150000m,
                             UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             MenuCourseId = 3,
-                            CategoryId = 1,
+                            CategoryId = 3,
                             CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Classic chicken noodle soup.",
-                            Image = "chicken_soup.jpg",
-                            Name = "Chicken Soup",
-                            Price = 7.4900000000000002,
+                            Description = "Chocholate Cookies",
+                            Image = "cookies.jpg",
+                            Name = "Chocholate Cookies",
+                            Price = 200000m,
                             UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
                             MenuCourseId = 4,
-                            CategoryId = 2,
+                            CategoryId = 1,
                             CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Rich dark chocolate cake.",
-                            Image = "chocolate_cake.jpg",
-                            Name = "Chocolate Cake",
-                            Price = 4.9900000000000002,
+                            Description = "Soto Banjar Limau Kuit",
+                            Image = "greentea_cheesecake.jpg",
+                            Name = "Soto Banjar Limau Kuit",
+                            Price = 150000m,
                             UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -243,10 +376,10 @@ namespace MyApp.WebAPI.Migrations
                             MenuCourseId = 5,
                             CategoryId = 2,
                             CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Creamy New York-style cheesecake.",
+                            Description = "Green Tea Cheesecake",
                             Image = "cheesecake.jpg",
-                            Name = "Cheesecake",
-                            Price = 5.4900000000000002,
+                            Name = "Green Tea Cheesecake",
+                            Price = 400000m,
                             UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
@@ -254,10 +387,10 @@ namespace MyApp.WebAPI.Migrations
                             MenuCourseId = 6,
                             CategoryId = 3,
                             CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Tart filled with custard and fresh fruit.",
-                            Image = "fruit_tart.jpg",
-                            Name = "Fruit Tart",
-                            Price = 4.79,
+                            Description = "Spagetti",
+                            Image = "spagetti.jpg",
+                            Name = "Italian Spagetti Bolognese",
+                            Price = 450000m,
                             UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });
                 });
@@ -440,20 +573,20 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MenuCourseId")
+                    b.Property<int>("MSId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserIdRef")
                         .HasColumnType("int");
 
                     b.HasKey("MyClassId");
 
-                    b.HasIndex("MenuCourseId");
+                    b.HasIndex("MSId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserIdRef");
 
                     b.ToTable("MyClasses");
                 });
@@ -562,84 +695,151 @@ namespace MyApp.WebAPI.Migrations
 
             modelBuilder.Entity("MyApp.WebAPI.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
-                        .IsRequired()
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Role")
-                        .HasColumnType("int");
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("RefreshToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.HasKey("UserId");
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
-                    b.ToTable("Users");
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
 
-                    b.HasData(
-                        new
-                        {
-                            UserId = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "admin@example.com",
-                            Name = "Admin User",
-                            Password = "hashed_password_1",
-                            Role = 0,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            UserId = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "alice@example.com",
-                            Name = "Alice",
-                            Password = "hashed_password_2",
-                            Role = 1,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            UserId = 3,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "bob@example.com",
-                            Name = "Bob",
-                            Password = "hashed_password_3",
-                            Role = 1,
-                            Status = 1,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
+
+                    b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
+                {
+                    b.HasOne("MyApp.WebAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
+                {
+                    b.HasOne("MyApp.WebAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MyApp.WebAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
+                {
+                    b.HasOne("MyApp.WebAPI.Models.User", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Invoice", b =>
                 {
                     b.HasOne("MyApp.WebAPI.Models.User", "User")
                         .WithMany("Invoices")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserIdRef")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -697,19 +897,19 @@ namespace MyApp.WebAPI.Migrations
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MyClass", b =>
                 {
-                    b.HasOne("MyApp.WebAPI.Models.MenuCourse", "MenuCourse")
+                    b.HasOne("MyApp.WebAPI.Models.MenuCourseSchedule", "MenuCourseSchedule")
                         .WithMany("MyClasses")
-                        .HasForeignKey("MenuCourseId")
+                        .HasForeignKey("MSId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyApp.WebAPI.Models.User", "User")
                         .WithMany("MyClasses")
-                        .HasForeignKey("UserId")
+                        .HasForeignKey("UserIdRef")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MenuCourse");
+                    b.Navigation("MenuCourseSchedule");
 
                     b.Navigation("User");
                 });
@@ -727,13 +927,13 @@ namespace MyApp.WebAPI.Migrations
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourse", b =>
                 {
                     b.Navigation("MenuCourseSchedules");
-
-                    b.Navigation("MyClasses");
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourseSchedule", b =>
                 {
                     b.Navigation("InvoiceMenuCourses");
+
+                    b.Navigation("MyClasses");
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Schedule", b =>

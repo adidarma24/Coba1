@@ -1,6 +1,5 @@
 namespace MyApp.WebAPI.DTOs
 {
-  // to get all invoice
   public class InvoiceDTO
   {
     public int InvoiceId { get; set; }
@@ -10,9 +9,9 @@ namespace MyApp.WebAPI.DTOs
     public decimal TotalPrice { get; set; }
   }
 
-  // to get detail invoice
   public class DetailInvoiceDTO
   {
+    public int UserIdRef { get; set; }
     public int InvoiceId { get; set; }
     public string NoInvoice { get; set; } = string.Empty;
     public DateTime Date { get; set; }
@@ -32,7 +31,6 @@ namespace MyApp.WebAPI.DTOs
 
   public class CreateInvoiceDTO
   {
-    public int UserId { get; set; }
     public List<int> MSId { get; set; } = new List<int>();
   }
 }

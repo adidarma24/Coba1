@@ -1,13 +1,14 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MyApp.WebAPI.Models;
 
 namespace MyApp.WebAPI.Data
 {
-  public class AppDbContext : DbContext
+  public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
   {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-    public DbSet<User> Users { get; set; }
     public DbSet<Invoice> Invoices { get; set; }
     public DbSet<InvoiceMenuCourse> InvoiceMenuCourses { get; set; }
     public DbSet<MenuCourse> MenuCourses { get; set; }
@@ -17,19 +18,26 @@ namespace MyApp.WebAPI.Data
     public DbSet<MenuCourseSchedule> MenuCourseSchedules { get; set; }
     public DbSet<MyClass> MyClasses { get; set; }
 
+
     public override int SaveChanges()
     {
       var entries = ChangeTracker.Entries()
-          .Where(e => e.Entity is BaseModel && (
-              e.State == EntityState.Added ||
-              e.State == EntityState.Modified));
+        .Where(e => e.Entity is BaseModel || e.Entity is User)
+        .ToList();
 
       foreach (var entry in entries)
       {
-        ((BaseModel)entry.Entity).UpdatedAt = DateTime.UtcNow;
-
         if (entry.State == EntityState.Added)
-          ((BaseModel)entry.Entity).CreatedAt = DateTime.UtcNow;
+        {
+          if (entry.Property("CreatedAt") != null)
+            entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
+        }
+
+        if (entry.State == EntityState.Modified)
+        {
+          if (entry.Property("UpdatedAt") != null)
+            entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+        }
       }
 
       return base.SaveChanges();
@@ -38,15 +46,22 @@ namespace MyApp.WebAPI.Data
     public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
       var entries = ChangeTracker.Entries()
-          .Where(e => e.Entity is BaseModel && (
-              e.State == EntityState.Added ||
-              e.State == EntityState.Modified));
+        .Where(e => e.Entity is BaseModel || e.Entity is User)
+        .ToList();
 
       foreach (var entry in entries)
       {
-        ((BaseModel)entry.Entity).UpdatedAt = DateTime.UtcNow;
         if (entry.State == EntityState.Added)
-          ((BaseModel)entry.Entity).CreatedAt = DateTime.UtcNow;
+        {
+          if (entry.Property("CreatedAt") != null)
+            entry.Property("CreatedAt").CurrentValue = DateTime.UtcNow;
+        }
+
+        if (entry.State == EntityState.Modified)
+        {
+          if (entry.Property("UpdatedAt") != null)
+            entry.Property("UpdatedAt").CurrentValue = DateTime.UtcNow;
+        }
       }
 
       return await base.SaveChangesAsync(cancellationToken);
@@ -55,6 +70,8 @@ namespace MyApp.WebAPI.Data
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
       base.OnModelCreating(modelBuilder);
+
+      ConfigureUser(modelBuilder);
 
       ConfigurePrimaryKey(modelBuilder);
 
@@ -65,6 +82,17 @@ namespace MyApp.WebAPI.Data
       ConfigureIndexes(modelBuilder);
 
       SeedData(modelBuilder);
+    }
+
+    private void ConfigureUser(ModelBuilder modelBuilder)
+    {
+      modelBuilder.Entity<User>(entity => { entity.ToTable("Users"); });
+      modelBuilder.Entity<IdentityRole<int>>(entity => { entity.ToTable("Roles"); });
+      modelBuilder.Entity<IdentityUserRole<int>>(entity => { entity.ToTable("UserRoles"); });
+      modelBuilder.Entity<IdentityUserClaim<int>>(entity => { entity.ToTable("UserClaims"); });
+      modelBuilder.Entity<IdentityUserLogin<int>>(entity => { entity.ToTable("UserLogins"); });
+      modelBuilder.Entity<IdentityRoleClaim<int>>(entity => { entity.ToTable("RoleClaims"); });
+      modelBuilder.Entity<IdentityUserToken<int>>(entity => { entity.ToTable("UserTokens"); });
     }
 
     private void ConfigurePrimaryKey(ModelBuilder modelBuilder)
@@ -81,7 +109,8 @@ namespace MyApp.WebAPI.Data
       modelBuilder.Entity<Invoice>()
                 .HasOne(i => i.User)
                 .WithMany(u => u.Invoices)
-                .HasForeignKey(i => i.UserId)
+                .HasForeignKey(i => i.UserIdRef)
+                .HasPrincipalKey(u => u.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
       modelBuilder.Entity<MenuCourse>()
@@ -117,14 +146,15 @@ namespace MyApp.WebAPI.Data
       modelBuilder.Entity<MyClass>()
                 .HasOne(mc => mc.User)
                 .WithMany(u => u.MyClasses)
-                .HasForeignKey(mc => mc.UserId)
+                .HasForeignKey(mc => mc.UserIdRef)
+                .HasPrincipalKey(u => u.Id)
                 .OnDelete(DeleteBehavior.Cascade);
 
       modelBuilder.Entity<MyClass>()
-                  .HasOne(mc => mc.MenuCourseSchedule)
-                  .WithMany(ms => ms.MyClasses)
-                  .HasForeignKey(mc => mc.MSId)
-                  .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(mc => mc.MenuCourseSchedule)
+                .WithMany(ms => ms.MyClasses)
+                .HasForeignKey(mc => mc.MSId)
+                .OnDelete(DeleteBehavior.Cascade);
     }
 
     private static void ConfigureDecimalPrecision(ModelBuilder modelBuilder)
@@ -207,42 +237,6 @@ namespace MyApp.WebAPI.Data
             CreatedAt = seedDate,
             UpdatedAt = seedDate
           }
-      );
-
-      modelBuilder.Entity<User>().HasData(
-        new User
-        {
-          UserId = 1,
-          Name = "Admin User",
-          Email = "admin@example.com",
-          Password = "hashed_password_1",
-          Role = UserRole.Admin,
-          Status = UserStatus.Active,
-          CreatedAt = seedDate,
-          UpdatedAt = seedDate
-        },
-        new User
-        {
-          UserId = 2,
-          Name = "Alice",
-          Email = "alice@example.com",
-          Password = "hashed_password_2",
-          Role = UserRole.User,
-          Status = UserStatus.Active,
-          CreatedAt = seedDate,
-          UpdatedAt = seedDate
-        },
-        new User
-        {
-          UserId = 3,
-          Name = "Bob",
-          Email = "bob@example.com",
-          Password = "hashed_password_3",
-          Role = UserRole.User,
-          Status = UserStatus.Inactive,
-          CreatedAt = seedDate,
-          UpdatedAt = seedDate
-        }
       );
 
       modelBuilder.Entity<MenuCourse>().HasData(

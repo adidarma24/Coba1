@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyApp.WebAPI.DTOs;
 using MyApp.WebAPI.Models;
@@ -17,15 +18,14 @@ namespace MyApp.WebAPI.Controllers
     }
 
     [HttpGet("user/{id}")]
-    public async Task<ActionResult<ApiResponse<PagedResult<MyClassDTO>>>> GetAllMyClassUser(
-      int id,
-      [FromQuery] int pageNumber = 1,
-      [FromQuery] int pageSize = 10
-    )
+    [Authorize]
+    [ProducesResponseType(typeof(ApiResponse<DetailInvoiceDTO>), 200)]
+    [ProducesResponseType(typeof(ErrorResponse), 404)]
+    public async Task<ActionResult<ApiResponse<IEnumerable<MyClassDTO>>>> GetAllMyClassUser(int id)
     {
-      var result = await _myClassService.GetAllMyClassUserAsync(id, pageNumber, pageSize);
+      var result = await _myClassService.GetAllMyClassUserAsync(id);
 
-      return Ok(new ApiResponse<PagedResult<MyClassDTO>>
+      return Ok(new ApiResponse<IEnumerable<MyClassDTO>>
       {
         Success = true,
         Data = result,

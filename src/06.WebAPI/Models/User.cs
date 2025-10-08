@@ -1,23 +1,20 @@
+using Microsoft.AspNetCore.Identity;
+
 namespace MyApp.WebAPI.Models
 {
-  public class User : BaseModel
+  public class User : IdentityUser<int>
   {
-    public int UserId { get; set; }
     public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public UserRole Role { get; set; } = UserRole.User;
     public UserStatus Status { get; set; } = UserStatus.Active;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+    // Refresh token untuk JWT authentication
+    public string? RefreshToken { get; set; }
+    public DateTime ExpiresAt { get; set; }
 
     public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
     public virtual ICollection<MyClass> MyClasses { get; set; } = new List<MyClass>();
-
-  }
-
-  public enum UserRole
-  {
-    Admin,
-    User
   }
 
   public enum UserStatus

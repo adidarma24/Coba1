@@ -1,12 +1,14 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
 using MyApp.WebAPI.Data;
 using MyApp.WebAPI.DTOs;
 using MyApp.WebAPI.Models;
 using MyApp.WebAPI.Exceptions;
 using MyApp.WebAPI.Extensions;
 using MyApp.WebAPI.Services.Interfaces;
+using System.Security.Claims;
 
 namespace MyApp.WebAPI.Services
 {
@@ -14,15 +16,33 @@ namespace MyApp.WebAPI.Services
   {
     private readonly AppDbContext _context;
     private readonly IMapper _mapper;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public InvoiceService(AppDbContext context, IMapper mapper)
+
+    public InvoiceService(AppDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
       _context = context;
       _mapper = mapper;
+      _httpContextAccessor = httpContextAccessor;
+    }
+
+    private int GetCurrentUserId()
+    {
+      var userIdClaim = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+      if (userIdClaim == null) throw new UnauthorizedAccessException("User not authenticated.");
+      return int.Parse(userIdClaim);
+    }
+
+    private bool IsAdmin()
+    {
+      return _httpContextAccessor.HttpContext?.User?.IsInRole("Admin") ?? false;
     }
 
     public async Task<PagedResult<InvoiceDTO>> GetAllInvoicesAsync(int pageNumber = 1, int pageSize = 10)
     {
+      if (!IsAdmin())
+        throw new ForbiddenException("Only administrators can access all invoices.");
+
       var invoices = _context.Invoices
                 .AsNoTracking()
                 .ProjectTo<InvoiceDTO>(_mapper.ConfigurationProvider);
@@ -30,39 +50,57 @@ namespace MyApp.WebAPI.Services
       return await invoices.ToPagedResultAsync(pageNumber, pageSize);
     }
 
-    public async Task<PagedResult<InvoiceDTO>> GetUserInvoicesAsync(int userId, int pageNumber = 1, int pageSize = 10)
+    public async Task<IEnumerable<InvoiceDTO>> GetUserInvoicesAsync(int userId)
     {
-      var invoices = _context.Invoices
-                .AsNoTracking()
-                .Where(i => i.UserId == userId)
-                .ProjectTo<InvoiceDTO>(_mapper.ConfigurationProvider);
+      var currentUserId = GetCurrentUserId();
+      var isAdmin = IsAdmin();
 
-      var pagedResult = await invoices.ToPagedResultAsync(pageNumber, pageSize);
+      if (!isAdmin && currentUserId != userId)
+        throw new ForbiddenException("You can only access your own invoices.");
 
-      if (!pagedResult.Items.Any())
+
+      var user = await _context.Users.AnyAsync(u => u.Id == userId);
+      if (!user)
         throw new NotFoundException($"User with ID {userId} not found");
 
-      return pagedResult;
+      var invoices = await _context.Invoices
+                .AsNoTracking()
+                .Where(i => i.UserIdRef == userId)
+                .ProjectTo<InvoiceDTO>(_mapper.ConfigurationProvider)
+                .ToListAsync();
+
+      return invoices;
     }
 
     public async Task<DetailInvoiceDTO?> GetInvoiceDetailAsync(int id)
     {
+      var currentUserId = GetCurrentUserId();
+      var isAdmin = IsAdmin();
+
       var invoice = await _context.Invoices
+              .Include(i => i.User)
               .Where(i => i.InvoiceId == id)
               .ProjectTo<DetailInvoiceDTO>(_mapper.ConfigurationProvider)
               .FirstOrDefaultAsync();
 
+
       if (invoice == null)
         throw new NotFoundException($"Invoice with ID {id} not found");
+
+      if (!isAdmin && invoice.UserIdRef != currentUserId)
+        throw new ForbiddenException("You can only access your own invoice details.");
+
 
       return invoice;
     }
 
     public async Task<object> CreateInvoiceAsync(CreateInvoiceDTO createInvoiceDTO)
     {
+      var currentUserId = GetCurrentUserId();
+
       // check user not found
-      var user = await _context.Users.FindAsync(createInvoiceDTO.UserId);
-      if (user == null) throw new NotFoundException("User not found.", new { createInvoiceDTO.UserId });
+      var user = await _context.Users.FindAsync(currentUserId);
+      if (user == null) throw new NotFoundException("User not found.");
 
       // check not select any course
       if (createInvoiceDTO.MSId == null || createInvoiceDTO.MSId.Count == 0)
@@ -93,7 +131,7 @@ namespace MyApp.WebAPI.Services
 
         // check if course already purchased
         var purchasedIds = await _context.MyClasses
-            .Where(mc => mc.UserId == user.UserId && createInvoiceDTO.MSId.Contains(mc.MSId))
+            .Where(mc => mc.UserIdRef == currentUserId && createInvoiceDTO.MSId.Contains(mc.MSId))
             .Select(mc => mc.MSId)
             .ToListAsync();
         if (purchasedIds.Count != 0)
@@ -138,7 +176,7 @@ namespace MyApp.WebAPI.Services
           Date = DateTime.UtcNow,
           TotalCourse = totalCourse,
           TotalPrice = totalPrice,
-          UserId = user.UserId
+          UserIdRef = currentUserId
         };
 
         _context.Invoices.Add(invoice);
@@ -158,7 +196,7 @@ namespace MyApp.WebAPI.Services
 
           var myClass = new MyClass
           {
-            UserId = user.UserId,
+            UserIdRef = currentUserId,
             MSId = schedule.MSId
           };
           _context.MyClasses.Add(myClass);
@@ -170,11 +208,11 @@ namespace MyApp.WebAPI.Services
         return new
         {
           invoiceId = invoice.InvoiceId,
-          invoiceNumber = invoice.NoInvoice,
+          noInvoice = invoice.NoInvoice,
           date = invoice.Date,
           totalCourse = invoice.TotalCourse,
           totalPrice = invoice.TotalPrice,
-          userId = invoice.UserId
+          userId = invoice.UserIdRef
         };
       }
       catch

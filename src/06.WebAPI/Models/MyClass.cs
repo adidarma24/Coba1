@@ -4,7 +4,7 @@ namespace MyApp.WebAPI.Models
   {
     public int MyClassId { get; set; }
 
-    public int UserId { get; set; }
+    public int UserIdRef { get; set; }
     public int MSId { get; set; }
 
     public virtual User User { get; set; } = null!;

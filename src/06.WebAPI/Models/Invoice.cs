@@ -8,7 +8,7 @@ namespace MyApp.WebAPI.Models
     public int TotalCourse { get; set; }
     public decimal TotalPrice { get; set; }
 
-    public int UserId { get; set; }
+    public int UserIdRef { get; set; }
 
     public virtual User User { get; set; } = null!;
     public virtual ICollection<InvoiceMenuCourse> InvoiceMenuCourses { get; set; } = new List<InvoiceMenuCourse>();
