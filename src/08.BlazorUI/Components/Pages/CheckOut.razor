@@ -4,12 +4,12 @@
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
-<PageTitle>Checkout</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Large" Class="pa-4">
 
   @* Checkbox Pilih Semua *@
   <MudPaper Elevation="0" Class="pa-4 mb-4 d-flex align-center">
+    @* Gunakan two-way binding ke properti SelectAll supaya checkbox "Pilih Semua" mengontrol semua item *@
     <MudCheckBox T="bool" @bind-Checked="SelectAll" Label=" Pilih Semua" />
   </MudPaper>
   <MudDivider Class="my-2" Style="border-top: 3px solid rgba(0,0,0,0.77);" />
@@ -51,12 +51,11 @@
   </MudPaper>
 
   @* Total Harga dan Tombol Bayar *@
-  <MudDivider Class="my-2" Style="border-top: 3px solid rgba(0,0,0,0.77); width: 100%;" />
-  <MudPaper Elevation="0" Class="d-flex flex-wrap justify-between align-center width: 100%;">
+  <MudPaper Elevation="0" Class="d-flex flex-wrap justify-between align-center pa-4 mt-6">
     <MudText Typo="Typo.subtitle1" Class="mr-4">Total Price</MudText>
     <MudText Typo="Typo.h6" Color="Color.Warning">IDR @_totalPrice.ToString("N2")</MudText>
     <MudSpacer />
-    <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="black-text px-12 py-2 rounded-lg mt-2 mt-sm-0"
+    <MudButton Variant="Variant.Filled" Color="Color.Warning" Class="px-12 py-2 rounded-lg mt-2 mt-sm-0"
       OnClick="@OpenPayment">
       Pay Now
     </MudButton>
@@ -115,15 +114,10 @@ ImageUrl="images/image16.svg"},
     }
 
     var parameters = new DialogParameters { ["TotalPrice"] = _totalPrice };
-    var options = new DialogOptions
-    {
-      CloseButton = true,
-      MaxWidth = MaxWidth.Small,
-      FullWidth = true,
-    };
+    var options = new DialogOptions { CloseButton = false, MaxWidth = MaxWidth.Small, FullWidth = true };
 
     // Use ShowAsync (recommended) and consider a null Data as cancellation
-    var dialogRef = await DialogService.ShowAsync<PaymentMethod>("Select Payment Method", parameters, options);
+    var dialogRef = await DialogService.ShowAsync<PaymentMethod>("Pilih Metode Pembayaran", parameters, options);
     var result = await dialogRef.Result;
 
     if (result?.Data != null)

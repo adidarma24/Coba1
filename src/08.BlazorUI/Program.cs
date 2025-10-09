@@ -1,5 +1,6 @@
 using MudBlazor.Services;
-using MyApp.BlazorUI.Components;
+using MyApp.BlazorUI.Components;    
+using MyApp.BlazorUI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,6 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddMudServices();
+builder.Services.AddSingleton<CartService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,94 @@
+@page "/menu/detail"
+@using MudBlazor
+
+<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge"
+    Class="pa-0 d-flex flex-column justify-center align-center mud-width-full">
+    <MudPaper Class="d-flex flex-column py-10 px-20 mud-width-full">
+        <MudPaper Class="d-flex flex-row gap-4" Elevation="0">
+            <MudImage Fluid="true" Src="/images/menu/tomyum.svg" Width="400" Height="266" Alt="" Elevation="25"
+                Class="rounded-none" ObjectFit="ObjectFit.Cover" />
+            <MudPaper Class="d-flex flex-column mud-width-full" Elevation="0">
+                <MudText Style="color:#828282" Typo="Typo.body1">Asian</MudText>
+                <MudText Style="color:black; font-weight:600;" Typo="Typo.h5">Tom Yum Thailand</MudText>
+                <MudText Style="color:#5B4947; font-weight:600;" Typo="Typo.h5">IDR 450.000</MudText>
+                <MudSelect Style="width:50%;" Class="mt-6" T="string" FitContent="true" Label="Select Schedule"
+                    Variant="Variant.Outlined">
+                    @foreach (var date in _Dates)
+                    {
+                        <MudSelectItem class="p-2" Value="@date">@date</MudSelectItem>
+                    }
+                </MudSelect>
+                <MudItem class="d-flex flex-row mud-width-full gap-4">
+                    <MudButton Style="width:40%; background-color:white; color:black;" Class="rounded-lg"
+                        Variant="Variant.Outlined">
+                        Add to Cart
+                    </MudButton>
+                    <MudButton Style="width:40%; background-color:#FABC1D; color:black;" Class="rounded-lg"
+                        Variant="Variant.Text">
+                        Buy Now
+                    </MudButton>
+                </MudItem>
+            </MudPaper>
+        </MudPaper>
+        <MudPaper Elevation="0" Class="d-flex flex-column mt-10 gap-4">
+            <MudText Typo="Typo.h5" Style="font-weight:600">
+                Description
+            </MudText>
+            <MudText Typo="Typo.body1">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt mollit anim id est laborum.
+            </MudText>
+            <MudText Typo="Typo.body1">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+                dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip
+                ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu
+                fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
+                deserunt mollit anim id est laborum.
+            </MudText>
+        </MudPaper>
+    </MudPaper>
+
+    <MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="px-3 my-20 px-20">
+        <MudText Typo="Typo.h5" Align="Align.Center" Class="fw-semibold mt-6 mb-6" Style="color:#5B4947;">
+            Another menu in this class
+        </MudText>
+
+        <MudGrid Class="my-20" Gutter="3">
+            @foreach (var item in MenuItems)
+            {
+                <MudItem xs="12" sm="6" md="4" lg="4">
+                    <MudCard Class="h-100" Elevation="0">
+                        <MudCardMedia Image="@item.ImageUrl" Height="180" Class="object-cover" />
+                        <MudCardContent>
+                            <MudText Typo="Typo.caption">@item.Category</MudText>
+                            <MudText Typo="Typo.h6">@item.Name</MudText>
+                            <MudText Class="mt-4" Style="color:#FABC1D;">@item.Price</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </MudItem>
+            }
+        </MudGrid>
+    </MudContainer>
+</MudContainer>
+
+@code {
+    private List<string> _Dates = new() { "Monday, 25 July 2022", "Tuesday, 26 July 2022", "Wednesday, 27 July 2022",
+"Thursday, 28 July 2022", "Friday, 29 July 2022", "Saturday, 30 July 2022" };
+
+    public record Menu(string Category, string Name, string Price, string ImageUrl);
+
+    List<Menu> MenuItems = new()
+{
+new ("Asian", "Sushi Salmon with Mentai", "IDR 200.000", "images/menu/sushi.svg"),
+new ("Asian", "Ichiraku Ramen", "IDR 350.000", "images/menu/ramen.svg"),
+new ("Asian", "Beef Rendang Sapi", "IDR 200.000", "images/menu/rendang.svg"),
+new ("Asian", "Pempek Palembang", "IDR 60.000", "images/menu/pempek.svg"),
+new ("Asian", "Soto Betawi Limau Kast", "IDR 120.000", "images/menu/soto.svg"),
+new ("Asian", "Takoyaki Deluxe", "IDR 150.000", "images/menu/takoyaki.svg"),
+new ("Asian", "Jajangmeyon", "IDR 150.000", "images/menu/jajangmeyon.svg"),
+new ("Asian", "Sate Padang", "IDR 300.000", "images/menu/sate.svg"),
+};
+}

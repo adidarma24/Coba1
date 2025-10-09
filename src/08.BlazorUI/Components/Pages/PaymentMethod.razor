@@ -1,6 +1,6 @@
 @using MudBlazor
 
-<MudDialogContent>
+<div class="mud-dialog-content">
   <MudStack Spacing="2">
     @foreach (var method in PaymentMethods)
     {
@@ -15,9 +15,9 @@
       </MudItem>
     }
   </MudStack>
-</MudDialogContent>
+</div>
 
-<MudDialogActions Class="mud-dialog-actions d-flex justify-center">
+<div class="mud-dialog-actions d-flex justify-center mud-dialog-actions">
   <MudButton Variant="Variant.Outlined" Color="Color.Default" OnClick="Cancel" Class="action-btn cancel-btn">
     Cancel
   </MudButton>
@@ -25,16 +25,19 @@
     Disabled="@(string.IsNullOrEmpty(SelectedMethod))" Class="action-btn pay-btn ml-3" Style="color:black;">
     Pay Now
   </MudButton>
-</MudDialogActions>
+</div>
 
 @code {
-  [CascadingParameter] object? MudDialogObj { get; set; }
+  // [PERUBAHAN] Menggunakan MudDialogInstance untuk interaksi dialog yang lebih aman dan bersih.
+  [CascadingParameter]
+  public dynamic? MudDialog { get; set; }
 
   [Parameter] public decimal TotalPrice { get; set; }
 
   private string? SelectedMethod { get; set; }
 
-  private List<(string Name, string Icon)> PaymentMethods = new()
+  // Daftar metode pembayaran tidak berubah
+  private List<(string Name, string Icon)> PaymentMethods = new()
 {
 ("Gopay", "images/payment/gopay.svg"),
 ("OVO", "images/payment/ovo.svg"),
@@ -44,43 +47,31 @@
 ("BNI", "images/payment/bni.svg"),
 };
 
-  private void SetSelectedMethod(string method) => SelectedMethod = method;
-
-  private void SelectMethod(string method)
+  private void SetSelectedMethod(string method)
   {
-    if (MudDialogObj is not null)
-    {
-      dynamic d = MudDialogObj;
-      try { d.Close(DialogResult.Ok(method)); } catch { }
-    }
+    SelectedMethod = method;
+  }
+ 
+  // [PERUBAHAN] Fungsi Cancel menjadi lebih sederhana.
+  private void Cancel()
+  {
+    // Cukup panggil MudDialog.Cancel() untuk menutup dialog sebagai "dibatalkan".
+    MudDialog?.Cancel();
   }
 
-  private void Cancel()
+  // [PERUBAHAN] Fungsi ConfirmPayNow juga menjadi lebih sederhana.
+  private void ConfirmPayNow()
   {
-    if (MudDialogObj is not null)
+    if (!string.IsNullOrEmpty(SelectedMethod))
     {
-      dynamic d = MudDialogObj;
-      try { d.Close(DialogResult.Cancel()); } catch { }
+      // Gunakan MudDialog.Close() untuk menutup dialog dan mengembalikan data.
+      MudDialog?.Close(global::MudBlazor.DialogResult.Ok(SelectedMethod));
     }
-  }
-
-  private void ConfirmPayNow()
-  {
-    if (string.IsNullOrEmpty(SelectedMethod))
-    {
-      // If no method is selected, you might want to show a message or just close with a generic result
-      // For now, let's assume if it's not selected, we don't proceed with a specific method.
-      // In Image 2, "Pay Now" is enabled even without a selection, but the image implies a selection has been made.
-      // If you want "Pay Now" always enabled and then handle selection later, remove the Disabled condition.
-      SelectMethod("PayNow"); // Or handle as an error/prompt for selection
-      return;
-    }
-
-    SelectMethod(SelectedMethod);
   }
 }
 
 <style>
+  /* Semua style Anda tetap sama karena sudah sesuai dengan tampilan yang diinginkan */
   .payment-option {
     display: flex;
     align-items: center;
@@ -96,9 +87,7 @@
 
   .payment-option.selected-method {
     background-color: #fff6df;
-    /* Warna latar belakang kuning muda saat terpilih */
     border: 1px solid #f2b705;
-    /* Border kuning saat terpilih */
   }
 
   .icon-circle {
@@ -135,17 +124,13 @@
 
   .cancel-btn {
     border: 1px solid #4b2e2e;
-    /* Border merah marun */
     color: #4b2e2e;
-    /* Warna teks merah marun */
     background: #fff;
   }
 
   .pay-btn {
     background-color: #f2b705;
-    /* Warna latar belakang kuning cerah */
     color: #000;
-    /* Warna teks hitam */
     font-weight: 600;
   }
 
@@ -156,19 +141,14 @@
     gap: 12px;
   }
 
-  /* Center the dialog title to match the design */
   .mud-dialog-title {
     text-align: center;
     width: 100%;
     font-weight: 600;
   }
 
-  /* Override MudBlazor's default dialog width to make it smaller as in Image 2 */
-  /* You might need to adjust these values based on your exact layout */
   .mud-dialog {
     max-width: 400px !important;
-    /* Contoh, sesuaikan lebar ini */
     width: 90% !important;
-    /* Agar responsif */
   }
 </style>
