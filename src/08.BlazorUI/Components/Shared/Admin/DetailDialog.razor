@@ -1,0 +1,89 @@
+<MudDialog>
+  <TitleContent>
+    <MudText Typo="Typo.h6">Detail Invoice</MudText>
+    <MudGrid>
+      <MudItem xs="12" sm="6" Class="mt-5 d-flex gap-8">
+        <MudItem>
+          <MudText>No. Invoice: </MudText>
+          <MudText>Date: </MudText>
+        </MudItem>
+        <MudItem>
+          <MudText>SOU00003</MudText>
+          <MudText>12 June 2022</MudText>
+        </MudItem>
+      </MudItem>
+      <MudItem xs="12" sm="6" Class="mt-5 d-flex justify-end align-end gap-8">
+        <MudText Typo="Typo.body1" Style="font-weight: 700;">Total Price</MudText>
+        <MudText Typo="Typo.body1" Style="font-weight: 700;">IDR 450.000</MudText>
+      </MudItem>
+    </MudGrid>
+  </TitleContent>
+  <DialogContent>
+    <MudTable Items="@invoice" FixedHeader="true" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading"
+      LoadingProgressColor="Color.Info" Class="mt-3">
+      <HeaderContent>
+        <MudTh Class="thead">No</MudTh>
+        <MudTh Class="thead">Course Name</MudTh>
+        <MudTh Class="thead">Type</MudTh>
+        <MudTh Class="thead">Schedule</MudTh>
+        <MudTh Class="thead">Price</MudTh>
+      </HeaderContent>
+      <RowTemplate>
+        <MudTd DataLabel="No">@context.No</MudTd>
+        <MudTd DataLabel="Course Name">@context.CourseName</MudTd>
+        <MudTd DataLabel="Type">@context.Type</MudTd>
+        <MudTd DataLabel="Schedule">@context.schedule.ToString("dddd, dd MMMM yyyy")</MudTd>
+        <MudTd DataLabel="Price">
+          @("IDR " + context.Price.ToString("N0", new System.Globalization.CultureInfo("id-ID")))
+        </MudTd>
+      </RowTemplate>
+      <PagerContent>
+        <MudTablePager />
+      </PagerContent>
+    </MudTable>
+  </DialogContent>
+  <DialogActions>
+    <MudButton Color="Color.Primary" OnClick="Submit">OK</MudButton>
+  </DialogActions>
+</MudDialog>
+
+@code {
+  [CascadingParameter]
+  private IMudDialogInstance MudDialog { get; set; }
+
+  private void Submit() => MudDialog.Close(DialogResult.Ok(true));
+
+  private void Cancel() => MudDialog.Cancel();
+
+  private bool _loading;
+  private IEnumerable<InvoiceModel> invoice = new List<InvoiceModel>
+{
+new InvoiceModel
+{
+No = 1,
+CourseName = "Tom Yum Thailand",
+Type = "Asian",
+schedule = new DateTime(2023, 5, 20),
+Price = 450000m
+},
+};
+
+  public class InvoiceModel
+  {
+    public int No { get; set; }
+    public string CourseName { get; set; } = string.Empty;
+    public string Type { get; set; } = string.Empty;
+    public DateTime schedule { get; set; }
+    public decimal Price { get; set; }
+  }
+}
+
+<style>
+  .mud-table-head th {
+    background-color: #dbffdd !important;
+  }
+
+  .thead {
+    text-align: center;
+  }
+</style>

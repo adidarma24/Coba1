@@ -1,0 +1,159 @@
+@page "/admin-user"
+@layout AdminLayout
+@using MyApp.BlazorUI.Components.Shared.Admin
+@inject IDialogService DialogService
+
+
+<PageTitle>Dashboard</PageTitle>
+
+<MudPaper Elevation="1" Style="padding: 1rem; height: calc(100vh - 8rem);">
+  <MudText Typo="Typo.h4" Style="padding: 0 0 1rem 0;">User Management</MudText>
+
+  <MudButton OnClick="OpenDialogAddUserAsync" Variant="Variant.Filled" Class="rounded-lg btn-add">
+    Add User
+  </MudButton>
+
+  <MudTable Items="@User" Height="26rem" FixedHeader="true" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading"
+    LoadingProgressColor="Color.Info" Class="mt-5">
+    <HeaderContent>
+      <MudTh Class="t">Email</MudTh>
+      <MudTh Class="t">Name</MudTh>
+      <MudTh Class="t">Role</MudTh>
+      <MudTh Class="t">Status</MudTh>
+      <MudTh Class="t">Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd Class="t" DataLabel="Email">@context.Email</MudTd>
+      <MudTd Class="t" DataLabel="Name">@context.Name</MudTd>
+      <MudTd Class="t" DataLabel="Role">@context.Role</MudTd>
+      <MudTd Class="t" DataLabel="Status">
+        @if (context.Status == UserStatus.Active)
+        {
+          <MudChip T="UserStatus" Color="Color.Success" Variant="Variant.Filled">Active</MudChip>
+        }
+        else
+        {
+          <MudChip T="UserStatus" Color="Color.Error" Variant="Variant.Filled">Inactive</MudChip>
+        }
+      </MudTd>
+      <MudTd Class="t" DataLabel="Action">
+        <MudButton OnClick="@(() => OpenDialogEditUserAsync(context))" Variant="Variant.Filled"
+          Class="rounded-lg btn-edit">
+          Edit
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+    <PagerContent>
+      <MudTablePager />
+    </PagerContent>
+  </MudTable>
+
+</MudPaper>
+
+@code {
+  private bool _loading;
+  private IEnumerable<UserModel> User = new List<UserModel>
+{
+new UserModel
+{
+Email = "admin@dlanguage.com",
+Name = "Super Admin",
+Role = UserRole.Admin,
+Status = UserStatus.Active
+},
+new UserModel
+{
+Email = "nurimamiskandar@gmail.com",
+Name = "Nur Imam Iskandar",
+Role = UserRole.User,
+Status = UserStatus.Active
+},
+new UserModel
+{
+Email = "imam.stmik15@gmail.com",
+Name = "Iskandar",
+Role = UserRole.User,
+Status = UserStatus.Active
+},
+new UserModel
+{
+Email = "iniemaildummysaya@gmail.com",
+Name = "Dummy User",
+Role = UserRole.User,
+Status = UserStatus.Inactive
+},
+new UserModel
+{
+Email = "yusrisahrul.works@gmail.com",
+Name = "yusri sahrul",
+Role = UserRole.User,
+Status = UserStatus.Active
+},
+new UserModel
+{
+Email = "yusribootcamp@gmail.com",
+Name = "yusri sahrul test",
+Role = UserRole.Admin,
+Status = UserStatus.Active
+}
+};
+
+  private Task OpenDialogAddUserAsync()
+  {
+    var options = new DialogOptions
+    {
+      CloseOnEscapeKey = true,
+      MaxWidth = MaxWidth.Medium,
+      FullWidth = true
+    };
+
+    return DialogService.ShowAsync<AddUserDialog>("Add User", options);
+  }
+
+  private Task OpenDialogEditUserAsync(UserModel user)
+  {
+    var options = new DialogOptions
+    {
+      CloseOnEscapeKey = true,
+      MaxWidth = MaxWidth.Medium,
+      FullWidth = true
+    };
+
+    var parameters = new DialogParameters
+{
+{ "User", user }
+};
+
+    return DialogService.ShowAsync<EditUserDialog>("Edit User", parameters, options);
+  }
+}
+
+<style>
+  .btn-add {
+    background-color: green;
+    text-transform: none;
+    color: white;
+  }
+
+  .btn-add:hover {
+    background-color: green;
+  }
+
+  .btn-edit {
+    background-color: #fabc1d;
+    text-transform: none;
+    color: white;
+  }
+
+  .btn-edit:hover {
+    background-color: #fabc1d;
+  }
+
+  .mud-table-head th {
+    background-color: #dbffdd !important;
+  }
+
+  .t {
+    text-align: center;
+  }
+</style>

@@ -1,0 +1,171 @@
+@page "/admin-payment"
+@using MyApp.BlazorUI.Components.Shared.Admin
+@layout AdminLayout
+@inject IDialogService DialogService
+
+<PageTitle>Dashboard</PageTitle>
+
+<MudPaper Elevation="1" Style="padding: 1rem; max-height: calc(100vh - 8rem);">
+  <MudText Typo="Typo.h4" Style="padding: 0 0 1rem 0;">Payment Method</MudText>
+
+  <MudButton OnClick="OpenDialogAddPaymentAsync" Variant="Variant.Filled" Class="rounded-lg btn-add">
+    Add Payment Method
+  </MudButton>
+
+  <MudTable Items="@Payment" Height="26rem" FixedHeader="true" Hover="true" Breakpoint="Breakpoint.Sm"
+    Loading="@_loading" LoadingProgressColor="Color.Info" Class="mt-5">
+    <HeaderContent>
+      <MudTh Class="t">Id</MudTh>
+      <MudTh Class="t">Name</MudTh>
+      <MudTh Class="t">Logo</MudTh>
+      <MudTh Class="t">Status</MudTh>
+      <MudTh Class="t">Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+      <MudTd Class="t" DataLabel="Id">@context.Id</MudTd>
+      <MudTd Class="t" DataLabel="Name">@context.Name</MudTd>
+      <MudTd Class="t" DataLabel="Logo">
+        <MudPaper Elevation="0" Class="d-flex justify-center align-center gap-3" Style="background-color: transparent;">
+          <MudImage Src="@context.Logo" Width="30" Height="30" />
+          <MudText>@context.Name</MudText>
+        </MudPaper>
+      </MudTd>
+      <MudTd Class="t" DataLabel="Status">
+        @if (context.Status == PaymentStatus.Active)
+        {
+          <MudChip T="PaymentStatus" Color="Color.Success" Variant="Variant.Filled">Active</MudChip>
+        }
+        else
+        {
+          <MudChip T="PaymentStatus" Color="Color.Error" Variant="Variant.Filled">Inactive</MudChip>
+        }
+      </MudTd>
+      <MudTd Class="t" DataLabel="Action">
+        <MudButton OnClick="@(() => OpenDialogEditPaymentAsync(context))" Variant="Variant.Filled"
+          Class="rounded-lg btn-edit">
+          Edit
+        </MudButton>
+      </MudTd>
+    </RowTemplate>
+    <PagerContent>
+      <MudTablePager />
+    </PagerContent>
+  </MudTable>
+
+</MudPaper>
+
+@code {
+  private bool _loading;
+
+  private IEnumerable<PaymentModel> Payment = new List<PaymentModel>
+{
+new PaymentModel
+{
+Id = "1",
+Name = "Dana",
+Logo = "/images/payment/Logo_DANA.svg",
+Status = PaymentStatus.Active
+},
+new PaymentModel
+{
+Id = "2",
+Name = "Gopay",
+Logo = "/images/payment/Logo_GOPAY.svg",
+Status = PaymentStatus.Active
+},
+new PaymentModel
+{
+Id = "3",
+Name = "BCA",
+Logo = "/images/payment/Logo_BCA.svg",
+Status = PaymentStatus.Active
+},
+new PaymentModel
+{
+Id = "4",
+Name = "BRI",
+Logo = "/images/payment/Logo_BRI.svg",
+Status = PaymentStatus.Inactive
+},
+new PaymentModel
+{
+Id = "5",
+Name = "Mandiri",
+Logo = "/images/payment/Logo_MANDIRI.svg",
+Status = PaymentStatus.Active
+},
+new PaymentModel
+{
+Id = "6",
+Name = "OVO",
+Logo = "/images/payment/Logo_OVO.svg",
+Status = PaymentStatus.Active
+},
+new PaymentModel
+{
+Id = "7",
+Name = "BNI",
+Logo = "/images/payment/Logo_BNI.svg",
+Status = PaymentStatus.Active
+}
+};
+
+  private Task OpenDialogAddPaymentAsync()
+  {
+    var options = new DialogOptions
+    {
+      CloseOnEscapeKey = true,
+      MaxWidth = MaxWidth.Medium,
+      FullWidth = true
+    };
+    return DialogService.ShowAsync<AddPaymentDialog>("Add Payment", options);
+  }
+
+  private Task OpenDialogEditPaymentAsync(PaymentModel payment)
+  {
+    var options = new DialogOptions
+    {
+      CloseOnEscapeKey = true,
+      MaxWidth = MaxWidth.Medium,
+      FullWidth = true
+    };
+
+    var parameters = new DialogParameters
+{
+{ "Payment", payment }
+};
+
+    return DialogService.ShowAsync<EditPaymentDialog>("Edit Payment", parameters, options);
+  }
+
+}
+
+<style>
+  .btn-add {
+    background-color: green;
+    text-transform: none;
+    color: white;
+  }
+
+  .btn-add:hover {
+    background-color: green;
+  }
+
+  .btn-edit {
+    background-color: #fabc1d;
+    text-transform: none;
+    color: white;
+  }
+
+  .btn-edit:hover {
+    background-color: #fabc1d;
+  }
+
+  .mud-table-head th {
+    background-color: #dbffdd !important;
+  }
+
+  .t {
+    text-align: center;
+  }
+</style>
