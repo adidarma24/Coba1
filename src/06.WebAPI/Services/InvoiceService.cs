@@ -14,12 +14,12 @@ namespace MyApp.WebAPI.Services
 {
   public class InvoiceService : IInvoiceService
   {
-    private readonly AppDbContext _context;
+    private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
 
-    public InvoiceService(AppDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public InvoiceService(ApplicationDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
       _context = context;
       _mapper = mapper;

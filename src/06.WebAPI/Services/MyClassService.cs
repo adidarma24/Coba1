@@ -14,11 +14,11 @@ namespace MyApp.WebAPI.Services
 {
   public class MyClassService : IMyClassService
   {
-    private readonly AppDbContext _context;
+    private readonly ApplicationDbContext _context;
     private readonly IMapper _mapper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public MyClassService(AppDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
+    public MyClassService(ApplicationDbContext context, IMapper mapper, IHttpContextAccessor httpContextAccessor)
     {
       _context = context;
       _mapper = mapper;

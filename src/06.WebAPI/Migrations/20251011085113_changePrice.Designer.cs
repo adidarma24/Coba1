@@ -11,9 +11,9 @@ using MyApp.WebAPI.Data;
 
 namespace MyApp.WebAPI.Migrations
 {
-    [DbContext(typeof(AppDbContext))]
-    [Migration("20251007201551_InitialMigration")]
-    partial class InitialMigration
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20251011085113_changePrice")]
+    partial class changePrice
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,7 +52,7 @@ namespace MyApp.WebAPI.Migrations
                         .HasDatabaseName("RoleNameIndex")
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("AspNetRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -76,7 +76,7 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("RoleClaims", (string)null);
+                    b.ToTable("AspNetRoleClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
@@ -100,7 +100,7 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserClaims", (string)null);
+                    b.ToTable("AspNetUserClaims", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
@@ -121,7 +121,7 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserLogins", (string)null);
+                    b.ToTable("AspNetUserLogins", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
@@ -136,7 +136,7 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("UserRoles", (string)null);
+                    b.ToTable("AspNetUserRoles", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
@@ -155,7 +155,7 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasKey("UserId", "LoginProvider", "Name");
 
-                    b.ToTable("UserTokens", (string)null);
+                    b.ToTable("AspNetUserTokens", (string)null);
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Category", b =>
@@ -170,12 +170,13 @@ namespace MyApp.WebAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -186,32 +187,6 @@ namespace MyApp.WebAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories");
-
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Image = "asian.svg",
-                            Name = "Asian",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Image = "coldDrink.svg",
-                            Name = "Cold Drink",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Image = "cookies.svg",
-                            Name = "Cookies",
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Invoice", b =>
@@ -230,7 +205,8 @@ namespace MyApp.WebAPI.Migrations
 
                     b.Property<string>("NoInvoice")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("TotalCourse")
                         .HasColumnType("int");
@@ -299,16 +275,16 @@ namespace MyApp.WebAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(18, 2)
@@ -325,74 +301,6 @@ namespace MyApp.WebAPI.Migrations
                         .IsUnique();
 
                     b.ToTable("MenuCourses");
-
-                    b.HasData(
-                        new
-                        {
-                            MenuCourseId = 1,
-                            CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Tom Yum dari Thailand",
-                            Image = "tomyum.jpg",
-                            Name = "Tom Yum Thailand",
-                            Price = 450000m,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MenuCourseId = 2,
-                            CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Minuman rasa strawberry",
-                            Image = "strawberry_float.jpg",
-                            Name = "Strawberry Float",
-                            Price = 150000m,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MenuCourseId = 3,
-                            CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Chocholate Cookies",
-                            Image = "cookies.jpg",
-                            Name = "Chocholate Cookies",
-                            Price = 200000m,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MenuCourseId = 4,
-                            CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Soto Banjar Limau Kuit",
-                            Image = "greentea_cheesecake.jpg",
-                            Name = "Soto Banjar Limau Kuit",
-                            Price = 150000m,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MenuCourseId = 5,
-                            CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Green Tea Cheesecake",
-                            Image = "cheesecake.jpg",
-                            Name = "Green Tea Cheesecake",
-                            Price = 400000m,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MenuCourseId = 6,
-                            CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Spagetti",
-                            Image = "spagetti.jpg",
-                            Name = "Italian Spagetti Bolognese",
-                            Price = 450000m,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourseSchedule", b =>
@@ -416,6 +324,7 @@ namespace MyApp.WebAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("Status")
+                        .HasMaxLength(50)
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -428,138 +337,6 @@ namespace MyApp.WebAPI.Migrations
                     b.HasIndex("ScheduleId");
 
                     b.ToTable("MenuCourseSchedules");
-
-                    b.HasData(
-                        new
-                        {
-                            MSId = 1,
-                            AvailableSlot = 10,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 1,
-                            ScheduleId = 1,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 2,
-                            AvailableSlot = 12,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 1,
-                            ScheduleId = 2,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 3,
-                            AvailableSlot = 0,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 1,
-                            ScheduleId = 3,
-                            Status = 1,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 4,
-                            AvailableSlot = 10,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 2,
-                            ScheduleId = 2,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 5,
-                            AvailableSlot = 0,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 2,
-                            ScheduleId = 3,
-                            Status = 1,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 6,
-                            AvailableSlot = 9,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 2,
-                            ScheduleId = 4,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 7,
-                            AvailableSlot = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 3,
-                            ScheduleId = 1,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 8,
-                            AvailableSlot = 0,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 3,
-                            ScheduleId = 2,
-                            Status = 1,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 9,
-                            AvailableSlot = 10,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 4,
-                            ScheduleId = 3,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 10,
-                            AvailableSlot = 5,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 4,
-                            ScheduleId = 4,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 11,
-                            AvailableSlot = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 5,
-                            ScheduleId = 1,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 12,
-                            AvailableSlot = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 5,
-                            ScheduleId = 2,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 13,
-                            AvailableSlot = 10,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 6,
-                            ScheduleId = 4,
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MyClass", b =>
@@ -603,15 +380,18 @@ namespace MyApp.WebAPI.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Logo")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -619,26 +399,6 @@ namespace MyApp.WebAPI.Migrations
                     b.HasKey("PaymentMethodId");
 
                     b.ToTable("PaymentMethods");
-
-                    b.HasData(
-                        new
-                        {
-                            PaymentMethodId = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Logo = "gopay.svg",
-                            Name = "Gopay",
-                            Status = 0,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            PaymentMethodId = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Logo = "dana.svg",
-                            Name = "Dana",
-                            Status = 1,
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Schedule", b =>
@@ -661,36 +421,6 @@ namespace MyApp.WebAPI.Migrations
                     b.HasKey("ScheduleId");
 
                     b.ToTable("Schedules");
-
-                    b.HasData(
-                        new
-                        {
-                            ScheduleId = 1,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ScheduleDate = new DateTime(2025, 10, 6, 9, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            ScheduleId = 2,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ScheduleDate = new DateTime(2025, 10, 7, 13, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            ScheduleId = 3,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ScheduleDate = new DateTime(2025, 10, 8, 10, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            ScheduleId = 4,
-                            CreatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ScheduleDate = new DateTime(2025, 10, 9, 14, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedAt = new DateTime(2025, 10, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.User", b =>
@@ -781,7 +511,7 @@ namespace MyApp.WebAPI.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("AspNetUsers", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

@@ -1,16 +1,22 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace MyApp.WebAPI.Models
 {
-  public class PaymentMethod : BaseModel
+  public class PaymentMethod
   {
+    [Key]
     public int PaymentMethodId { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Logo { get; set; } = string.Empty;
-    public PaymentStatus Status { get; set; } = PaymentStatus.Active;
-  }
 
-  public enum PaymentStatus
-  {
-    Active,
-    Inactive
+    [Required, MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(255)]
+    public string? Logo { get; set; }
+
+    [MaxLength(50)]
+    public string Status { get; set; } = "Active";
+
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime UpdatedAt { get; set; } = DateTime.Now;
   }
 }

@@ -11,12 +11,19 @@ using MyApp.WebAPI.Services;
 using MyApp.WebAPI.Services.Interfaces;
 using MyApp.WebAPI.Configuration;
 using System.Text;
+using MyApp.WebAPI.Services.Implementations;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+// ===============================================
+// 1️⃣ Connection String & Database Configuration
+// ===============================================
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
 
 builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 {
@@ -34,7 +41,7 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
   options.User.RequireUniqueEmail = true;
   options.SignIn.RequireConfirmedEmail = false; // For demo purposes
 })
-.AddEntityFrameworkStores<AppDbContext>()
+.AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
 var jwtSettings = new JwtSettings();
@@ -74,6 +81,17 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IMyClassService, MyClassService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// ===============================================
+// 3️⃣ Register Services (Dependency Injection)
+// ===============================================
+// Di sini kita daftarkan semua service yang kita pisahkan ke folder Services/
+builder.Services.AddScoped<IUserService, UserService>();
+
+// ===============================================
+// 4️⃣ Tambahkan Controller, Swagger, dan Authorization
+// ===============================================
+builder.Services.AddOpenApi();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -115,14 +133,31 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-
-
+// ===============================================
+// 5️⃣ Build App
+// ===============================================
 var app = builder.Build();
 
+// ===============================================
+// 6️⃣ Automatic Migration & Seeding
+// ===============================================
+using (var scope = app.Services.CreateScope())
+{
+  var services = scope.ServiceProvider;
+  var context = services.GetRequiredService<ApplicationDbContext>();
+  context.Database.Migrate();
+
+  await SeedData.InitializeAsync(services);
+}
+
+// ===============================================
+// 7️⃣ Middleware Pipeline
+// ===============================================
 if (app.Environment.IsDevelopment())
 {
   app.UseSwagger();
   app.UseSwaggerUI();
+  app.MapOpenApi();
 }
 
 app.UseRouting();
