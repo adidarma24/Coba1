@@ -1,33 +1,73 @@
-using MyApp.WebAPI.Data;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MyApp.WebAPI.Data;
+using MyApp.WebAPI.Models;
+using MyApp.WebAPI.Services.Interfaces;
+using MyApp.WebAPI.Services.Implementations;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ 1. Connection string
+// ===============================================
+// 1️⃣ Connection String & Database Configuration
+// ===============================================
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// ✅ 2. Tambahkan DbContext SEBELUM build
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
-// ✅ 3. Tambahkan service lain
+// ===============================================
+// 2️⃣ Identity Configuration
+// ===============================================
+builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+{
+    // ✅ Password rules
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+
+    // ✅ User rules
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+// ===============================================
+// 3️⃣ Register Services (Dependency Injection)
+// ===============================================
+// Di sini kita daftarkan semua service yang kita pisahkan ke folder Services/
+builder.Services.AddScoped<IUserService, UserService>();
+
+// ===============================================
+// 4️⃣ Tambahkan Controller, Swagger, dan Authorization
+// ===============================================
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 builder.Services.AddOpenApi();
 
-// ✅ 4. Build aplikasi
+// ===============================================
+// 5️⃣ Build App
+// ===============================================
 var app = builder.Build();
 
-// ✅ 5. Jalankan DbInitializer (gunakan scope)
+// ===============================================
+// 6️⃣ Automatic Migration & Seeding
+// ===============================================
 using (var scope = app.Services.CreateScope())
 {
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    DbInitializer.Initialize(context);
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
+
+    await SeedData.InitializeAsync(services);
 }
 
-// ✅ 6. Middleware pipeline
+// ===============================================
+// 7️⃣ Middleware Pipeline
+// ===============================================
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -36,7 +76,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
-app.Run();
+await app.RunAsync();

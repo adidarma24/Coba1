@@ -5,18 +5,22 @@ namespace MyApp.WebAPI.Data
 {
     public static class DbInitializer
     {
-        public static void Initialize(ApplicationDbContext context)
+        public static async Task InitializeAsync(ApplicationDbContext context)
         {
             try
             {
-                // Pastikan database sudah ada
-                context.Database.EnsureCreated();
+                await context.Database.MigrateAsync();
 
-                // 🔄 Reset identity PaymentMethods agar ID berurutan
-                var maxId = context.PaymentMethods.Any() ? context.PaymentMethods.Max(p => p.PaymentMethodId) : 0;
-                context.Database.ExecuteSqlRaw($"DBCC CHECKIDENT ('PaymentMethods', RESEED, {maxId})");
+                // Hitung PaymentMethod terakhir
+                var maxId = await context.PaymentMethods.AnyAsync()
+                    ? await context.PaymentMethods.MaxAsync(p => p.PaymentMethodId)
+                    : 0;
 
-                Console.WriteLine($"✅ Database initialized successfully. Max ID: {maxId}");
+                await context.Database.ExecuteSqlAsync(
+                    $"DBCC CHECKIDENT ('PaymentMethods', RESEED, {maxId})"
+                );
+
+                Console.WriteLine($"✅ Database initialized successfully. Max PaymentMethodId: {maxId}");
             }
             catch (Exception ex)
             {

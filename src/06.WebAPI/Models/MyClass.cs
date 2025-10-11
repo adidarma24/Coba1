@@ -16,7 +16,7 @@ namespace MyApp.WebAPI.Models
         public int MenuCourseId { get; set; }
 
         [ForeignKey(nameof(UserId))]
-        public User? User { get; set; }
+        public User? User { get; set; } = default!;
 
         [ForeignKey(nameof(MenuCourseId))]
         public MenuCourse? MenuCourse { get; set; }

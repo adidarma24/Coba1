@@ -1,33 +1,25 @@
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace MyApp.WebAPI.Models
 {
-    public class User
-    {
-        [Key]
-        public int UserId { get; set; }
+  public class User : IdentityUser<int>
+  {
+    public string Name { get; set; } = string.Empty;
+    public UserStatus Status { get; set; } = UserStatus.Active;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
 
-        [Required, MaxLength(100)]
-        public string Name { get; set; } = string.Empty;
+    // Refresh token untuk JWT authentication
+    public string? RefreshToken { get; set; }
+    public DateTime ExpiresAt { get; set; }
 
-        [Required, MaxLength(150)]
-        public string Email { get; set; } = string.Empty;
+    public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
+    public virtual ICollection<MyClass> MyClasses { get; set; } = new List<MyClass>();
+  }
 
-        [Required, MaxLength(255)]
-        public string Password { get; set; } = string.Empty;
-
-        [Required, MaxLength(50)]
-        public string Row { get; set; } = "User"; // Admin / User
-
-        [Required, MaxLength(50)]
-        public string Status { get; set; } = "Active"; // Active / Inactive
-
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; } = DateTime.Now;
-
-        // Relationships
-        public ICollection<Invoice>? Invoices { get; set; } = new List<Invoice>();
-        public ICollection<MyClass>? MyClasses { get; set; } = new List<MyClass>();
-    }
+  public enum UserStatus
+  {
+    Active,
+    Inactive
+  }
 }
