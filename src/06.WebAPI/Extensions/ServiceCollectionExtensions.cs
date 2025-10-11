@@ -3,7 +3,8 @@ using WebApplication1.Data;
 using WebApplication1.Services;
 using FluentValidation;
 using System.Reflection;
-using WebApplication1.Middleware; // Namespace untuk middleware jika Anda memindahkannya nanti
+using AutoMapper;
+using WebApplication1.Middleware;
 
 namespace WebApplication1.Extensions
 {
@@ -19,6 +20,8 @@ namespace WebApplication1.Extensions
             services.AddScoped<IMenuCourseScheduleService, MenuCourseScheduleService>();
             return services;
         }
+
+        
 
         /// <summary>
         /// Method untuk konfigurasi database context dan koneksinya secara dinamis.

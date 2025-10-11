@@ -31,7 +31,6 @@ namespace WebApplication1.Services
         {
             var menuCourse = await _context.MenuCourses
                 .Include(mc => mc.Category)
-                // DIPERBAIKI: Menggunakan 'Id' yang sudah distandarkan
                 .FirstOrDefaultAsync(mc => mc.Id == id);
             
             return _mapper.Map<MenuCourseDto>(menuCourse);
@@ -46,22 +45,18 @@ namespace WebApplication1.Services
             }
 
             var menuCourse = _mapper.Map<MenuCourse>(createDto);
-            // UpdatedAt akan di-handle oleh DbContext, jadi hanya perlu set CreatedAt
-            menuCourse.CreatedAt = DateTime.UtcNow;
 
             _context.MenuCourses.Add(menuCourse);
             await _context.SaveChangesAsync();
             
             await _context.Entry(menuCourse).Reference(mc => mc.Category).LoadAsync();
 
-            // DIPERBAIKI: Menggunakan 'Id' yang sudah distandarkan
             _logger.LogInformation("MenuCourse created with ID: {MenuCourseId}", menuCourse.Id);
             return _mapper.Map<MenuCourseDto>(menuCourse);
         }
 
         public async Task<MenuCourseDto?> UpdateMenuCourseAsync(int id, UpdateMenuCourseDto updateDto)
         {
-            // FindAsync sudah efisien untuk mencari berdasarkan PK 'Id'
             var menuCourse = await _context.MenuCourses.FindAsync(id);
             if (menuCourse == null) return null;
 
@@ -75,17 +70,14 @@ namespace WebApplication1.Services
             }
 
             _mapper.Map(updateDto, menuCourse);
-            // UpdatedAt akan di-handle oleh SaveChangesAsync di DbContext
             
             await _context.SaveChangesAsync();
             
-            // Reload relasi jika CategoryId berubah
             if(menuCourse.CategoryId != updateDto.CategoryId)
             {
                 await _context.Entry(menuCourse).Reference(mc => mc.Category).LoadAsync();
             }
 
-            // DIPERBAIKI: Menggunakan 'Id' yang sudah distandarkan
             _logger.LogInformation("MenuCourse updated with ID: {MenuCourseId}", menuCourse.Id);
             return _mapper.Map<MenuCourseDto>(menuCourse);
         }

@@ -50,9 +50,6 @@ namespace WebApplication1.Services
         {
             var category = _mapper.Map<Category>(createCategoryDto);
 
-            // DIOPTIMALKAN: Baris ini dihapus karena CreatedAt sudah di-handle
-            // secara otomatis oleh konfigurasi default value di DbContext.
-            // category.CreatedAt = DateTime.UtcNow;
             
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
