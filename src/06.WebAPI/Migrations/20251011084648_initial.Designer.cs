@@ -12,8 +12,8 @@ using MyApp.WebAPI.Data;
 namespace MyApp.WebAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251009083545_InitialIdentitySetup")]
-    partial class InitialIdentitySetup
+    [Migration("20251011084648_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -183,25 +183,10 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasKey("CategoryId");
 
-                    b.ToTable("Categories");
+                    b.HasIndex("Name")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Image = "asian.svg",
-                            Name = "Asian",
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Image = "western.svg",
-                            Name = "Western",
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Invoice", b =>
@@ -227,17 +212,21 @@ namespace MyApp.WebAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("float(18)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserIdRef")
                         .HasColumnType("int");
 
                     b.HasKey("InvoiceId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("NoInvoice")
+                        .IsUnique();
+
+                    b.HasIndex("UserIdRef");
 
                     b.ToTable("Invoices");
                 });
@@ -298,7 +287,8 @@ namespace MyApp.WebAPI.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<double>("Price")
-                        .HasColumnType("float");
+                        .HasPrecision(18, 2)
+                        .HasColumnType("float(18)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -307,31 +297,10 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("MenuCourses");
+                    b.HasIndex("Name", "CategoryId")
+                        .IsUnique();
 
-                    b.HasData(
-                        new
-                        {
-                            MenuCourseId = 1,
-                            CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "tomyum",
-                            Image = "tomyum.svg",
-                            Name = "Tomyum",
-                            Price = 100000.0,
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MenuCourseId = 2,
-                            CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Learn design principles",
-                            Image = "pizza.svg",
-                            Name = "Pizza",
-                            Price = 150000.0,
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
+                    b.ToTable("MenuCourses");
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourseSchedule", b =>
@@ -342,7 +311,7 @@ namespace MyApp.WebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MSId"));
 
-                    b.Property<int>("Available")
+                    b.Property<int>("AvailableSlot")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -354,10 +323,9 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<int>("ScheduleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -369,28 +337,6 @@ namespace MyApp.WebAPI.Migrations
                     b.HasIndex("ScheduleId");
 
                     b.ToTable("MenuCourseSchedules");
-
-                    b.HasData(
-                        new
-                        {
-                            MSId = 1,
-                            Available = 10,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 1,
-                            ScheduleId = 1,
-                            Status = "Active",
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            MSId = 2,
-                            Available = 8,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            MenuCourseId = 2,
-                            ScheduleId = 2,
-                            Status = "Active",
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MyClass", b =>
@@ -404,20 +350,20 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MenuCourseId")
+                    b.Property<int>("MSId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserIdRef")
                         .HasColumnType("int");
 
                     b.HasKey("MyClassId");
 
-                    b.HasIndex("MenuCourseId");
+                    b.HasIndex("MSId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserIdRef");
 
                     b.ToTable("MyClasses");
                 });
@@ -453,26 +399,6 @@ namespace MyApp.WebAPI.Migrations
                     b.HasKey("PaymentMethodId");
 
                     b.ToTable("PaymentMethods");
-
-                    b.HasData(
-                        new
-                        {
-                            PaymentMethodId = 1,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Logo = "bca.png",
-                            Name = "BCA",
-                            Status = "Active",
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            PaymentMethodId = 2,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Logo = "gopay.png",
-                            Name = "GoPay",
-                            Status = "Active",
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Schedule", b =>
@@ -495,22 +421,6 @@ namespace MyApp.WebAPI.Migrations
                     b.HasKey("ScheduleId");
 
                     b.ToTable("Schedules");
-
-                    b.HasData(
-                        new
-                        {
-                            ScheduleId = 1,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ScheduleDate = new DateTime(2025, 10, 9, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        },
-                        new
-                        {
-                            ScheduleId = 2,
-                            CreatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            ScheduleDate = new DateTime(2025, 10, 13, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            UpdatedAt = new DateTime(2025, 10, 6, 0, 0, 0, 0, DateTimeKind.Unspecified)
-                        });
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.User", b =>
@@ -589,6 +499,10 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -655,8 +569,8 @@ namespace MyApp.WebAPI.Migrations
                 {
                     b.HasOne("MyApp.WebAPI.Models.User", "User")
                         .WithMany("Invoices")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("UserIdRef")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -673,7 +587,7 @@ namespace MyApp.WebAPI.Migrations
                     b.HasOne("MyApp.WebAPI.Models.MenuCourseSchedule", "MenuCourseSchedule")
                         .WithMany("InvoiceMenuCourses")
                         .HasForeignKey("MSId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Invoice");
@@ -686,7 +600,7 @@ namespace MyApp.WebAPI.Migrations
                     b.HasOne("MyApp.WebAPI.Models.Category", "Category")
                         .WithMany("MenuCourses")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -703,7 +617,7 @@ namespace MyApp.WebAPI.Migrations
                     b.HasOne("MyApp.WebAPI.Models.Schedule", "Schedule")
                         .WithMany("MenuCourseSchedules")
                         .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("MenuCourse");
@@ -713,19 +627,19 @@ namespace MyApp.WebAPI.Migrations
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MyClass", b =>
                 {
-                    b.HasOne("MyApp.WebAPI.Models.MenuCourse", "MenuCourse")
+                    b.HasOne("MyApp.WebAPI.Models.MenuCourseSchedule", "MenuCourseSchedule")
                         .WithMany("MyClasses")
-                        .HasForeignKey("MenuCourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("MSId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyApp.WebAPI.Models.User", "User")
                         .WithMany("MyClasses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("UserIdRef")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MenuCourse");
+                    b.Navigation("MenuCourseSchedule");
 
                     b.Navigation("User");
                 });
@@ -743,13 +657,13 @@ namespace MyApp.WebAPI.Migrations
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourse", b =>
                 {
                     b.Navigation("MenuCourseSchedules");
-
-                    b.Navigation("MyClasses");
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourseSchedule", b =>
                 {
                     b.Navigation("InvoiceMenuCourses");
+
+                    b.Navigation("MyClasses");
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Schedule", b =>

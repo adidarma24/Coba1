@@ -146,8 +146,8 @@ namespace MyApp.WebAPI.Data
             {
               MenuCourseId = tomyum!.MenuCourseId,
               ScheduleId = schedule1.ScheduleId,
-              Available = 10,
-              Status = "Active",
+              AvailableSlot = 10,
+              Status = MSStatus.Active,
               CreatedAt = DateTime.UtcNow,
               UpdatedAt = DateTime.UtcNow
             },
@@ -155,8 +155,8 @@ namespace MyApp.WebAPI.Data
             {
               MenuCourseId = pizza!.MenuCourseId,
               ScheduleId = schedule2.ScheduleId,
-              Available = 8,
-              Status = "Active",
+              AvailableSlot = 8,
+              Status = MSStatus.Active,
               CreatedAt = DateTime.UtcNow,
               UpdatedAt = DateTime.UtcNow
             }

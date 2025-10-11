@@ -180,6 +180,9 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasKey("CategoryId");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Categories");
                 });
 
@@ -205,18 +208,22 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<int>("TotalCourse")
                         .HasColumnType("int");
 
-                    b.Property<double>("TotalPrice")
-                        .HasColumnType("float");
+                    b.Property<decimal>("TotalPrice")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserIdRef")
                         .HasColumnType("int");
 
                     b.HasKey("InvoiceId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("NoInvoice")
+                        .IsUnique();
+
+                    b.HasIndex("UserIdRef");
 
                     b.ToTable("Invoices");
                 });
@@ -276,8 +283,9 @@ namespace MyApp.WebAPI.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
-                    b.Property<double>("Price")
-                        .HasColumnType("float");
+                    b.Property<decimal>("Price")
+                        .HasPrecision(18, 2)
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -285,6 +293,9 @@ namespace MyApp.WebAPI.Migrations
                     b.HasKey("MenuCourseId");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Name", "CategoryId")
+                        .IsUnique();
 
                     b.ToTable("MenuCourses");
                 });
@@ -297,7 +308,7 @@ namespace MyApp.WebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MSId"));
 
-                    b.Property<int>("Available")
+                    b.Property<int>("AvailableSlot")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -309,10 +320,9 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<int>("ScheduleId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
+                    b.Property<int>("Status")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -337,20 +347,20 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("MenuCourseId")
+                    b.Property<int>("MSId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("UserIdRef")
                         .HasColumnType("int");
 
                     b.HasKey("MyClassId");
 
-                    b.HasIndex("MenuCourseId");
+                    b.HasIndex("MSId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserIdRef");
 
                     b.ToTable("MyClasses");
                 });
@@ -486,6 +496,10 @@ namespace MyApp.WebAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -552,8 +566,8 @@ namespace MyApp.WebAPI.Migrations
                 {
                     b.HasOne("MyApp.WebAPI.Models.User", "User")
                         .WithMany("Invoices")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("UserIdRef")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -570,7 +584,7 @@ namespace MyApp.WebAPI.Migrations
                     b.HasOne("MyApp.WebAPI.Models.MenuCourseSchedule", "MenuCourseSchedule")
                         .WithMany("InvoiceMenuCourses")
                         .HasForeignKey("MSId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Invoice");
@@ -583,7 +597,7 @@ namespace MyApp.WebAPI.Migrations
                     b.HasOne("MyApp.WebAPI.Models.Category", "Category")
                         .WithMany("MenuCourses")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
@@ -600,7 +614,7 @@ namespace MyApp.WebAPI.Migrations
                     b.HasOne("MyApp.WebAPI.Models.Schedule", "Schedule")
                         .WithMany("MenuCourseSchedules")
                         .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("MenuCourse");
@@ -610,19 +624,19 @@ namespace MyApp.WebAPI.Migrations
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MyClass", b =>
                 {
-                    b.HasOne("MyApp.WebAPI.Models.MenuCourse", "MenuCourse")
+                    b.HasOne("MyApp.WebAPI.Models.MenuCourseSchedule", "MenuCourseSchedule")
                         .WithMany("MyClasses")
-                        .HasForeignKey("MenuCourseId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("MSId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("MyApp.WebAPI.Models.User", "User")
                         .WithMany("MyClasses")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("UserIdRef")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MenuCourse");
+                    b.Navigation("MenuCourseSchedule");
 
                     b.Navigation("User");
                 });
@@ -640,13 +654,13 @@ namespace MyApp.WebAPI.Migrations
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourse", b =>
                 {
                     b.Navigation("MenuCourseSchedules");
-
-                    b.Navigation("MyClasses");
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourseSchedule", b =>
                 {
                     b.Navigation("InvoiceMenuCourses");
+
+                    b.Navigation("MyClasses");
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Schedule", b =>
