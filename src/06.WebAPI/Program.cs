@@ -1,41 +1,85 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using MyApp.WebAPI.Data;
+using MyApp.WebAPI.Models;
+using MyApp.WebAPI.Services.Interfaces;
+using MyApp.WebAPI.Services.Implementations;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// ===============================================
+// 1️⃣ Connection String & Database Configuration
+// ===============================================
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
+
+// ===============================================
+// 2️⃣ Identity Configuration
+// ===============================================
+builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
+{
+    // ✅ Password rules
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+
+    // ✅ User rules
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+// ===============================================
+// 3️⃣ Register Services (Dependency Injection)
+// ===============================================
+// Di sini kita daftarkan semua service yang kita pisahkan ke folder Services/
+builder.Services.AddScoped<IUserService, UserService>();
+
+// ===============================================
+// 4️⃣ Tambahkan Controller, Swagger, dan Authorization
+// ===============================================
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddAuthorization();
 builder.Services.AddOpenApi();
 
+// ===============================================
+// 5️⃣ Build App
+// ===============================================
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// ===============================================
+// 6️⃣ Automatic Migration & Seeding
+// ===============================================
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
+
+    await SeedData.InitializeAsync(services);
+}
+
+// ===============================================
+// 7️⃣ Middleware Pipeline
+// ===============================================
 if (app.Environment.IsDevelopment())
 {
+    app.UseSwagger();
+    app.UseSwaggerUI();
     app.MapOpenApi();
 }
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
-app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+await app.RunAsync();
