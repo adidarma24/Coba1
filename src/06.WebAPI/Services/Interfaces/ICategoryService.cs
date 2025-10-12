@@ -1,7 +1,7 @@
 
-using WebApplication1.DTOs;
+usingMyApp.WebAPI.DTOs;
 
-namespace WebApplication1.Services
+namespaceMyApp.WebAPI.Services
 {
     /// <summary>
     /// Interface (kontrak) untuk Category Service

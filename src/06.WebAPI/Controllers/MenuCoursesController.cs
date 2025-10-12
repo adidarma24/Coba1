@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.DTOs;
-using WebApplication1.Models; // Diperlukan untuk ApiResponse
-using WebApplication1.Services;
+using MyApp.WebAPI.DTOs;
+using MyApp.WebAPI.Models; // Diperlukan untuk ApiResponse
+using MyApp.WebAPI.Services;
 
-namespace WebApplication1.Controllers
+namespace MyApp.WebAPI.Controllers
 {
     /// <summary>
     /// Controller untuk mengelola data Menu Course

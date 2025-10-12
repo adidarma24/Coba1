@@ -1,7 +1,7 @@
 // Letak: Services/IMenuCourseService.cs
-using WebApplication1.DTOs;
+using MyApp.WebAPI.DTOs;
 
-namespace WebApplication1.Services
+namespace MyApp.WebAPI.Services
 {
     /// <summary>
     /// Interface (kontrak) untuk MenuCourse Service

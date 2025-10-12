@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.DTOs;
-using WebApplication1.Models;
-using WebApplication1.Services;
+usingMyApp.WebAPI.DTOs;
+usingMyApp.WebAPI.Models;
+usingMyApp.WebAPI.Services;
 
-namespace WebApplication1.Controllers
+namespaceMyApp.WebAPI.Controllers
 {
     /// <summary>
     /// Controller untuk mengelola jadwal spesifik untuk setiap Menu Course

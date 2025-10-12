@@ -1,4 +1,4 @@
-namespace WebApplication1.Models
+namespace MyApp.WebAPI.Models
 {
     /// <summary>
     /// Interface untuk entitas yang memiliki timestamp pembuatan dan pembaruan.

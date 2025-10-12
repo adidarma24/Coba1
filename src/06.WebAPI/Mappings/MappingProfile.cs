@@ -1,56 +1,31 @@
 using AutoMapper;
-using WebApplication1.DTOs;
-using WebApplication1.Models;
+using MyApp.WebAPI.DTOs;
+using MyApp.WebAPI.Models;
 
-namespace WebApplication1.Mappings
+namespace MyApp.WebAPI.Mappings
 {
-    /// <summary>
-    /// Profil AutoMapper untuk mendefinisikan semua pemetaan antara entitas dan DTO.
-    /// </summary>
-    public class MappingProfile : Profile
+  public class InvoiceProfile : Profile
+  {
+    public InvoiceProfile()
     {
-        public MappingProfile()
-        {
-            // === Aturan Mapping untuk Category ===
-            
-            // Dari Model -> DTO
-            CreateMap<Category, CategoryDto>()
-                .ForMember(dest => dest.MenuCourseCount, opt => opt.MapFrom(src => src.MenuCourses.Count));
+      CreateMap<Invoice, InvoiceDTO>();
 
-            // Dari DTO -> Model
-            CreateMap<CreateCategoryDto, Category>();
-            CreateMap<UpdateCategoryDto, Category>();
+      CreateMap<Invoice, DetailInvoiceDTO>()
+          .ForMember(dest => dest.ListCourse, opt => opt.MapFrom(src => src.InvoiceMenuCourses));
 
+      CreateMap<InvoiceMenuCourse, CourseItemDTO>()
+          .ForMember(dest => dest.MenuCourseId, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.MenuCourseId))
+          .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.Name))
+          .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.Category.Name))
+          .ForMember(dest => dest.ScheduleDate, opt => opt.MapFrom(src => src.MenuCourseSchedule.Schedule.ScheduleDate))
+          .ForMember(dest => dest.Price, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.Price));
 
-            // === Aturan Mapping untuk MenuCourse ===
-
-            // Dari Model -> DTO
-            CreateMap<MenuCourse, MenuCourseDto>()
-                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.Name));
-
-            // Dari DTO -> Model
-            CreateMap<CreateMenuCourseDto, MenuCourse>();
-            CreateMap<UpdateMenuCourseDto, MenuCourse>();
-
-
-            // === Aturan Mapping untuk Schedule ===
-
-            // Dari Model -> DTO
-            CreateMap<Schedule, ScheduleDto>();
-            // Dari DTO -> Model
-            CreateMap<CreateScheduleDto, Schedule>();
-
-
-            // === Aturan Mapping untuk MenuCourse_Schedule ===
-            
-            // Dari Model -> DTO
-            CreateMap<MenuCourse_Schedule, MenuCourseScheduleDto>()
-                .ForMember(dest => dest.MenuCourseName, opt => opt.MapFrom(src => src.MenuCourse.Name))
-                .ForMember(dest => dest.ScheduleDate, opt => opt.MapFrom(src => src.Schedule.ScheduleDate));
-            
-            // Dari DTO -> Model
-            CreateMap<CreateMenuCourseScheduleDto, MenuCourse_Schedule>();
-            CreateMap<UpdateMenuCourseScheduleDto, MenuCourse_Schedule>();
-        }
+      CreateMap<MyClass, MyClassDTO>()
+          .ForMember(dest => dest.MenuCourseId, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.MenuCourseId))
+          .ForMember(dest => dest.Name, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.Name))
+          .ForMember(dest => dest.Image, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.Image))
+          .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.MenuCourseSchedule.MenuCourse.Category.Name))
+          .ForMember(dest => dest.Schedule, opt => opt.MapFrom(src => src.MenuCourseSchedule.Schedule.ScheduleDate));
     }
+  }
 }

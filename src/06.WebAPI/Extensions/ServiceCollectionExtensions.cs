@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
-using WebApplication1.Data;
-using WebApplication1.Services;
+using MyApp.WebAPI.Data;
+using MyApp.WebAPI.Services;
 using FluentValidation;
 using System.Reflection;
 using AutoMapper;
-using WebApplication1.Middleware;
+using MyApp.WebAPI.Middleware;
 
-namespace WebApplication1.Extensions
+namespace MyApp.WebAPI.Extensions
 {
     public static class ServiceCollectionExtensions
     {

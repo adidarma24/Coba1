@@ -1,30 +1,29 @@
-namespace WebApplication1.Models
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MyApp.WebAPI.Models
 {
-    public class MenuCourse : IAuditable // Direkomendasikan untuk implement IAuditable
-    {
-        // DIPERBAIKI: Nama PK disamakan menjadi 'Id'
-        public int Id { get; set; }
+  public class MenuCourse : BaseModel
+  {
+    [Key]
+    public int MenuCourseId { get; set; }
 
-        // Atribut [Required] dll. dihapus, diatur di DbContext
-        public string Name { get; set; }
+    [Required, MaxLength(150)]
+    public string Name { get; set; } = string.Empty;
 
-        public string? Image { get; set; }
+    [MaxLength(255)]
+    public string? Image { get; set; }
 
-        // DIPERBAIKI: Tipe data diubah ke decimal
-        public decimal Price { get; set; }
+    public decimal Price { get; set; }
 
-        public string? Description { get; set; }
+    public string? Description { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+    // FK
+    public int CategoryId { get; set; }
+    [ForeignKey(nameof(CategoryId))]
+    public Category Category { get; set; } = null!;
 
-        public DateTime UpdatedAt { get; set; }
-
-        public int CategoryId { get; set; }
-
-        // Atribut [ForeignKey] dihapus, diatur di DbContext
-        public virtual Category Category { get; set; } = null!;
-
-        // TAMBAHKAN INI: Satu MenuCourse bisa memiliki banyak jadwal
-        public virtual ICollection<MenuCourse_Schedule> MenuCourse_Schedules { get; set; } = new List<MenuCourse_Schedule>();
-    }
+    // Relation
+    public virtual ICollection<MenuCourseSchedule> MenuCourseSchedules { get; set; } = new List<MenuCourseSchedule>();
+  }
 }

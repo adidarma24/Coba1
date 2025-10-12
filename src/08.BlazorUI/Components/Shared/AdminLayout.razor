@@ -1,0 +1,120 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+
+<MudThemeProvider Theme="CustomTheme" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+<MudLayout>
+  <MudAppBar Style="height:4rem; background-color: #FABC1D;">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge=" Edge.Start"
+      OnClick="@((e) => DrawerToggle())" />
+    <MudText Typo="Typo.h6">
+      @title
+    </MudText>
+  </MudAppBar>
+
+  <MudDrawer @bind-Open="@_drawerOpen">
+    <MudDrawerHeader Class="d-flex align-center">
+      <MudText Class="d-flex justify-center" Style="width: 100%;" Typo="Typo.body1">Main Menu</MudText>
+    </MudDrawerHeader>
+
+    <MudNavMenu Class="d-flex flex-column" Style="width: 100%;">
+      <MudLink Href="/admin-dashboard" Class="nav-link">
+        <MudButton Class="nav-btn">
+          <MudIcon Icon="@Icons.Material.Filled.Dashboard" />
+          <MudText Class="nav-text">Dashboard</MudText>
+        </MudButton>
+      </MudLink>
+
+      <MudLink Href="/admin-user" Class="nav-link">
+        <MudButton Class="nav-btn">
+          <MudIcon Icon="@Icons.Material.Filled.PermContactCalendar" />
+          <MudText Class="nav-text">User Management</MudText>
+        </MudButton>
+      </MudLink>
+
+      <MudLink Href="/admin-payment" Class="nav-link">
+        <MudButton Class="nav-btn">
+          <MudIcon Icon="@Icons.Material.Filled.Payments" />
+          <MudText Class="nav-text">Payment Method</MudText>
+        </MudButton>
+      </MudLink>
+
+      <MudDivider Class="my-1 line" />
+
+      <MudDrawerHeader Class="d-flex align-center">
+        <MudText Class="d-flex justify-center" Style="width: 100%;" Typo="Typo.body1">Action Menu</MudText>
+      </MudDrawerHeader>
+
+      <MudLink Href="/login" Class="nav-link">
+        <MudButton Class="nav-btn">
+          <MudIcon Icon="@Icons.Material.Filled.ExitToApp" />
+          <MudText Class="nav-text">Logout</MudText>
+        </MudButton>
+      </MudLink>
+    </MudNavMenu>
+  </MudDrawer>
+
+  <MudMainContent Class="main">
+    @Body
+  </MudMainContent>
+</MudLayout>
+
+@code {
+  bool _drawerOpen = true;
+  string title = "Dashboard";
+
+  void DrawerToggle()
+  {
+    _drawerOpen = !_drawerOpen;
+  }
+
+  MudTheme CustomTheme = new MudTheme()
+  {
+    Typography = new Typography()
+    {
+      Default = new DefaultTypography()
+      {
+        FontFamily = new[] { "Montserrat", "Helvetica", "Arial", "sans-serif" }
+      }
+    }
+  };
+}
+
+<style>
+  .main {
+    height: 100vh;
+    padding: 6rem 2rem;
+    background: rgb(234, 234, 234);
+  }
+
+  .btn {
+    display: flex;
+    justify-content: center;
+  }
+
+  .nav-link {
+    text-decoration: none !important;
+  }
+
+  .nav-btn {
+    width: 100%;
+    padding: 0.7rem;
+    display: flex;
+    justify-content: start;
+    color: #5b4947;
+    border-radius: 0.5rem;
+  }
+
+  .nav-text {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 1rem;
+  }
+
+  .line {
+    border: 1px solid black;
+  }
+</style>

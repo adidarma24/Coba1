@@ -1,10 +1,9 @@
-namespace WebApplication1.DTOs
+namespace  MyApp.WebAPI.DTOs
 {
     public class CategoryDto
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        // Image bisa jadi tidak ada, jadi nullable (?) adalah pilihan yang baik
         public string? Image { get; set; } 
         public int MenuCourseCount { get; set; }
     }

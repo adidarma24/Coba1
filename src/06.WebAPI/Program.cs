@@ -1,69 +1,144 @@
-// Import Entity Framework Core untuk database operations
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.EntityFrameworkCore;
-// Import ApplicationDbContext dari folder Data
-using WebApplication1.Data;
-// Import extension methods dari folder Extensions
-using WebApplication1.Extensions;
-// Import custom middleware dari folder Middleware
-using WebApplication1.Middleware;
-// Import FluentValidation core library
-using FluentValidation;
-// Import FluentValidation ASP.NET Core integration
-using FluentValidation.AspNetCore;
-// Import System.Reflection untuk assembly operations
-using System.Reflection;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+using MyApp.WebAPI.Data;
+using MyApp.WebAPI.Models;
+using MyApp.WebAPI.Middlewares;
+using MyApp.WebAPI.Services;
+using MyApp.WebAPI.Services.Interfaces;
+using MyApp.WebAPI.Configuration;
+using System.Text;
+using MyApp.WebAPI.Services.Implementations;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ========== KONFIGURASI SERVICES (DEPENDENCY INJECTION) ==========
+// ===============================================
+// 1️⃣ Connection String & Database Configuration
+// ===============================================
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddControllers();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
-// Daftarkan Database Context menggunakan extension method
-builder.Services.AddDatabaseContext(builder.Configuration);
 
-// Daftarkan AutoMapper untuk object-to-object mapping
-builder.Services.AddAutoMapperProfiles();
-
-// Konfigurasi FluentValidation
-builder.Services.AddFluentValidationAutoValidation();
-builder.Services.AddValidators();
-
-// Daftarkan semua business services (CategoryService, MenuCourseService, dll.)
-builder.Services.AddApplicationServices();
-
-// Konfigurasi CORS untuk mengizinkan cross-origin requests
-builder.Services.AddCorsPolicy();
-
-// ========== KONFIGURASI SWAGGER/OPENAPI ==========
-
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(c =>
+builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 {
-    // DIPERBAIKI: Judul dan deskripsi disesuaikan dengan konteks aplikasi saat ini
-    c.SwaggerDoc("v1", new() { 
-        Title = "Course API", // Nama API
-        Version = "v1", // Versi API
-        Description = "A simple API for managing courses and categories", // Deskripsi API
-        Contact = new() { // Info kontak developer
-            Name = "Developer Team", 
-            Email = "dev@company.com" 
-        }
-    });
-    
-    // Include XML comments untuk dokumentasi yang lebih detail
-    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
-    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
-    if (File.Exists(xmlPath))
+  options.Password.RequiredLength = 6;
+  options.Password.RequireDigit = true;
+  options.Password.RequireLowercase = true;
+  options.Password.RequireUppercase = true;
+  options.Password.RequireNonAlphanumeric = true;
+
+  options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
+  options.Lockout.MaxFailedAccessAttempts = 5;
+  options.Lockout.AllowedForNewUsers = true;
+
+  // User settings
+  options.User.RequireUniqueEmail = true;
+  options.SignIn.RequireConfirmedEmail = false; // For demo purposes
+})
+.AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
+
+var jwtSettings = new JwtSettings();
+builder.Configuration.GetSection("JwtSettings").Bind(jwtSettings);
+builder.Services.AddSingleton(jwtSettings);
+builder.Services.AddAuthentication(options =>
+{
+  options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+  options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+  options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+  .AddJwtBearer(options =>
+  {
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        c.IncludeXmlComments(xmlPath);
-    }
+      ValidateIssuer = jwtSettings.ValidateIssuer,
+      ValidateAudience = jwtSettings.ValidateAudience,
+      ValidateLifetime = jwtSettings.ValidateLifetime,
+      ValidateIssuerSigningKey = jwtSettings.ValidateIssuerSigningKey,
+      ValidIssuer = jwtSettings.Issuer,
+      ValidAudience = jwtSettings.Audience,
+      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey)),
+      ClockSkew = TimeSpan.FromMinutes(jwtSettings.ClockSkew)
+    };
+  });
+
+builder.Services.AddAuthorization(options =>
+{
+  AuthorizationPolicies.ConfigurePolicies(options);
 });
 
-// ========== BUILD APLIKASI ==========
+builder.Services.AddControllers();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IMyClassService, MyClassService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
+// ===============================================
+// 3️⃣ Register Services (Dependency Injection)
+// ===============================================
+// Di sini kita daftarkan semua service yang kita pisahkan ke folder Services/
+builder.Services.AddScoped<IUserService, UserService>();
+
+// ===============================================
+// 4️⃣ Tambahkan Controller, Swagger, dan Authorization
+// ===============================================
+builder.Services.AddOpenApi();
+
+builder.Services.AddSwaggerGen(c =>
+{
+  c.SwaggerDoc("v1", new()
+  {
+    Title = "Soup API",
+    Version = "v1",
+    Description = "API documentation"
+  });
+
+  // Add JWT Authentication to Swagger
+  c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+  {
+    Description = @"JWT Authorization header using the Bearer scheme. 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      Example: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'",
+    Name = "Authorization",
+    In = ParameterLocation.Header,
+    Type = SecuritySchemeType.ApiKey,
+    Scheme = "Bearer"
+  });
+
+  c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+    {
+      {
+        new OpenApiSecurityScheme
+        {
+          Reference = new OpenApiReference
+          {
+            Type = ReferenceType.SecurityScheme,
+            Id = "Bearer"
+          },
+          Scheme = "oauth2",
+          Name = "Bearer",
+          In = ParameterLocation.Header,
+        },
+        new List<string>()
+      }
+    });
+});
+
+// ===============================================
+// 5️⃣ Build App
+// ===============================================
 var app = builder.Build();
 
+<<<<<<< HEAD
 // ========== SEED DATABASE ==========
 
 await SeedDatabase(app);
@@ -84,12 +159,38 @@ if (app.Environment.IsDevelopment())
 // ========== MIDDLEWARE PIPELINE (URUTAN PENTING!) ==========
 
 app.UseMiddleware<ExceptionHandlingMiddleware>();
+=======
+// ===============================================
+// 6️⃣ Automatic Migration & Seeding
+// ===============================================
+using (var scope = app.Services.CreateScope())
+{
+  var services = scope.ServiceProvider;
+  var context = services.GetRequiredService<ApplicationDbContext>();
+  context.Database.Migrate();
+
+  await SeedData.InitializeAsync(services);
+}
+
+// ===============================================
+// 7️⃣ Middleware Pipeline
+// ===============================================
+if (app.Environment.IsDevelopment())
+{
+  app.UseSwagger();
+  app.UseSwaggerUI();
+  app.MapOpenApi();
+}
+
+app.UseRouting();
+>>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+<<<<<<< HEAD
 // ========== START APLIKASI ==========
 
 app.Run();
@@ -109,3 +210,14 @@ static async Task SeedDatabase(WebApplication app)
     // DIPERBAIKI: Komentar disesuaikan dengan ApplicationDbContext
     // Note: Data seed sudah dikonfigurasi di ApplicationDbContext.OnModelCreating
 }
+=======
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
+app.MapControllers();
+
+await SeedData.InitializeAsync(app.Services);
+
+app.Run();
+>>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a

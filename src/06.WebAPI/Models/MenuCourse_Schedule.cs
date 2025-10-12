@@ -1,4 +1,4 @@
-namespace WebApplication1.Models
+namespace MyApp.WebAPI.Models
 {
     public class MenuCourse_Schedule : IAuditable
     {

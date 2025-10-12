@@ -1,13 +1,13 @@
 <MudNavMenu Class="@Css" Style="width: 100%;">
   @if (!login)
   {
-    <MudLink Href="/login">
+    <MudLink Href="/login" Class="btn">
       <MudButton Variant="Variant.Outlined" Class="rounded-lg button button-outline">
         Login
       </MudButton>
     </MudLink>
 
-    <MudLink Href="/register">
+    <MudLink Href="/register" Class="btn">
       <MudButton Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
         Register
       </MudButton>
@@ -37,7 +37,7 @@
     </MudLink>
 
     <MudText Class="d-none d-sm-flex" style="color:#5b4947; font-size:24px">|</MudText>
-    <MudDivider Class="d-flex d-sm-none my-1" />
+    <MudDivider Class="d-flex d-sm-none my-1 line" />
 
     <MudLink Href="/" Class="nav-link">
       <MudButton Class="nav-btn">
@@ -62,6 +62,11 @@
 }
 
 <style>
+  .btn {
+    display: flex;
+    justify-content: center;
+  }
+
   .nav-link {
     text-decoration: none !important;
   }
@@ -79,6 +84,10 @@
     font-size: 16px;
     font-weight: 500;
     margin: 0 1rem;
+  }
+
+  .line {
+    border: 1px solid black;
   }
 
   @@media (min-width: 600px) {

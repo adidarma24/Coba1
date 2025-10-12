@@ -1,40 +1,18 @@
-namespace WebApplication1.Models
+using System.ComponentModel.DataAnnotations;
+
+namespace MyApp.WebAPI.Models
 {
-    /// <summary>
-    /// Entity class untuk merepresentasikan Category dalam database
-    /// </summary>
-    public class Category : IAuditable // Direkomendasikan untuk implement IAuditable
-    {
-        /// <summary>
-        /// Primary Key
-        /// </summary>
-        public int Id { get; set; }
+  public class Category : BaseModel
+  {
+    [Key]
+    public int CategoryId { get; set; }
 
-        /// <summary>
-        /// Nama category - Required, unique, max 100 characters
-        /// </summary>
-        public string Name { get; set; } = string.Empty;
+    [Required, MaxLength(100)]
+    public string Name { get; set; } = string.Empty;
 
-        /// <summary>
-        /// URL path untuk gambar kategori (opsional)
-        /// </summary>
-        public string? Image { get; set; }
+    [MaxLength(255)]
+    public string? Image { get; set; }
 
-        // Properti Description dan IsActive DIHAPUS karena tidak ada di skema DB
-
-        /// <summary>
-        /// Timestamp kapan category ini dibuat
-        /// </summary>
-        public DateTime CreatedAt { get; set; }
-
-        /// <summary>
-        /// Timestamp kapan category ini terakhir di-update
-        /// </summary>
-        public DateTime UpdatedAt { get; set; }
-
-        /// <summary>
-        /// Navigation property untuk relasi One-to-Many dengan MenuCourse
-        /// </summary>
-        public virtual ICollection<MenuCourse> MenuCourses { get; set; } = new List<MenuCourse>();
-    }
+    public virtual ICollection<MenuCourse> MenuCourses { get; set; } = new List<MenuCourse>();
+  }
 }
