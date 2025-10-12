@@ -138,28 +138,6 @@ builder.Services.AddSwaggerGen(c =>
 // ===============================================
 var app = builder.Build();
 
-<<<<<<< HEAD
-// ========== SEED DATABASE ==========
-
-await SeedDatabase(app);
-
-// ========== KONFIGURASI HTTP REQUEST PIPELINE ==========
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        // DIPERBAIKI: Nama endpoint disesuaikan
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Course API V1");
-        c.RoutePrefix = string.Empty;
-    });
-}
-
-// ========== MIDDLEWARE PIPELINE (URUTAN PENTING!) ==========
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-=======
 // ===============================================
 // 6️⃣ Automatic Migration & Seeding
 // ===============================================
@@ -183,34 +161,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
-<<<<<<< HEAD
-// ========== START APLIKASI ==========
-
-app.Run();
-
-// ========== HELPER METHODS ==========
-
-static async Task SeedDatabase(WebApplication app)
-{
-    using var scope = app.Services.CreateScope();
-    
-    // DIPERBAIKI: Komentar disesuaikan dengan ApplicationDbContext
-    // Ambil instance ApplicationDbContext dari DI container
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    
-    await context.Database.EnsureCreatedAsync();
-    
-    // DIPERBAIKI: Komentar disesuaikan dengan ApplicationDbContext
-    // Note: Data seed sudah dikonfigurasi di ApplicationDbContext.OnModelCreating
-}
-=======
 app.UseAuthentication();
 app.UseAuthorization();
 
@@ -220,4 +176,3 @@ app.MapControllers();
 await SeedData.InitializeAsync(app.Services);
 
 app.Run();
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a

@@ -1,26 +1,20 @@
+// Lokasi: src/06.WebAPI/Services/IScheduleService.cs
+
 using MyApp.WebAPI.DTOs;
 
 namespace MyApp.WebAPI.Services
 {
-    /// <summary>
-    /// Interface (kontrak) untuk Schedule Service
-    /// Mendefinisikan operasi dasar CRUD untuk data Jadwal (Schedule)
-    /// </summary>
     public interface IScheduleService
     {
-        /// <summary>
-        /// Mengambil semua jadwal yang tersedia
-        /// </summary>
         Task<IEnumerable<ScheduleDto>> GetAllAsync();
+        
+        // Pastikan metode ini ada
+        Task<ScheduleDto?> GetAsync(int id); 
 
-        /// <summary>
-        /// Membuat jadwal baru
-        /// </summary>
         Task<ScheduleDto> CreateAsync(CreateScheduleDto createDto);
+        
+        Task<ScheduleDto?> UpdateAsync(int id, UpdateScheduleDto updateDto);
 
-        /// <summary>
-        /// Menghapus jadwal berdasarkan ID
-        /// </summary>
         Task<bool> DeleteAsync(int id);
     }
 }

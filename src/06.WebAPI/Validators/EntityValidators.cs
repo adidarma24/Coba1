@@ -1,8 +1,8 @@
 using FluentValidation;
-using WebApplication1.DTOs;
+using MyApp.WebAPI.DTOs;
 using System.Linq;
 
-namespace WebApplication1.Validators
+namespace MyApp.WebAPI.Validators
 {
     //==================== CATEGORY VALIDATORS ====================
     

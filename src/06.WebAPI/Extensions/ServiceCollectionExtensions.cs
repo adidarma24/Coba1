@@ -4,7 +4,7 @@ using MyApp.WebAPI.Services;
 using FluentValidation;
 using System.Reflection;
 using AutoMapper;
-using MyApp.WebAPI.Middleware;
+using MyApp.WebAPI.Middlewares;
 
 namespace MyApp.WebAPI.Extensions
 {

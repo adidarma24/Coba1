@@ -31,14 +31,14 @@ namespace MyApp.WebAPI.Services
         {
             var menuCourse = await _context.MenuCourses
                 .Include(mc => mc.Category)
-                .FirstOrDefaultAsync(mc => mc.Id == id);
+                .FirstOrDefaultAsync(mc => mc.MenuCourseId == id);
             
             return _mapper.Map<MenuCourseDto>(menuCourse);
         }
 
         public async Task<MenuCourseDto> CreateMenuCourseAsync(CreateMenuCourseDto createDto)
         {
-            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == createDto.CategoryId);
+            var categoryExists = await _context.Categories.AnyAsync(c => c.CategoryId == createDto.CategoryId);
             if (!categoryExists)
             {
                 throw new ArgumentException($"Category dengan ID {createDto.CategoryId} tidak ditemukan.");
@@ -51,7 +51,7 @@ namespace MyApp.WebAPI.Services
             
             await _context.Entry(menuCourse).Reference(mc => mc.Category).LoadAsync();
 
-            _logger.LogInformation("MenuCourse created with ID: {MenuCourseId}", menuCourse.Id);
+            _logger.LogInformation("MenuCourse created with ID: {MenuCourseId}", menuCourse.MenuCourseId);
             return _mapper.Map<MenuCourseDto>(menuCourse);
         }
 
@@ -62,7 +62,7 @@ namespace MyApp.WebAPI.Services
 
             if(menuCourse.CategoryId != updateDto.CategoryId)
             {
-                var categoryExists = await _context.Categories.AnyAsync(c => c.Id == updateDto.CategoryId);
+                var categoryExists = await _context.Categories.AnyAsync(c => c.CategoryId == updateDto.CategoryId);
                 if (!categoryExists)
                 {
                     throw new ArgumentException($"Category dengan ID {updateDto.CategoryId} tidak ditemukan.");
@@ -78,7 +78,7 @@ namespace MyApp.WebAPI.Services
                 await _context.Entry(menuCourse).Reference(mc => mc.Category).LoadAsync();
             }
 
-            _logger.LogInformation("MenuCourse updated with ID: {MenuCourseId}", menuCourse.Id);
+            _logger.LogInformation("MenuCourse updated with ID: {MenuCourseId}", menuCourse.MenuCourseId);
             return _mapper.Map<MenuCourseDto>(menuCourse);
         }
 
@@ -91,7 +91,7 @@ namespace MyApp.WebAPI.Services
             await _context.SaveChangesAsync();
             
             // DIPERBAIKI: Menggunakan 'Id' yang sudah distandarkan
-            _logger.LogInformation("MenuCourse deleted with ID: {MenuCourseId}", menuCourse.Id);
+            _logger.LogInformation("MenuCourse deleted with ID: {MenuCourseId}", menuCourse.MenuCourseId);
             return true;
         }
     }

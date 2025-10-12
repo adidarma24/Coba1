@@ -1,11 +1,7 @@
-// Letak: Services/IMenuCourseService.cs
 using MyApp.WebAPI.DTOs;
 
 namespace MyApp.WebAPI.Services
 {
-    /// <summary>
-    /// Interface (kontrak) untuk MenuCourse Service
-    /// </summary>
     public interface IMenuCourseService
     {
         Task<IEnumerable<MenuCourseDto>> GetAllMenuCoursesAsync();

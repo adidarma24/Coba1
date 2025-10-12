@@ -1,92 +1,92 @@
+// Lokasi: src/06.WebAPI/Controllers/SchedulesController.cs
+
 using Microsoft.AspNetCore.Mvc;
-using MyApp.WebAPI.DTOs;
+using MyApp.WebAPI.DTOs; // Pastikan using directive ini ada
 using MyApp.WebAPI.Models;
 using MyApp.WebAPI.Services;
 
 namespace MyApp.WebAPI.Controllers
 {
-    /// <summary>
-    /// Controller untuk mengelola data master Jadwal (Schedules)
-    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     [Produces("application/json")]
     public class SchedulesController : ControllerBase
     {
         private readonly IScheduleService _scheduleService;
-        private readonly ILogger<SchedulesController> _logger;
 
-        public SchedulesController(IScheduleService scheduleService, ILogger<SchedulesController> logger)
+        public SchedulesController(IScheduleService scheduleService)
         {
             _scheduleService = scheduleService;
-            _logger = logger;
         }
 
-        /// <summary>
-        /// Mengambil semua data jadwal yang tersedia
-        /// </summary>
         [HttpGet]
-        [ProducesResponseType(typeof(ApiResponse<IEnumerable<ScheduleDto>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var schedules = await _scheduleService.GetAllAsync();
-            return Ok(ApiResponse<IEnumerable<ScheduleDto>>.SuccessResult(schedules));
+            return Ok(new ApiResponse<IEnumerable<ScheduleDto>>
+            {
+                Success = true, Data = schedules, Message = "Berhasil mengambil semua data jadwal."
+            });
+        }
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var schedule = await _scheduleService.GetAsync(id); 
+            if (schedule == null)
+            {
+                return NotFound(new ApiResponse<object>
+                {
+                    Success = false, Message = $"Jadwal dengan ID {id} tidak ditemukan."
+                });
+            }
+            return Ok(new ApiResponse<ScheduleDto>
+            {
+                Success = true, Data = schedule, Message = "Berhasil mengambil data jadwal."
+            });
         }
 
-        /// <summary>
-        /// Membuat jadwal baru
-        /// </summary>
-        /// <param name="createDto">Data untuk jadwal baru</param>
-        /// <returns>Jadwal yang baru dibuat</returns>
-        /// <response code="201">Berhasil membuat jadwal</response>
-        /// <response code="400">Input tidak valid (misal: jadwal sudah ada)</response>
         [HttpPost]
-        [ProducesResponseType(typeof(ApiResponse<ScheduleDto>), StatusCodes.Status201Created)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] CreateScheduleDto createDto)
         {
-            try
+            var newSchedule = await _scheduleService.CreateAsync(createDto);
+            var response = new ApiResponse<ScheduleDto>
             {
-                var newSchedule = await _scheduleService.CreateAsync(createDto);
-                var response = ApiResponse<ScheduleDto>.SuccessResult(newSchedule, "Jadwal berhasil dibuat.");
-                // Menggunakan CreatedAtAction membutuhkan endpoint GetById, yang tidak ada di service ini.
-                // Mengembalikan 201 Created dengan lokasi header ke resource baru adalah praktik yang baik,
-                // tapi untuk kesederhanaan, kita bisa kembalikan 200 OK atau 201 dengan objeknya.
-                return Ok(response); 
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ApiResponse<object>.ErrorResult(ex.Message));
-            }
+                Success = true, Data = newSchedule, Message = "Jadwal berhasil dibuat."
+            };
+            return CreatedAtAction(nameof(GetById), new { id = newSchedule.Id }, response);
         }
 
-        /// <summary>
-        /// Menghapus sebuah jadwal
-        /// </summary>
-        /// <param name="id">ID dari jadwal yang akan dihapus</param>
-        /// <response code="204">Berhasil menghapus jadwal</response>
-        /// <response code="404">Jadwal tidak ditemukan</response>
-        /// <response code="409">Jadwal tidak bisa dihapus karena masih digunakan</response>
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateScheduleDto updateDto)
+        {
+            // Kode ini sekarang akan berfungsi karena UpdateScheduleDto sudah ada
+            var updatedSchedule = await _scheduleService.UpdateAsync(id, updateDto); 
+            if (updatedSchedule == null)
+            {
+                return NotFound(new ApiResponse<object>
+                {
+                    Success = false, Message = $"Jadwal dengan ID {id} tidak ditemukan."
+                });
+            }
+            return Ok(new ApiResponse<ScheduleDto>
+            {
+                Success = true, Data = updatedSchedule, Message = "Jadwal berhasil diperbarui."
+            });
+        }
+
         [HttpDelete("{id}")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status404NotFound)]
-        [ProducesResponseType(typeof(ApiResponse<object>), StatusCodes.Status409Conflict)]
         public async Task<IActionResult> Delete(int id)
         {
-            try
+            var success = await _scheduleService.DeleteAsync(id);
+            if (!success)
             {
-                var success = await _scheduleService.DeleteAsync(id);
-                if (!success)
+                return NotFound(new ApiResponse<object>
                 {
-                    return NotFound(ApiResponse<object>.ErrorResult($"Jadwal dengan ID {id} tidak ditemukan."));
-                }
-                return NoContent();
+                    Success = false, Message = $"Jadwal dengan ID {id} tidak ditemukan."
+                });
             }
-            catch (InvalidOperationException ex)
-            {
-                // 409 Conflict adalah status yang tepat ketika sebuah aksi tidak bisa dilakukan karena konflik state
-                return Conflict(ApiResponse<object>.ErrorResult(ex.Message));
-            }
+            return NoContent();
         }
     }
 }

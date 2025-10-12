@@ -4,11 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-<<<<<<< HEAD
-using WebApplication1.Data;
-=======
 using MyApp.WebAPI.Data;
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
 
 #nullable disable
 
@@ -21,20 +17,12 @@ namespace MyApp.WebAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-<<<<<<< HEAD
-                .HasAnnotation("ProductVersion", "9.0.0")
-=======
                 .HasAnnotation("ProductVersion", "9.0.9")
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-<<<<<<< HEAD
-            modelBuilder.Entity("WebApplication1.Models.Category", b =>
-=======
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -42,16 +30,6 @@ namespace MyApp.WebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-<<<<<<< HEAD
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Image")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-=======
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -191,233 +169,10 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<string>("Image")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
-<<<<<<< HEAD
-                        .HasColumnType("nvarchar(100)")
-                        .HasComment("Nama kategori - harus unik");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique()
-                        .HasDatabaseName("IX_Categories_Name");
-
-                    b.ToTable("Categories", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Asian",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Cold Drink",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Cookies",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Desert",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Eastern",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Hot Drink",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Junkfood",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Name = "Western",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.MenuCourse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int")
-                        .HasComment("Foreign key ke tabel Categories");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)")
-                        .HasComment("Deskripsi detail dari menu course");
-
-                    b.Property<string>("Image")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)")
-                        .HasComment("URL path ke gambar menu course");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)")
-                        .HasComment("Nama dari menu course");
-
-                    b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)")
-                        .HasComment("Harga menu course dalam format decimal");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId")
-                        .HasDatabaseName("IX_MenuCourses_CategoryId");
-
-                    b.HasIndex("Name")
-                        .HasDatabaseName("IX_MenuCourses_Name");
-
-                    b.HasIndex("Price")
-                        .HasDatabaseName("IX_MenuCourses_Price");
-
-                    b.ToTable("MenuCourses", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CategoryId = 1,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Nasi goreng klasik dengan telur dan ayam.",
-                            Name = "Nasi Goreng Spesial",
-                            Price = 25000m,
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CategoryId = 2,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Minuman teh dingin yang menyegarkan.",
-                            Name = "Es Teh Manis",
-                            Price = 5000m,
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CategoryId = 3,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Kue kering dengan taburan choco chip.",
-                            Name = "Choco Chip Cookies",
-                            Price = 15000m,
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 4,
-                            CategoryId = 4,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Dessert puding rasa coklat.",
-                            Name = "Pudding Coklat",
-                            Price = 12000m,
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 5,
-                            CategoryId = 5,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Daging panggang dengan sayuran dalam roti pita.",
-                            Name = "Kebab Turki",
-                            Price = 30000m,
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 6,
-                            CategoryId = 6,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Kopi hitam panas tanpa gula.",
-                            Name = "Kopi Hitam",
-                            Price = 8000m,
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 7,
-                            CategoryId = 7,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Potongan kentang yang digoreng renyah.",
-                            Name = "Kentang Goreng",
-                            Price = 18000m,
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 8,
-                            CategoryId = 8,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            Description = "Pasta dengan saus daging tomat klasik.",
-                            Name = "Spaghetti Bolognese",
-                            Price = 45000m,
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.MenuCourse_Schedule", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-=======
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -552,19 +307,12 @@ namespace MyApp.WebAPI.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MSId"));
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
 
                     b.Property<int>("AvailableSlot")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
-<<<<<<< HEAD
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-=======
                         .HasColumnType("datetime2");
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
 
                     b.Property<int>("MenuCourseId")
                         .HasColumnType("int");
@@ -572,8 +320,6 @@ namespace MyApp.WebAPI.Migrations
                     b.Property<int>("ScheduleId")
                         .HasColumnType("int");
 
-<<<<<<< HEAD
-=======
                     b.Property<int>("Status")
                         .HasMaxLength(50)
                         .HasColumnType("int");
@@ -639,61 +385,12 @@ namespace MyApp.WebAPI.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedAt")
-<<<<<<< HEAD
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MenuCourseId");
-
-                    b.HasIndex("ScheduleId");
-
-                    b.ToTable("MenuCourse_Schedules", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            AvailableSlot = 20,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            MenuCourseId = 1,
-                            ScheduleId = 1,
-                            Status = "Active",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            AvailableSlot = 20,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            MenuCourseId = 1,
-                            ScheduleId = 2,
-                            Status = "Active",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            AvailableSlot = 15,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            MenuCourseId = 2,
-                            ScheduleId = 3,
-                            Status = "Active",
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
-=======
                         .HasColumnType("datetime2");
 
                     b.HasKey("PaymentMethodId");
@@ -724,7 +421,6 @@ namespace MyApp.WebAPI.Migrations
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.User", b =>
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -732,57 +428,6 @@ namespace MyApp.WebAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-<<<<<<< HEAD
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<DateTime>("ScheduleDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Schedules", (string)null);
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ScheduleDate = new DateTime(2025, 10, 20, 10, 0, 0, 0, DateTimeKind.Utc),
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ScheduleDate = new DateTime(2025, 10, 22, 14, 0, 0, 0, DateTimeKind.Utc),
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        },
-                        new
-                        {
-                            Id = 3,
-                            CreatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            ScheduleDate = new DateTime(2025, 10, 25, 19, 0, 0, 0, DateTimeKind.Utc),
-                            UpdatedAt = new DateTime(2025, 10, 1, 0, 0, 0, 0, DateTimeKind.Utc)
-                        });
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.MenuCourse", b =>
-                {
-                    b.HasOne("WebApplication1.Models.Category", "Category")
-                        .WithMany("MenuCourses")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired()
-                        .HasConstraintName("FK_MenuCourses_Categories");
-=======
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
@@ -954,37 +599,22 @@ namespace MyApp.WebAPI.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
 
                     b.Navigation("Category");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("WebApplication1.Models.MenuCourse_Schedule", b =>
-                {
-                    b.HasOne("WebApplication1.Models.MenuCourse", "MenuCourse")
-                        .WithMany("MenuCourse_Schedules")
-=======
             modelBuilder.Entity("MyApp.WebAPI.Models.MenuCourseSchedule", b =>
                 {
                     b.HasOne("MyApp.WebAPI.Models.MenuCourse", "MenuCourse")
                         .WithMany("MenuCourseSchedules")
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
                         .HasForeignKey("MenuCourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-<<<<<<< HEAD
-                    b.HasOne("WebApplication1.Models.Schedule", "Schedule")
-                        .WithMany("MenuCourse_Schedules")
-                        .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Restrict)
-=======
                     b.HasOne("MyApp.WebAPI.Models.Schedule", "Schedule")
                         .WithMany("MenuCourseSchedules")
                         .HasForeignKey("ScheduleId")
                         .OnDelete(DeleteBehavior.Cascade)
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
                         .IsRequired();
 
                     b.Navigation("MenuCourse");
@@ -992,9 +622,6 @@ namespace MyApp.WebAPI.Migrations
                     b.Navigation("Schedule");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("WebApplication1.Models.Category", b =>
-=======
             modelBuilder.Entity("MyApp.WebAPI.Models.MyClass", b =>
                 {
                     b.HasOne("MyApp.WebAPI.Models.MenuCourseSchedule", "MenuCourseSchedule")
@@ -1015,21 +642,10 @@ namespace MyApp.WebAPI.Migrations
                 });
 
             modelBuilder.Entity("MyApp.WebAPI.Models.Category", b =>
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
                 {
                     b.Navigation("MenuCourses");
                 });
 
-<<<<<<< HEAD
-            modelBuilder.Entity("WebApplication1.Models.MenuCourse", b =>
-                {
-                    b.Navigation("MenuCourse_Schedules");
-                });
-
-            modelBuilder.Entity("WebApplication1.Models.Schedule", b =>
-                {
-                    b.Navigation("MenuCourse_Schedules");
-=======
             modelBuilder.Entity("MyApp.WebAPI.Models.Invoice", b =>
                 {
                     b.Navigation("InvoiceMenuCourses");
@@ -1057,7 +673,6 @@ namespace MyApp.WebAPI.Migrations
                     b.Navigation("Invoices");
 
                     b.Navigation("MyClasses");
->>>>>>> 5083bd36b7ff853f16a3fe0d871efdfc1b6c8a8a
                 });
 #pragma warning restore 612, 618
         }
