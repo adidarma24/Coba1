@@ -1,7 +1,5 @@
-// Lokasi: src/06.WebAPI/Controllers/SchedulesController.cs
-
 using Microsoft.AspNetCore.Mvc;
-using MyApp.WebAPI.DTOs; // Pastikan using directive ini ada
+using MyApp.WebAPI.DTOs; 
 using MyApp.WebAPI.Models;
 using MyApp.WebAPI.Services;
 
@@ -60,7 +58,6 @@ namespace MyApp.WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UpdateScheduleDto updateDto)
         {
-            // Kode ini sekarang akan berfungsi karena UpdateScheduleDto sudah ada
             var updatedSchedule = await _scheduleService.UpdateAsync(id, updateDto); 
             if (updatedSchedule == null)
             {

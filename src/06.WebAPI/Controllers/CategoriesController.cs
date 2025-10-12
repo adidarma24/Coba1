@@ -1,4 +1,3 @@
-// Lokasi: src/06.WebAPI/Controllers/CategoriesController.cs
 using Microsoft.AspNetCore.Mvc;
 using MyApp.WebAPI.DTOs;
 using MyApp.WebAPI.Models; 
