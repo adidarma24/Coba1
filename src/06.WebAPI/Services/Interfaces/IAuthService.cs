@@ -6,10 +6,12 @@ namespace MyApp.WebAPI.Services.Interfaces
   public interface IAuthService
   {
     Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request);
+    Task<string> ConfirmEmailAsync(string email, string token);
+    Task<AuthResponseDto> ResendConfirmationEmailAsync(string email);
     Task<AuthResponseDto> LoginAsync(LoginRequestDto request);
     Task<AuthResponseDto> RefreshTokenAsync(RefreshTokenRequestDto request);
-    Task<bool> LogoutAsync(string userEmail);
-    Task<bool> SendResetPasswordEmailAsync(ForgotPasswordRequestDto request);
-    Task<bool> ResetPasswordAsync(ResetPasswordRequestDto request);
+    Task<bool> LogoutAsync(string email);
+    Task<AuthResponseDto> SendResetPasswordEmailAsync(ForgotPasswordRequestDto request);
+    Task<AuthResponseDto> ResetPasswordAsync(ResetPasswordRequestDto request);
   }
 }

@@ -1,4 +1,7 @@
 @page "/reset-password"
+@using MyApp.BlazorUI.Services.Interfaces
+@using MyApp.BlazorUI.DTOs.Auth
+@inject IAuthService AuthService
 @inject NavigationManager Navigation
 
 <PageTitle>Reset Password</PageTitle>
@@ -14,13 +17,14 @@
 
     <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
       <MudPaper Elevation="0" Class="d-flex flex-column gap-6">
-        <MudTextField T="string" @bind-Value="resetModel.Email" Validation="@(new Func<string, string>(ValidateEmail))"
-          Placeholder="Email" Variant="Variant.Outlined" InputType="InputType.Email" Required="true"
-          RequiredError="Email is required!" For="@(() => resetModel.Email)" Style="height: 2rem;" />
+        <MudTextField T="string" @bind-Value="forgotPasswordRequestDto.Email"
+          Validation="@(new Func<string, string>(ValidateEmail))" Placeholder="Email" Variant="Variant.Outlined"
+          InputType="InputType.Email" Required="true" RequiredError="Email is required!"
+          For="@(() => forgotPasswordRequestDto.Email)" Style="height: 2rem;" />
 
-        @if (!string.IsNullOrEmpty(OTPError))
+        @if (!string.IsNullOrEmpty(ForgotError))
         {
-          <MudText Color="Color.Error">@OTPError</MudText>
+          <MudText Color="Color.Error">@ForgotError</MudText>
         }
       </MudPaper>
     </MudForm>
@@ -32,8 +36,17 @@
         </MudButton>
       </MudLink>
 
-      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
-        Confirm
+      <MudButton Disabled="@_processing" OnClick="Submit" Variant="Variant.Filled" DropShadow="false"
+        Class="rounded-lg button button-filled">
+        @if (_processing)
+        {
+          <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+          <MudText Class="ms-2">Processing</MudText>
+        }
+        else
+        {
+          <MudText>Confirm</MudText>
+        }
       </MudButton>
     </MudPaper>
   </MudPaper>
@@ -44,26 +57,42 @@
   MudForm? form;
   bool success;
   string[] errors = { };
-  private string OTPError = string.Empty;
-  private ResetModel resetModel = new();
+  private bool _processing = false;
+  private string ForgotError = string.Empty;
+  private ForgotPasswordRequestDto forgotPasswordRequestDto = new ForgotPasswordRequestDto();
 
-  private static string email = "test@gmail.com";
-
-  private void Submit()
+  private async Task Submit()
   {
     form?.Validate();
-    if (success)
+
+    if (!success)
+      return;
+
+    _processing = true;
+    ForgotError = string.Empty;
+    StateHasChanged();
+
+    try
     {
-      if (resetModel.Email == email)
+      var result = await AuthService.ForgotPasswordAsync(forgotPasswordRequestDto);
+      if (result.Success)
       {
-        Console.WriteLine("OTP is send to your Email!");
-        OTPError = string.Empty;
-        Navigation.NavigateTo("/new-password");
+        Console.WriteLine("A password reset link has been sent to your email.");
+        ForgotError = result.Message;
       }
       else
       {
-        OTPError = "Email not registered!";
+        ForgotError = result.Message;
       }
+    }
+    catch
+    {
+      ForgotError = $"Server error";
+    }
+    finally
+    {
+      _processing = false;
+      StateHasChanged();
     }
   }
 
@@ -82,10 +111,5 @@
     {
       return string.Empty;
     }
-  }
-
-  public class ResetModel
-  {
-    public string Email { get; set; } = string.Empty;
   }
 }

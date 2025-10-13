@@ -1,5 +1,11 @@
 @page "/my-class"
 @using MyApp.BlazorUI.Components.Models
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@attribute [Authorize]
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthStateProvider
+
 
 <PageTitle>My Class</PageTitle>
 
@@ -29,6 +35,28 @@
 </MudContainer>
 
 @code {
+  private string userName = "";
+  private string userEmail = "";
+  private string userRole = "";
+
+  protected override async Task OnInitializedAsync()
+  {
+    var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+    var user = authState.User;
+
+    if (user.Identity?.IsAuthenticated == true)
+    {
+      userName = user.FindFirst("name")?.Value ?? "User";
+      userEmail = user.FindFirst("email")?.Value ?? user.Identity.Name ?? "N/A";
+      userRole = user.FindFirst("role")?.Value ?? "User";
+    }
+    else
+    {
+      // Redirect to login if not authenticated
+      Navigation.NavigateTo("/login", forceLoad: true);
+    }
+  }
+
 
   private IEnumerable<MyClassModel> myClasses = new List<MyClassModel>
 {

@@ -1,4 +1,7 @@
 @page "/new-password"
+@using MyApp.BlazorUI.Services.Interfaces
+@using MyApp.BlazorUI.DTOs.Auth
+@inject IAuthService AuthService
 @inject NavigationManager Navigation
 
 <PageTitle>Reset Password</PageTitle>
@@ -14,7 +17,7 @@
     <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
       <MudPaper Elevation="0" Class="d-flex flex-column gap-6">
         <MudTextField T="string" 
-                      @bind-Value="resetModel.Password"
+                      @bind-Value="resetPasswordRequestDto.NewPassword"
                       Validation="@(new Func<string, IEnumerable<string>>(ValidatePassword))" 
                       Placeholder="New Password"
                       Variant="Variant.Outlined" 
@@ -26,11 +29,11 @@
                       IconSize="Size.Small" 
                       Required="true" 
                       RequiredError="New password is required!" 
-                      For="@(() => resetModel.Password)" 
+                      For="@(() => resetPasswordRequestDto.NewPassword)"  
                       Style="height: 2rem;" />
 
         <MudTextField T="string" 
-                      @bind-Value="resetModel.ConfirmPassword"
+                      @bind-Value="resetPasswordRequestDto.ConfirmNewPassword"
                       Validation="@(new Func<string, string>(ValidateConfirmPassword))" 
                       Placeholder="Confirm New Password"
                       Variant="Variant.Outlined" 
@@ -42,8 +45,13 @@
                       IconSize="Size.Small" 
                       Required="true"
                       RequiredError="Please confirm your new password!" 
-                      For="@(() => resetModel.ConfirmPassword)"
+                      For="@(() => resetPasswordRequestDto.ConfirmNewPassword)"
                       Style="height: 2rem;" />
+
+        @if (!string.IsNullOrEmpty(passwordError))
+        {
+          <MudText Color="Color.Error">@passwordError</MudText>
+        }
       </MudPaper>
     </MudForm>
 
@@ -54,8 +62,16 @@
         </MudButton>
       </MudLink>
 
-      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
-        Confirm
+      <MudButton Disabled="@_processing" OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
+        @if (_processing)
+        {
+          <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+          <MudText Class="ms-2">Processing</MudText>
+        }
+        else
+        {
+          <MudText>Confirm</MudText>
+        }
       </MudButton>
     </MudPaper>
   </MudPaper>
@@ -66,22 +82,60 @@
   MudForm? form;
   bool success;
   string[] errors = { };
+  private bool _processing = false;
   private string passwordError = string.Empty;
-  private ResetModel resetModel = new();
+  private ResetPasswordRequestDto resetPasswordRequestDto = new ResetPasswordRequestDto();
+
+  protected override void OnInitialized()
+  {
+    var uri = Navigation.ToAbsoluteUri(Navigation.Uri);
+
+    var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+    if (query.TryGetValue("email", out var emailValue))
+        resetPasswordRequestDto.Email = emailValue!;
+
+    if (query.TryGetValue("token", out var tokenValue))
+        resetPasswordRequestDto.Token = tokenValue!;
+  }
 
   bool isShow;
   InputType PasswordInput = InputType.Password;
   string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
-  private static string pass = "Qwerty123";
-
-  private void Submit()
+  private async Task Submit()
   {
     form?.Validate();
-    if (success)
+
+    if (!success)
+      return;
+
+    _processing = true;
+    passwordError = string.Empty;
+    StateHasChanged();
+
+    try
     {
-      Console.WriteLine("Reset password Success!");
-      Navigation.NavigateTo("/login");
+      var result = await AuthService.ResetPasswordAsync(resetPasswordRequestDto);
+      if(result.Success)
+      {
+      Console.WriteLine("Password reset Success.");
+      passwordError = result.Message;
+      Navigation.NavigateTo("/password-reset-success");
+      }
+      else 
+      {
+      passwordError = result.Message;
+      }
+    }
+    catch(Exception ex)
+    { 
+      passwordError = $"server error";
+    }
+    finally
+    {
+      _processing = false;
+      StateHasChanged();
     }
   }
 
@@ -96,11 +150,7 @@
     {
       yield return "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number!";
     }
-    if (value == pass)
-    {
-      yield return "Your new password cannot be same as old password";
-    }
-    ValidateConfirmPassword(resetModel.ConfirmPassword);
+    ValidateConfirmPassword(resetPasswordRequestDto.ConfirmNewPassword);
   }
 
   private string ValidateConfirmPassword(string value)
@@ -109,7 +159,7 @@
     {
       return "Please confirm your new password!";
     }
-    else if (value != resetModel.Password)
+    else if (value != resetPasswordRequestDto.NewPassword)
     {
       return "New password do not match!";
     }
@@ -133,11 +183,5 @@
       PasswordInputIcon = Icons.Material.Filled.Visibility;
       PasswordInput = InputType.Text;
     }
-  }
-
-  public class ResetModel
-  {
-    public string Password { get; set; } = string.Empty;
-    public string ConfirmPassword { get; set; } = string.Empty;
   }
 }

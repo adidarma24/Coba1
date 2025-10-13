@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using MyApp.WebAPI.DTOs.Auth;
 using MyApp.WebAPI.Services.Interfaces;
 using MyApp.WebAPI.Models;
+using System.Security.Claims;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace MyApp.WebAPI.Controllers
 {
@@ -29,7 +31,7 @@ namespace MyApp.WebAPI.Controllers
         {
           Success = true,
           Data = result,
-          Message = "Registration successful"
+          Message = result.Message
         });
       }
 
@@ -39,6 +41,39 @@ namespace MyApp.WebAPI.Controllers
         Data = result,
         Message = result.Message
       });
+    }
+
+    [HttpPost("resend-confirmation-email")]
+    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<ApiResponse<AuthResponseDto>>> ResendConfirmationEmail([FromBody] string email)
+    {
+      var result = await _authService.ResendConfirmationEmailAsync(email);
+      if (result.Success)
+      {
+        return Ok(new ApiResponse<AuthResponseDto>
+        {
+          Success = true,
+          Data = result,
+          Message = result.Message
+        });
+      }
+
+      return BadRequest(new ApiResponse<AuthResponseDto>
+      {
+        Success = false,
+        Data = result,
+        Message = result.Message
+      });
+    }
+
+    [HttpGet("confirm-email")]
+    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse<AuthResponseDto>), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ConfirmEmail([FromQuery] string email, [FromQuery] string token)
+    {
+      var redirectUrl = await _authService.ConfirmEmailAsync(email, token);
+      return Redirect(redirectUrl);
     }
 
     [HttpPost("login")]
@@ -57,7 +92,7 @@ namespace MyApp.WebAPI.Controllers
         });
       }
 
-      return Unauthorized(new ApiResponse<AuthResponseDto>
+      return BadRequest(new ApiResponse<AuthResponseDto>
       {
         Success = false,
         Data = result,
@@ -82,7 +117,7 @@ namespace MyApp.WebAPI.Controllers
         });
       }
 
-      return Unauthorized(new ApiResponse<AuthResponseDto>
+      return BadRequest(new ApiResponse<AuthResponseDto>
       {
         Success = false,
         Data = result,
@@ -95,8 +130,21 @@ namespace MyApp.WebAPI.Controllers
     [Authorize]
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse<bool>>> Logout([FromQuery] string email)
+    public async Task<ActionResult<ApiResponse<bool>>> Logout()
     {
+      var email = User.FindFirst(ClaimTypes.Email)?.Value
+      ?? User.FindFirst(JwtRegisteredClaimNames.Email)?.Value; ;
+
+      if (string.IsNullOrEmpty(email))
+      {
+        return BadRequest(new ApiResponse<bool>
+        {
+          Success = false,
+          Data = false,
+          Message = "Invalid token: email not found."
+        });
+      }
+
       var result = await _authService.LogoutAsync(email);
       return Ok(new ApiResponse<bool>
       {
@@ -109,28 +157,48 @@ namespace MyApp.WebAPI.Controllers
     [HttpPost("forgot-password")]
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse<bool>>> ForgotPassword([FromBody] ForgotPasswordRequestDto dto)
+    public async Task<ActionResult<ApiResponse<AuthResponseDto>>> ForgotPassword([FromBody] ForgotPasswordRequestDto dto)
     {
       var result = await _authService.SendResetPasswordEmailAsync(dto);
-      return Ok(new ApiResponse<bool>
+      if (result.Success)
       {
-        Success = result,
+        return Ok(new ApiResponse<AuthResponseDto>
+        {
+          Success = true,
+          Data = result,
+          Message = result.Message
+        });
+      }
+
+      return BadRequest(new ApiResponse<AuthResponseDto>
+      {
+        Success = false,
         Data = result,
-        Message = result ? "Password reset email sent successfully." : "Failed to sent email"
+        Message = result.Message
       });
     }
 
     [HttpPost("reset-password")]
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse<bool>), StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<ApiResponse<bool>>> ResetPassword([FromBody] ResetPasswordRequestDto request)
+    public async Task<ActionResult<ApiResponse<AuthResponseDto>>> ResetPassword([FromBody] ResetPasswordRequestDto request)
     {
       var result = await _authService.ResetPasswordAsync(request);
-      return Ok(new ApiResponse<bool>
+      if (result.Success)
       {
-        Success = result,
+        return Ok(new ApiResponse<AuthResponseDto>
+        {
+          Success = true,
+          Data = result,
+          Message = result.Message
+        });
+      }
+
+      return BadRequest(new ApiResponse<AuthResponseDto>
+      {
+        Success = false,
         Data = result,
-        Message = result ? "Password has been reset successfully." : "Failed to reset password"
+        Message = result.Message
       });
     }
   }
