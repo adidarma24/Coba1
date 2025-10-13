@@ -61,6 +61,15 @@
   private string ForgotError = string.Empty;
   private ForgotPasswordRequestDto forgotPasswordRequestDto = new ForgotPasswordRequestDto();
 
+  protected override async Task OnInitializedAsync()
+  {
+    var authState = await AuthService.IsUserAuthenticatedAsync();
+    if (authState)
+    {
+      Navigation.NavigateTo("/", forceLoad: true);
+    }
+  }
+
   private async Task Submit()
   {
     form?.Validate();

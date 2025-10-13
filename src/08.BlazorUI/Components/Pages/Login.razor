@@ -91,6 +91,16 @@
   InputType PasswordInput = InputType.Password;
   string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
+  protected override async Task OnInitializedAsync()
+  {
+    var authState = await AuthService.IsUserAuthenticatedAsync();
+    if (authState)
+    {
+      Navigation.NavigateTo("/", forceLoad: true);
+    }
+  }
+
+
   private async Task Submit()
   {
     form?.Validate();

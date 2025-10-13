@@ -53,30 +53,6 @@ namespace MyApp.BlazorUI.Services
     public async Task<ApiResponse<AuthResponseDto>> ResendConfirmationEmailAsync(string email)
       => await Post<ApiResponse<AuthResponseDto>>("api/Auth/resend-confirmation-email", email);
 
-    // private async Task<T?> Post<T>(string url, object? body)
-    // {
-    //   var response = await _http.PostAsJsonAsync(url, body);
-
-    //   if (!response.IsSuccessStatusCode)
-    //   {
-    //     var error = await response.Content.ReadAsStringAsync();
-    //     Console.WriteLine($"Server returned error ({response.StatusCode}): {error}");
-    //     return default;
-    //   }
-
-    //   var content = await response.Content.ReadAsStringAsync();
-    //   if (string.IsNullOrWhiteSpace(content))
-    //   {
-    //     Console.WriteLine("Response content is empty.");
-    //     return default;
-    //   }
-
-    //   return JsonSerializer.Deserialize<T>(content, new JsonSerializerOptions
-    //   {
-    //     PropertyNameCaseInsensitive = true
-    //   });
-    // }
-
     private async Task<T?> Post<T>(string url, object? body)
     {
       HttpResponseMessage response;
