@@ -38,7 +38,7 @@ namespace MyApp.WebAPI.Services
 
         public async Task<MenuCourseDto> CreateMenuCourseAsync(CreateMenuCourseDto createDto)
         {
-            var categoryExists = await _context.Categories.AnyAsync(c => c.CategoryId == createDto.CategoryId);
+            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == createDto.CategoryId);
             if (!categoryExists)
             {
                 throw new ArgumentException($"Category dengan ID {createDto.CategoryId} tidak ditemukan.");
@@ -62,7 +62,7 @@ namespace MyApp.WebAPI.Services
 
             if(menuCourse.CategoryId != updateDto.CategoryId)
             {
-                var categoryExists = await _context.Categories.AnyAsync(c => c.CategoryId == updateDto.CategoryId);
+                var categoryExists = await _context.Categories.AnyAsync(c => c.Id == updateDto.CategoryId);
                 if (!categoryExists)
                 {
                     throw new ArgumentException($"Category dengan ID {updateDto.CategoryId} tidak ditemukan.");

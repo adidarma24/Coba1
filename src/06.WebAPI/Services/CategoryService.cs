@@ -32,7 +32,7 @@ namespace MyApp.WebAPI.Services
         {
             var category = await _context.Categories
                 .Include(c => c.MenuCourses)
-                .FirstOrDefaultAsync(c => c.CategoryId == id);
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             return _mapper.Map<CategoryDto>(category);
         }
@@ -46,7 +46,7 @@ namespace MyApp.WebAPI.Services
             await _context.SaveChangesAsync();
 
             _logger.LogInformation("Category created: {CategoryName} with ID: {CategoryId}", 
-                category.Name, category.CategoryId);
+                category.Name, category.Id);
 
             var categoryDto = _mapper.Map<CategoryDto>(category);
             categoryDto.MenuCourseCount = 0; // Set manual karena relasi belum di-load
@@ -59,7 +59,7 @@ namespace MyApp.WebAPI.Services
           
             var category = await _context.Categories
                 .Include(c => c.MenuCourses)
-                .FirstOrDefaultAsync(c => c.CategoryId == id);
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (category == null)
             {
@@ -96,7 +96,7 @@ namespace MyApp.WebAPI.Services
 
         public async Task<bool> CategoryExistsAsync(int id)
         {
-            return await _context.Categories.AnyAsync(c => c.CategoryId == id);
+            return await _context.Categories.AnyAsync(c => c.Id == id);
         }
     }
 }

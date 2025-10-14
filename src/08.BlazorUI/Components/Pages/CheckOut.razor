@@ -26,6 +26,7 @@
           <MudItem xs="12" sm="4" md="2">
             <MudImage Src="@item.ImageUrl" Alt="@item.Name" Fluid="true" Style="width: 12.5rem; height: 8.3rem;" />
           </MudItem>
+
           <MudItem xs="10" sm="6" md="8">
             <div class="d-flex flex-column">
               <MudText Typo="Typo.caption" style="color: #828282;">@item.Category</MudText>
@@ -38,6 +39,7 @@
               </MudText>
             </div>
           </MudItem>
+
           <MudItem xs="2" sm="1" md="1" Class="d-flex justify-end align-center">
             <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error" OnClick="@(() => RemoveItem(item))" />
           </MudItem>
@@ -75,19 +77,16 @@ new CartItem { Category="Asian", Name="Ichiraku Ramen", Schedule=new DateTime(20
 ImageUrl="images/image10.svg"},
 new CartItem { Category="Eastern", Name="Italian Spaghetti Bolognese", Schedule=new DateTime(2022,7,25), Price=450_000,
 ImageUrl="images/image16.svg"},
-}
-  ;
+};
 
   private List<CartItem> SelectedItems = new List<CartItem>();
 
   private void OnSelectAllChanged(bool value)
   {
     SelectAll = value;
-
     foreach (var item in CartItems)
     {
       item.Selected = value;
-
       if (value)
       {
         if (!SelectedItems.Contains(item))
@@ -98,14 +97,12 @@ ImageUrl="images/image16.svg"},
         SelectedItems.Clear();
       }
     }
-
     StateHasChanged();
   }
 
   private void OnItemSelectionChanged(CartItem item, bool isChecked)
   {
     item.Selected = isChecked;
-
     if (isChecked)
     {
       if (!SelectedItems.Contains(item))
@@ -130,11 +127,20 @@ ImageUrl="images/image16.svg"},
 
   private async Task OpenPayment()
   {
-    if (_totalPrice <= 0) { Snackbar.Add("Tidak ada item yang dipilih untuk dibayar.", Severity.Info); return; }
-    var
-    options = new DialogOptions { CloseOnEscapeKey = true, MaxWidth = MaxWidth.Small, FullWidth = true, }; // Use ShowAsync
-    (recommended)and consider a null Data as cancellation var dialogRef = await DialogService.ShowAsync<PaymentMethod>
-    ("Select Payment Method", options);
+    if (_totalPrice <= 0)
+    {
+      Snackbar.Add("Tidak ada item yang dipilih untuk dibayar.", Severity.Info);
+      return;
+    }
+
+    var options = new DialogOptions
+    {
+      CloseOnEscapeKey = true,
+      MaxWidth = MaxWidth.Small,
+      FullWidth = true
+    };
+
+    var dialogRef = await DialogService.ShowAsync<PaymentMethod>("Select Payment Method", options);
     var result = await dialogRef.Result;
 
     if (result?.Data != null)

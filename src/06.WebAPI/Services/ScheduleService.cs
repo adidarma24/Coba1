@@ -45,7 +45,7 @@ namespace MyApp.WebAPI.Services
             _context.Schedules.Add(schedule);
             await _context.SaveChangesAsync();
 
-            _logger.LogInformation("Jadwal baru dibuat dengan ID: {ScheduleId}", schedule.ScheduleId);
+            _logger.LogInformation("Jadwal baru dibuat dengan ID: {ScheduleId}", schedule.Id);
             return _mapper.Map<ScheduleDto>(schedule);
         }
         
@@ -55,7 +55,7 @@ namespace MyApp.WebAPI.Services
             var schedule = await _context.Schedules.FindAsync(id);
             if (schedule == null) return null;
 
-            var existingSchedule = await _context.Schedules.FirstOrDefaultAsync(s => s.ScheduleDate == updateDto.ScheduleDate && s.ScheduleId != id);
+            var existingSchedule = await _context.Schedules.FirstOrDefaultAsync(s => s.ScheduleDate == updateDto.ScheduleDate && s.Id != id);
             if (existingSchedule != null)
             {
                 throw new InvalidOperationException("Jadwal dengan tanggal dan waktu yang sama sudah ada.");
