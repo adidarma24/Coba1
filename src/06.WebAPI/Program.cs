@@ -12,6 +12,7 @@ using MyApp.WebAPI.Services.Interfaces;
 using MyApp.WebAPI.Configuration;
 using System.Text;
 using MyApp.WebAPI.Services.Implementations;
+using MyApp.WebAPI.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -87,6 +88,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 // ===============================================
 // Di sini kita daftarkan semua service yang kita pisahkan ke folder Services/
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddApplicationServices();
 
 // ===============================================
 // 4️⃣ Tambahkan Controller, Swagger, dan Authorization
