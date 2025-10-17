@@ -5,8 +5,7 @@ namespace MyApp.WebAPI.Models
   public class Schedule : BaseModel
   {
     [Key]
-    public int ScheduleId { get; set; }
-
+    public int ScheduleId { get; set; } // PK diseragamkan
     public DateTime ScheduleDate { get; set; }
 
     // Relation

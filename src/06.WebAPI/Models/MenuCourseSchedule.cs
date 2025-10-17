@@ -6,8 +6,7 @@ namespace MyApp.WebAPI.Models
   public class MenuCourseSchedule : BaseModel
   {
     [Key]
-    public int MSId { get; set; }
-
+    public int MSId { get; set; } // PK diseragamkan
     public int AvailableSlot { get; set; }
     [Required, MaxLength(50)]
     public MSStatus Status { get; set; } = MSStatus.Active;
@@ -16,13 +15,13 @@ namespace MyApp.WebAPI.Models
     public int MenuCourseId { get; set; }
     public int ScheduleId { get; set; }
 
+    // Navigation Properties
     [ForeignKey(nameof(MenuCourseId))]
-    public MenuCourse MenuCourse { get; set; } = null!;
+    public virtual MenuCourse MenuCourse { get; set; } = null!;
 
     [ForeignKey(nameof(ScheduleId))]
-    public Schedule Schedule { get; set; } = null!;
+    public virtual Schedule Schedule { get; set; } = null!;
 
-    // Relations
     public virtual ICollection<InvoiceMenuCourse> InvoiceMenuCourses { get; set; } = new List<InvoiceMenuCourse>();
     public virtual ICollection<MyClass> MyClasses { get; set; } = new List<MyClass>();
   }
