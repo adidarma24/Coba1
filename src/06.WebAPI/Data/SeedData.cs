@@ -93,7 +93,7 @@ namespace MyApp.WebAPI.Data
               Image = "tomyum.svg",
               Price = 100000,
               Description = "tomyum",
-              CategoryId = asianCategory!.Id,
+              CategoryId = asianCategory!.CategoryId,
               CreatedAt = DateTime.UtcNow,
               UpdatedAt = DateTime.UtcNow
             },
@@ -103,7 +103,7 @@ namespace MyApp.WebAPI.Data
               Image = "pizza.svg",
               Price = 150000,
               Description = "Learn design principles",
-              CategoryId = westernCategory!.Id,
+              CategoryId = westernCategory!.CategoryId,
               CreatedAt = DateTime.UtcNow,
               UpdatedAt = DateTime.UtcNow
             }
@@ -135,8 +135,8 @@ namespace MyApp.WebAPI.Data
         await context.SaveChangesAsync();
       }
 
-      var schedule1 = await context.Schedules.OrderBy(s => s.Id).FirstAsync();
-      var schedule2 = await context.Schedules.OrderBy(s => s.Id).Skip(1).FirstAsync();
+      var schedule1 = await context.Schedules.OrderBy(s => s.ScheduleId).FirstAsync();
+      var schedule2 = await context.Schedules.OrderBy(s => s.ScheduleId).Skip(1).FirstAsync();
 
       // === SEED MENU COURSE SCHEDULE ===
       if (!context.MenuCourseSchedules.Any())
@@ -145,7 +145,7 @@ namespace MyApp.WebAPI.Data
             new MenuCourseSchedule
             {
               MenuCourseId = tomyum!.MenuCourseId,
-              ScheduleId = schedule1.Id,
+              ScheduleId = schedule1.ScheduleId,
               AvailableSlot = 10,
               Status = MSStatus.Active,
               CreatedAt = DateTime.UtcNow,
@@ -154,7 +154,7 @@ namespace MyApp.WebAPI.Data
             new MenuCourseSchedule
             {
               MenuCourseId = pizza!.MenuCourseId,
-              ScheduleId = schedule2.Id,
+              ScheduleId = schedule2.ScheduleId,
               AvailableSlot = 8,
               Status = MSStatus.Active,
               CreatedAt = DateTime.UtcNow,

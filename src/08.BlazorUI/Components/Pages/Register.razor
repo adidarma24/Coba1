@@ -1,4 +1,7 @@
 ﻿@page "/register"
+@using MyApp.BlazorUI.Services.Interfaces
+@using MyApp.BlazorUI.DTOs.Auth
+@inject IAuthService AuthService
 @inject NavigationManager Navigation
 
 <PageTitle>Register</PageTitle>
@@ -14,27 +17,27 @@
     <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
       <MudPaper Elevation="0" Class="d-flex flex-column gap-6">
         <MudTextField T="string"
-                      @bind-Value="registerModel.Name"
+                      @bind-Value="registerRequestDto.Name"
                       Placeholder="Name" 
                       Variant="Variant.Outlined" 
                       Required="true"
                       RequiredError="Name is required!"
-                      For="@(() => registerModel.Name)" 
+                      For="@(() => registerRequestDto.Name)" 
                       Style="height: 2rem;" />
 
         <MudTextField T="string"
-                      @bind-Value="registerModel.Email" 
+                      @bind-Value="registerRequestDto.Email" 
                       Validation="@(new Func<string, string>(ValidateEmail))"
                       Placeholder="Email" 
                       Variant="Variant.Outlined" 
                       InputType="InputType.Email" 
                       Required="true"
                       RequiredError="Email is required!"
-                      For="@(() => registerModel.Email)" 
+                      For="@(() => registerRequestDto.Email)" 
                       Style="height: 2rem;" />
 
         <MudTextField T="string"
-                      @bind-Value="registerModel.Password" 
+                      @bind-Value="registerRequestDto.Password" 
                       Validation="@(new Func<string, IEnumerable<string>>(ValidatePassword))"
                       Placeholder="Password" 
                       Variant="Variant.Outlined"
@@ -46,11 +49,11 @@
                       IconSize="Size.Small"
                       Required="true" 
                       RequiredError="Password is required!"
-                      For="@(() => registerModel.Password)" 
+                      For="@(() => registerRequestDto.Password)" 
                       Style="height: 2rem;" />
 
         <MudTextField T="string"
-                      @bind-Value="registerModel.ConfirmPassword" 
+                      @bind-Value="registerRequestDto.ConfirmPassword" 
                       Validation="@(new Func<string, string>(ValidateConfirmPassword))"
                       Placeholder="Confirm Password"
                       Variant="Variant.Outlined" 
@@ -62,7 +65,7 @@
                       IconSize="Size.Small"
                       Required="true"
                       RequiredError="Please confirm your password!"
-                      For="@(() => registerModel.ConfirmPassword)" 
+                      For="@(() => registerRequestDto.ConfirmPassword)" 
                       Style="height: 2rem;" />
       
         @if (!string.IsNullOrEmpty(registerError))
@@ -74,8 +77,16 @@
     </MudForm>
 
     <MudPaper Elevation="0" Class="d-flex justify-end">
-      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
-        Sign Up
+      <MudButton Disabled="@_processing" OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
+        @if (_processing)
+        {
+          <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+          <MudText Class="ms-2">Processing</MudText>
+        }
+        else
+        {
+          <MudText>Sign Up</MudText>
+        }
       </MudButton>
     </MudPaper>
   </MudPaper>
@@ -90,29 +101,55 @@
   bool success;
   string[] errors = { };
   MudForm? form;
+  private bool _processing = false;
   private string registerError = string.Empty;
-  private RegisterModel registerModel = new();
+  private RegisterRequestDto registerRequestDto = new RegisterRequestDto();
 
   bool isShow;
   InputType PasswordInput = InputType.Password;
   string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
-  private static string email = "test@gmail.com";
+   protected override async Task OnInitializedAsync()
+  {
+    var authState = await AuthService.IsUserAuthenticatedAsync();
+    if (authState)
+    {
+      Navigation.NavigateTo("/", forceLoad: true);
+    }
+  }
 
-  private void Submit()
+  private async Task Submit()
   {
     form?.Validate();
-    if (success)
+
+    if (!success)
+      return;
+
+    _processing = true;
+    registerError = string.Empty;
+    StateHasChanged();
+
+    try
     {
-      if (registerModel.Email != email)
+      var result = await AuthService.RegisterAsync(registerRequestDto);
+      if (result.Success)
       {
         Console.WriteLine("Register Success!");
-        Navigation.NavigateTo("/email-success");
+        registerError = result.Message;
       }
       else
       {
-        registerError = "Email already registered!";
+        registerError = result.Message;
       }
+    }
+    catch
+    {
+      registerError = $"Server error";
+    }
+    finally
+    {
+      _processing = false;
+      StateHasChanged();
     }
   }
 
@@ -144,7 +181,7 @@
     {
       yield return "Password must be at least 6 characters, contain at least one uppercase letter and contain at least one number!";
     }
-    ValidateConfirmPassword(registerModel.ConfirmPassword);
+    ValidateConfirmPassword(registerRequestDto.ConfirmPassword);
   }
 
   private string ValidateConfirmPassword(string value)
@@ -153,7 +190,7 @@
     {
       return "Please confirm your password!";
     }
-    else if (value != registerModel.Password)
+    else if (value != registerRequestDto.Password)
     {
       return "Passwords do not match!";
     }
@@ -176,13 +213,5 @@
       PasswordInputIcon = Icons.Material.Filled.Visibility;
       PasswordInput = InputType.Text;
     }
-  }
-
-  public class RegisterModel
-  {
-    public string Name { get; set; } = string.Empty;
-    public string Email { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string ConfirmPassword { get; set; } = string.Empty;
   }
 }

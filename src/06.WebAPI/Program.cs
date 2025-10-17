@@ -32,7 +32,7 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
   options.Password.RequireDigit = true;
   options.Password.RequireLowercase = true;
   options.Password.RequireUppercase = true;
-  options.Password.RequireNonAlphanumeric = true;
+  options.Password.RequireNonAlphanumeric = false;
 
   options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
   options.Lockout.MaxFailedAccessAttempts = 5;
@@ -40,7 +40,7 @@ builder.Services.AddIdentity<User, IdentityRole<int>>(options =>
 
   // User settings
   options.User.RequireUniqueEmail = true;
-  options.SignIn.RequireConfirmedEmail = false; // For demo purposes
+  options.SignIn.RequireConfirmedEmail = true;
 })
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
@@ -82,6 +82,7 @@ builder.Services.AddScoped<IInvoiceService, InvoiceService>();
 builder.Services.AddScoped<IMyClassService, MyClassService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 // ===============================================
 // 3️⃣ Register Services (Dependency Injection)
@@ -165,9 +166,6 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
 
 app.UseAuthentication();
 app.UseAuthorization();

@@ -1,5 +1,14 @@
+@using Microsoft.AspNetCore.Components.Authorization
+@using MyApp.BlazorUI.Services.Interfaces
+@using MyApp.BlazorUI.Services
+@using MyApp.BlazorUI.DTOs.Auth
+@using Blazored.LocalStorage;
+@inject AuthenticationStateProvider AuthStateProvider
+@inject Blazored.LocalStorage.ILocalStorageService _localStorage
+@inject IAuthService AuthService
+
 <MudNavMenu Class="@Css" Style="width: 100%;">
-  @if (!login)
+  @if (!_isLoggedIn)
   {
     <MudLink Href="/login" Class="btn">
       <MudButton Variant="Variant.Outlined" Class="rounded-lg button button-outline">
@@ -47,7 +56,7 @@
     </MudLink>
 
     <MudLink Href="/" Class="nav-link">
-      <MudButton Class="nav-btn">
+      <MudButton Class="nav-btn" OnClick="Logout">
         <MudIcon Icon="@Icons.Material.Filled.ExitToApp" />
         <MudText Class="d-flex d-sm-none nav-text">Logout</MudText>
       </MudButton>
@@ -57,8 +66,74 @@
 
 @code {
   [Parameter] public string Css { get; set; } = "";
+  private bool _isLoggedIn;
+  private bool _initialized;
 
-  private static bool login = true;
+  protected override async Task OnInitializedAsync()
+  {
+    var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+    _isLoggedIn = authState.User.Identity?.IsAuthenticated ?? false;
+
+    // Listen to changes (e.g., after login/logout)
+    if (AuthStateProvider is CustomAuthStateProvider customProvider)
+    {
+      customProvider.AuthenticationStateChanged += async task =>
+      {
+        var state = await task;
+        _isLoggedIn = state.User.Identity?.IsAuthenticated ?? false;
+        await InvokeAsync(StateHasChanged);
+      };
+    }
+  }
+
+  protected override async Task OnAfterRenderAsync(bool firstRender)
+  {
+    if (firstRender && !_initialized)
+    {
+      _initialized = true;
+      try
+      {
+        var isAuth = await AuthService.IsUserAuthenticatedAsync();
+        if (isAuth && !_isLoggedIn)
+        {
+          _isLoggedIn = true;
+          StateHasChanged();
+        }
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"NavMenu init auth check failed: {ex.Message}");
+      }
+    }
+  }
+
+  private async Task Logout()
+  {
+    try
+    {
+      var result = await AuthService.LogoutAsync();
+      if (result == null)
+      {
+        Console.WriteLine("Logout failed: no response from server.");
+        return;
+      }
+
+      if (result.Success)
+      {
+        _isLoggedIn = false;
+        Console.WriteLine(result.Message);
+        StateHasChanged();
+      }
+      else
+      {
+        Console.WriteLine(result.Message);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"Logout error: {ex}");
+    }
+  }
 }
 
 <style>

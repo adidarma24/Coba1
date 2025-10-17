@@ -1,6 +1,44 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@inject NavigationManager Navigation
+
+<Router AppAssembly="typeof(Program).Assembly">
   <Found Context="routeData">
-    <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+    <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+      <NotAuthorized>
+        @if (context.User.Identity?.IsAuthenticated != true)
+        {
+          Navigation.NavigateTo("/login", forceLoad: true);
+        }
+        else
+        {
+          <div class="d-flex flex-column align-items-center justify-content-center" style="height: 100vh;">
+            <MudText Typo="Typo.h4" Color="Color.Error">Access Denied</MudText>
+            <MudText Typo="Typo.body1" Class="mt-3">You don't have permission to access this page.</MudText>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" Class="mt-4">
+              Go to Home
+            </MudButton>
+          </div>
+        }
+      </NotAuthorized>
+      <Authorizing>
+        <div class="d-flex align-items-center justify-content-center" style="height: 100vh;">
+          <MudProgressCircular Color="Color.Primary" Size="Size.Large" Indeterminate="true" />
+          <MudText Typo="Typo.h6" Class="ml-3">Checking authentication...</MudText>
+        </div>
+      </Authorizing>
+    </AuthorizeRouteView>
     <FocusOnNavigate RouteData="routeData" Selector="h1" />
   </Found>
+  <NotFound>
+    <LayoutView Layout="typeof(Layout.MainLayout)">
+      <div class="d-flex flex-column align-items-center justify-content-center" style="height: 100vh;">
+        <MudText Typo="Typo.h3" Color="Color.Error">404</MudText>
+        <MudText Typo="Typo.h5" Class="mt-2">Page Not Found</MudText>
+        <MudText Typo="Typo.body1" Class="mt-3">The page you're looking for doesn't exist.</MudText>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" Class="mt-4">
+          Go to Home
+        </MudButton>
+      </div>
+    </LayoutView>
+  </NotFound>
 </Router>

@@ -1,4 +1,7 @@
 ﻿@page "/login"
+@using MyApp.BlazorUI.Services.Interfaces
+@using MyApp.BlazorUI.DTOs.Auth
+@inject IAuthService AuthService
 @inject NavigationManager Navigation
 
 <PageTitle>Login</PageTitle>
@@ -13,18 +16,37 @@
 
     <MudForm @ref="form" @bind-IsValid="@success" @bind-Errors="@errors">
       <MudPaper Elevation="0" Class="d-flex flex-column gap-6">
-        <MudTextField T="string" @bind-Value="loginModel.Email" Validation="@(new Func<string, string>(ValidateEmail))"
-          Placeholder="Email" Variant="Variant.Outlined" InputType="InputType.Email" Required="true"
-          RequiredError="Email is required!" For="@(() => loginModel.Email)" Style="height: 2rem;" />
+        <MudTextField T="string" @bind-Value="loginRequestDto.Email"
+          Validation="@(new Func<string, string>(ValidateEmail))" Placeholder="Email" Variant="Variant.Outlined"
+          InputType="InputType.Email" Required="true" RequiredError="Email is required!"
+          For="@(() => loginRequestDto.Email)" Style="height: 2rem;" />
 
-        <MudTextField T="string" @bind-Value="loginModel.Password" Placeholder="Password" Variant="Variant.Outlined"
-          InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon"
-          OnAdornmentClick="TogglePasword" AdornmentAriaLabel="Show Password" IconSize="Size.Small" Required="true"
-          RequiredError="Password is required!" For="@(() => loginModel.Password)" Style="height: 2rem;" />
+        <MudTextField T="string" @bind-Value="loginRequestDto.Password" Placeholder="Password"
+          Variant="Variant.Outlined" InputType="@PasswordInput" Adornment="Adornment.End"
+          AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="TogglePasword" AdornmentAriaLabel="Show Password"
+          IconSize="Size.Small" Required="true" RequiredError="Password is required!"
+          For="@(() => loginRequestDto.Password)" Style="height: 2rem;" />
 
         @if (!string.IsNullOrEmpty(loginError))
         {
           <MudText Color="Color.Error">@loginError</MudText>
+        }
+
+        @if (loginError == "Your email is not confirmed, please check your email or resend email confirmation.")
+        {
+          <MudButton Disabled="@_processing" OnClick="SubmitResendEmail" Variant="Variant.Text" Color="Color.Primary">
+            @if (_processing)
+            {
+              <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+              <MudText Class="ms-2">Processing</MudText>
+            }
+            else
+            {
+              <MudText>Resend email confirmation</MudText>
+            }
+          </MudButton>
+
+          <MudText Color="Color.Error">@loginResendError</MudText>
         }
 
         <MudText Typo="Typo.body2" Style="font-weight: 400; color: #5b4947;">
@@ -35,8 +57,17 @@
     </MudForm>
 
     <MudPaper Elevation="0" Class="d-flex justify-end">
-      <MudButton OnClick="Submit" Variant="Variant.Filled" DropShadow="false" Class="rounded-lg button button-filled">
-        Login
+      <MudButton Disabled="@_processing" OnClick="Submit" Variant="Variant.Filled" DropShadow="false"
+        Class="rounded-lg button button-filled">
+        @if (_processing)
+        {
+          <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+          <MudText Class="ms-2">Processing</MudText>
+        }
+        else
+        {
+          <MudText>Login</MudText>
+        }
       </MudButton>
     </MudPaper>
   </MudPaper>
@@ -51,22 +82,40 @@
   MudForm? form;
   bool success;
   string[] errors = { };
+  private bool _processing = false;
   private string loginError = string.Empty;
-  private LoginModel loginModel = new();
+  private string loginResendError = string.Empty;
+  private LoginRequestDto loginRequestDto = new LoginRequestDto();
 
   bool isShow;
   InputType PasswordInput = InputType.Password;
   string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
-  private static string email = "test@gmail.com";
-  private static string pass = "Qwerty123";
+  protected override async Task OnInitializedAsync()
+  {
+    var authState = await AuthService.IsUserAuthenticatedAsync();
+    if (authState)
+    {
+      Navigation.NavigateTo("/", forceLoad: true);
+    }
+  }
 
-  private void Submit()
+
+  private async Task Submit()
   {
     form?.Validate();
-    if (success)
+
+    if (!success)
+      return;
+
+    _processing = true;
+    loginError = string.Empty;
+    StateHasChanged();
+
+    try
     {
-      if (loginModel.Email == email && loginModel.Password == pass)
+      var result = await AuthService.LoginAsync(loginRequestDto);
+      if (result.Success)
       {
         Console.WriteLine("Login Success!");
         loginError = string.Empty;
@@ -74,8 +123,47 @@
       }
       else
       {
-        loginError = "Email or Password incorrect!";
+        loginError = result.Message;
       }
+    }
+    catch (Exception ex)
+    {
+      loginError = $"Server error";
+    }
+    finally
+    {
+      _processing = false;
+      StateHasChanged();
+    }
+  }
+
+  private async Task SubmitResendEmail()
+  {
+    _processing = true;
+    loginResendError = string.Empty;
+    StateHasChanged();
+
+    try
+    {
+      var result = await AuthService.ResendConfirmationEmailAsync(loginRequestDto.Email);
+      if (result.Success)
+      {
+        Console.WriteLine("Resend email Success!");
+        loginResendError = result.Message;
+      }
+      else
+      {
+        loginResendError = result.Message;
+      }
+    }
+    catch (Exception ex)
+    {
+      loginResendError = $"Server error";
+    }
+    finally
+    {
+      _processing = false;
+      StateHasChanged();
     }
   }
 
@@ -110,11 +198,5 @@
       PasswordInputIcon = Icons.Material.Filled.Visibility;
       PasswordInput = InputType.Text;
     }
-  }
-
-  public class LoginModel
-  {
-    public string Email { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
   }
 }
